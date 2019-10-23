@@ -53,3 +53,9 @@ TTTT_TuneCP5_13TeV-amcatnlo-pythia8/NANOAODSIM/PU2017_12Apr2018_Nano14Dec2018_10
 /xrootd/store/data/Run2017D/JetHT/NANOAOD/Nano14Dec2018-v1	 JetHT2017D
 /xrootd/store/data/Run2017E/JetHT/NANOAOD/Nano14Dec2018-v1	 JetHT2017E
 /xrootd/store/data/Run2017F/JetHT/NANOAOD/Nano14Dec2018-v1	 JetHT2017F
+# SingleMuon
+/xrootd/store/data/Run2017B/SingleMuon/NANOAOD/Nano14Dec2018-v1	SingleMuon2017B
+/xrootd/store/data/Run2017C/SingleMuon/NANOAOD/Nano14Dec2018-v1	SingleMuon2017C
+/xrootd/store/data/Run2017D/SingleMuon/NANOAOD/Nano14Dec2018-v1	SingleMuon2017D
+/xrootd/store/data/Run2017E/SingleMuon/NANOAOD/Nano14Dec2018-v1	SingleMuon2017E
+/xrootd/store/data/Run2017F/SingleMuon/NANOAOD/Nano14Dec2018-v1	SingleMuon2017F
