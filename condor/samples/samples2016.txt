@@ -1,0 +1,8 @@
+# SingleMuon
+/xrootd/store/data/Run2016B_ver2/SingleMuon/NANOAOD/Nano14Dec2018_ver2-v1	SingleMuonRun2016B
+/xrootd/store/data/Run2016C/SingleMuon/NANOAOD/Nano14Dec2018-v1		SingleMuonRun201C6
+/xrootd/store/data/Run2016D/SingleMuon/NANOAOD/Nano14Dec2018-v1		SingleMuonRun2016D
+/xrootd/store/data/Run2016E/SingleMuon/NANOAOD/Nano14Dec2018-v1		SingleMuonRun2016E
+/xrootd/store/data/Run2016F/SingleMuon/NANOAOD/Nano14Dec2018-v1		SingleMuonRun2016F
+/xrootd/store/data/Run2016G/SingleMuon/NANOAOD/Nano14Dec2018-v1		SingleMuonRun201G6
+/xrootd/store/data/Run2016H/SingleMuon/NANOAOD/Nano14Dec2018-v1		SingleMuonRun2016H

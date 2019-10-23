@@ -1,0 +1,5 @@
+# SingleMuon
+/xrootd/store/data/Run2018A/SingleMuon/NANOAOD/Nano14Dec2018-v1				SingleMuonRun2017A
+/xrootd/store/data/Run2018B/SingleMuon/NANOAOD/Nano14Dec2018-v1				SingleMuonRun2017B
+/xrootd/store/data/Run2018C/SingleMuon/NANOAOD/Nano14Dec2018-v1				SingleMuonRun2017C
+/xrootd/store/data/Run2018D/SingleMuon/NANOAOD/Nano14Dec2018_ver2-v1	SingleMuonRun2017D
