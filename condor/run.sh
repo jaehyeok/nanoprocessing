@@ -25,8 +25,8 @@ ls -rlt
 echo ""
 
 # run
-echo "./process_nano.exe $1 $2 $3"
-./process_nano.exe  $1 $2 $3
+echo "./process_nano.exe $1 $2 $3 $4"
+./process_nano.exe  $1 $2 $3 $4
 
 # copy
 #xrdcp *_TTZToQQ.root root://cms-xrdr.private.lo:2094//xrd/store/user/jaehyeok/2017v4/2019_09_09

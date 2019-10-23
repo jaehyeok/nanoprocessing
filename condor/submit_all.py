@@ -4,9 +4,16 @@ import os
 import os.path
 
 #outputdir="/xrootd_user/jaehyeok/xrootd/2017v4/2019_09_09"
-outputdir="root://cms-xrdr.private.lo:2094//xrd/store/user/jaehyeok/2017v4/2019_09_11/"
+#outputdir="root://cms-xrdr.private.lo:2094//xrd/store/user/jaehyeok/2018v4/2019_10_13/"
+#outputdir="root://cms-xrdr.private.lo:2094//xrd/store/user/jaehyeok/2017v4/2019_10_13/"
+outputdir="root://cms-xrdr.private.lo:2094//xrd/store/user/jaehyeok/2016v4/2019_10_15/"
 
-f = open("samples/samples2017.txt", 'r')
+#f = open("samples/samples2018.txt", 'r')
+#f = open("samples/samples2017.txt", 'r')
+f = open("samples/samples2016.txt", 'r')
+
+list_processed="flist_outputdir_2016v4_2019_10_15.txt"
+
 lines = f.readlines()
 for line in lines:
   if "#" in line:
@@ -25,7 +32,7 @@ for line in lines:
           list_file.write(filename)
     condor_file = open("condor_"+process+".jds", "w")
     condor_file.write("executable              = run.sh\n");
-    condor_file.write("arguments               = "+splits[0]+" "+outputdir+" "+process+"\n");
+    condor_file.write("arguments               = "+splits[0]+" "+outputdir+" "+process+" " +list_processed+"\n");
     condor_file.write("transfer_input_files    = process_nano.exe flist_"+process+".txt\n");
     condor_file.write("log                     = log/run_"+process+".$(Cluster).$(Process).log\n");
     condor_file.write("output                  = log/run_"+process+"_output.$(Cluster).$(Process).out\n");
@@ -48,7 +55,7 @@ for line in lines:
         list_file.write(filename)
     condor_file = open("condor_"+process+".jds", "w")
     condor_file.write("executable              = run.sh\n");
-    condor_file.write("arguments               = "+splits[0]+" "+outputdir+" "+process+"\n");
+    condor_file.write("arguments               = "+splits[0]+" "+outputdir+" "+process+" "+list_processed+"\n");
     condor_file.write("transfer_input_files    = process_nano.exe flist_"+process+".txt\n");
     condor_file.write("log                     = log/run_"+process+".$(Cluster).$(Process).log\n");
     condor_file.write("output                  = log/run_"+process+"_output.$(Cluster).$(Process).out\n");

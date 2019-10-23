@@ -1,4 +1,5 @@
 #include <glob.h>
+#include <fstream>
 #include "TString.h" 
 
 using namespace std;
@@ -40,4 +41,10 @@ float deltaR(float deltaEta, float deltaPhi)
 float deltaR(float eta1, float eta2, float phi1, float phi2)
 { 
   return  deltaR(eta1-eta2, phi1-phi2);
+}
+
+// function that checks if a file exists
+bool fexists(TString filename) {
+	std::ifstream ifile(filename.Data());
+	return (bool)ifile;
 }

@@ -219,8 +219,11 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   Bool_t Flag_BadPFMuonFilter=true;
   Bool_t Flag_eeBadScFilter=true;
   // trigger 
+  Bool_t HLT_PFJet450=true;
   Bool_t HLT_PFHT900=true;
   Bool_t HLT_PFHT1050=true;
+  Bool_t HLT_IsoMu24=true;
+  Bool_t HLT_IsoMu27=true;
 
   // global
   tree->SetBranchAddress("event",               &event_);
@@ -294,9 +297,16 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   tree->SetBranchAddress("Flag_eeBadScFilter",                      &Flag_eeBadScFilter);
   // trigger
   if(year==2016)
-    tree->SetBranchAddress("HLT_PFHT900",                             &HLT_PFHT900);
+	{
+    tree->SetBranchAddress("HLT_PFHT900",     &HLT_PFHT900);
+    tree->SetBranchAddress("HLT_PFJet450",    &HLT_PFJet450);
+  }
   if(year>2016)
-    tree->SetBranchAddress("HLT_PFHT1050",                            &HLT_PFHT1050);
+	{
+    tree->SetBranchAddress("HLT_PFHT1050",    &HLT_PFHT1050);
+	}
+  tree->SetBranchAddress("HLT_IsoMu24",   &HLT_IsoMu24);
+  tree->SetBranchAddress("HLT_IsoMu27",   &HLT_IsoMu27);
 
   // ------------------------------------------------------------------ 
   // New file 
@@ -439,8 +449,11 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   std::vector<bool>  sys_pass;
   */
   // trigger 
+  bool trig_jet450=true; 
   bool trig_ht900=true; 
   bool trig_ht1050=true;
+  bool trig_isomu24=true; 
+  bool trig_isomu27=true; 
 
   // global
   babyTree_->Branch("run",            	&run);    
@@ -497,8 +510,11 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   // filters
   babyTree_->Branch("pass",    	&pass);    
   // triggers 
+  babyTree_->Branch("trig_jet450",  	&trig_jet450);    
   babyTree_->Branch("trig_ht900",    	&trig_ht900);    
   babyTree_->Branch("trig_ht1050",  	&trig_ht1050);    
+  babyTree_->Branch("trig_isomu24",  	&trig_isomu24);    
+  babyTree_->Branch("trig_isomu27",  	&trig_isomu27);    
 
 
   // 
@@ -585,8 +601,11 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
     //    
     pass=true;
     //
+    trig_jet450=true;
     trig_ht900=true;
     trig_ht1050=true;
+    trig_isomu24=true;
+    trig_isomu27=true;
 
     // apply json in data
     if(isData && !inJSON(VRunLumi,run,ls)) continue;
@@ -855,6 +874,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
         Flag_BadPFMuonFilter;
       // triggers 
       trig_ht900  = HLT_PFHT900;
+      trig_jet450 = HLT_PFJet450;
     } 
     else
     {
@@ -868,6 +888,8 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
       // triggers 
       trig_ht1050 = HLT_PFHT1050;
     }
+   trig_isomu24  = HLT_IsoMu24;
+   trig_isomu27  = HLT_IsoMu27;
 
    
     // Fill the branches 
@@ -945,13 +967,13 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
 int main(int argc, char **argv)
 {
   bool useCondor = true;
-  TString inputdir, outputdir, process; 
+  TString inputdir, outputdir, process, list_processed; 
   
-  if(argc<4)
+  if(argc<5)
   {
     cout << " Please provide proper arguments" << endl;
     cout << "" << endl;
-    cout << "   ./process.exe [input dir] [output dir] [process]" << endl; 
+    cout << "   ./process.exe [input dir] [output dir] [process] [list of processed files]" << endl; 
     cout << "" << endl;
     return 0;
   }
@@ -960,16 +982,18 @@ int main(int argc, char **argv)
     inputdir    = argv[1];
     outputdir   = argv[2];
     process     = argv[3];
+    list_processed    = argv[4];
     
     cout << "-----------------------------------------------------------------------" << endl;
     cout << " input   dir  : " << inputdir << endl;
     cout << " output  dir  : " << outputdir << endl;
     cout << " process      : " << process << endl;
+    cout << " list of processed files      : " << list_processed << endl;
     cout << "-----------------------------------------------------------------------" << endl;
   }
 
   bool isData = false;
-  if(inputdir.Contains("Run201") || process.Contains("Run201"))            isData = true;
+  if(inputdir.Contains("Run201") || process.Contains("Run201"))          isData = true;
   if(inputdir.Contains("JetHT") || process.Contains("JetHT"))            isData = true;
   if(inputdir.Contains("SingleMuon") || process.Contains("SingleMuon"))  isData = true;
 
@@ -978,6 +1002,7 @@ int main(int argc, char **argv)
   // => https://twiki.cern.ch/twiki/bin/view/Main/CMGMonojetAnalysisTools
   //vector<TString> files = globVector(Form("/xrootd/%s/*/*.root", inputdir.Data())); 
   vector<TString> files = getFileListFromFile(Form("flist/flist_%s.txt", process.Data())); 
+  vector<TString> files_original = files; 
   for(int ifile=0; ifile<files.size(); ifile++)
   {
     cout << files.at(ifile) << endl;
@@ -1004,8 +1029,27 @@ int main(int argc, char **argv)
     delete h;
   }
   // 
+  vector<TString> files_processed = getFileListFromFile(Form("flist/%s", list_processed.Data())); 
   for(int i=0; i<files.size(); i++)
   {
+		// check if a file is already there in the output directory
+		// if it does, skip it
+		bool file_is_processed = false;
+    for(int j=0; j<files_processed.size(); j++)
+		{
+  		TObjArray *tokens = files.at(i).Tokenize("/"); 
+  		TString outputfile = (dynamic_cast<TObjString*>(tokens->At(tokens->GetEntries()-1)))->GetString();
+  		outputfile.ReplaceAll(".root", Form("_fatjetbaby_%s.root", process.Data()));
+			cout << outputfile << " " << files_processed.at(j) << endl; // FIXME
+			if(outputfile == files_processed.at(j)) file_is_processed=true;
+		}
+   		
+	  if(file_is_processed) 
+		{ 
+			cout << "file already exists in " << outputdir << endl; 
+			cout << "skip it!" << endl;
+			continue;
+		}
     cout << "procesing " << files.at(i) << endl; 
     process_nano(files.at(i), outputdir, sumWeights, process, nfiles, filenumber); 
   }
