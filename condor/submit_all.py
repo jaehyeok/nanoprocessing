@@ -3,17 +3,28 @@ import sys
 import os
 import os.path
 
+year=sys.argv[1]
+
 #outputdir="/xrootd_user/jaehyeok/xrootd/2017v4/2019_09_09"
-#outputdir="root://cms-xrdr.private.lo:2094//xrd/store/user/jaehyeok/2018v4/2019_10_13/"
-#outputdir="root://cms-xrdr.private.lo:2094//xrd/store/user/jaehyeok/2017v4/2019_10_13/"
-outputdir="root://cms-xrdr.private.lo:2094//xrd/store/user/jaehyeok/2016v4/2019_10_15/"
+outputdir="root://cms-xrdr.private.lo:2094//xrd/store/user/jaehyeok/2016v4/2019_10_23/"
+samplelist="samples/samples2016.txt"
+if year == "2017":
+	outputdir="root://cms-xrdr.private.lo:2094//xrd/store/user/jaehyeok/2017v4/2019_10_23/"
+	samplelist="samples/samples2017.txt"
+if year == "2018":
+	outputdir="root://cms-xrdr.private.lo:2094//xrd/store/user/jaehyeok/2018v4/2019_10_23/"
+	samplelist="samples/samples2018.txt"
 
-#f = open("samples/samples2018.txt", 'r')
-#f = open("samples/samples2017.txt", 'r')
-f = open("samples/samples2016.txt", 'r')
+print year
+print outputdir
+print samplelist
 
-list_processed="flist_outputdir_2016v4_2019_10_15.txt"
+f = open(samplelist, 'r')
 
+splits = outputdir.split("/")
+list_processed = "flist_outputdir_"+splits[4]+"_"+splits[5]+".txt"
+
+# make file list and condor submisstion script
 lines = f.readlines()
 for line in lines:
   if "#" in line:
@@ -30,7 +41,7 @@ for line in lines:
         filename="/xrootd/store/mc/RunIIFall17NanoAODv4/"+splits[0]+"/"+subdir+"/"+files+"\n"
         if "BB833C07-5ECA-5E43-8A99-38083AACE497" not in filename:
           list_file.write(filename)
-    condor_file = open("condor_"+process+".jds", "w")
+    condor_file = open("submit_scripts/condor_"+process+".jds", "w")
     condor_file.write("executable              = run.sh\n");
     condor_file.write("arguments               = "+splits[0]+" "+outputdir+" "+process+" " +list_processed+"\n");
     condor_file.write("transfer_input_files    = process_nano.exe flist_"+process+".txt\n");
@@ -41,7 +52,7 @@ for line in lines:
     condor_file.write("#when_to_transfer_output = ON_EXIT\n");
     condor_file.write("queue");
     condor_file.close()
-    print("condor_submit condor_"+process+".jds")
+    print("condor_submit submit_scripts/condor_"+process+".jds")
     #os.system("condor_submit condor_"+process+".jds")
   # data
   elif "Run201" in splits[0]:
@@ -53,7 +64,7 @@ for line in lines:
       for files in f_list_subdir:
         filename=splits[0]+"/"+subdir+"/"+files+"\n"
         list_file.write(filename)
-    condor_file = open("condor_"+process+".jds", "w")
+    condor_file = open("submit_scripts/condor_"+process+".jds", "w")
     condor_file.write("executable              = run.sh\n");
     condor_file.write("arguments               = "+splits[0]+" "+outputdir+" "+process+" "+list_processed+"\n");
     condor_file.write("transfer_input_files    = process_nano.exe flist_"+process+".txt\n");
@@ -64,7 +75,7 @@ for line in lines:
     condor_file.write("#when_to_transfer_output = ON_EXIT\n");
     condor_file.write("queue");
     condor_file.close()
-    print("condor_submit condor_"+process+".jds")
+    print("condor_submit submit_scripts/condor_"+process+".jds")
     #os.system("condor_submit condor_"+process+".jds")
 f.close()
 
