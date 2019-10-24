@@ -1,0 +1,4 @@
+*.exe
+condor/condor_*.jds
+condor/log
+flist
