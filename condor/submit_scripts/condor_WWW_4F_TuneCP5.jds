@@ -1,0 +1,9 @@
+executable              = run.sh
+arguments               = WWW_4F_TuneCP5_13TeV-amcatnlo-pythia8/NANOAODSIM/PU2017_12Apr2018_Nano14Dec2018_102X_mc2017_realistic_v6-v1 root://cms-xrdr.private.lo:2094//xrd/store/user/jaehyeok/2017v4/2019_10_23/ WWW_4F_TuneCP5 flist_outputdir_xrd_store.txt
+transfer_input_files    = process_nano.exe flist_WWW_4F_TuneCP5.txt
+log                     = log/run_WWW_4F_TuneCP5.$(Cluster).$(Process).log
+output                  = log/run_WWW_4F_TuneCP5_output.$(Cluster).$(Process).out
+error                   = log/run_WWW_4F_TuneCP5_errors.$(Cluster).$(Process).err
+#should_transfer_files   = Yes
+#when_to_transfer_output = ON_EXIT
+queue

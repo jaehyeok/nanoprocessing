@@ -1,0 +1,9 @@
+executable              = run.sh
+arguments               = /xrootd/store/data/Run2018D/SingleMuon/NANOAOD/Nano14Dec2018_ver2-v1 root://cms-xrdr.private.lo:2094//xrd/store/user/jaehyeok/2018v4/2019_10_23/ SingleMuonRun2018D flist_outputdir_xrd_store.txt
+transfer_input_files    = process_nano.exe flist_SingleMuonRun2018D.txt
+log                     = log/run_SingleMuonRun2018D.$(Cluster).$(Process).log
+output                  = log/run_SingleMuonRun2018D_output.$(Cluster).$(Process).out
+error                   = log/run_SingleMuonRun2018D_errors.$(Cluster).$(Process).err
+#should_transfer_files   = Yes
+#when_to_transfer_output = ON_EXIT
+queue
