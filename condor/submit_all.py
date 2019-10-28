@@ -8,17 +8,25 @@ year=sys.argv[1]
 #outputdir="/xrootd_user/jaehyeok/xrootd/2017v4/2019_09_09"
 outputdir="root://cms-xrdr.private.lo:2094//xrd/store/user/jaehyeok/2016v4/2019_10_23/"
 samplelist="samples/samples2016.txt"
+inputmctag="RunIISummer16NanoAODv4"
 if year == "2017":
 	outputdir="root://cms-xrdr.private.lo:2094//xrd/store/user/jaehyeok/2017v4/2019_10_23/"
 	samplelist="samples/samples2017.txt"
+	inputmctag="RunIIFall17NanoAODv4"
 if year == "2018":
 	outputdir="root://cms-xrdr.private.lo:2094//xrd/store/user/jaehyeok/2018v4/2019_10_23/"
 	samplelist="samples/samples2018.txt"
+	inputmctag="RunIIAutumn18NanoAODv4"
 
-print year
-print outputdir
-print samplelist
+# print out inputs
+print "------------------------------------------------------------------------------------------------------------"
+print " year: "+year
+print " output dir: "+outputdir
+print " sample list: "+samplelist
+print "------------------------------------------------------------------------------------------------------------"
+print ""
 
+# open sample list file to write
 f = open(samplelist, 'r')
 
 splits = outputdir.split("/")
@@ -32,13 +40,13 @@ for line in lines:
   splits = line.split("\t")
   # mc
   if "13TeV" in splits[0]:
-    f_list = os.listdir("/xrootd/store/mc/RunIIFall17NanoAODv4/"+splits[0]+"")
+    f_list = os.listdir("/xrootd/store/mc/"+inputmctag+"/"+splits[0]+"")
     process=line.split('_13TeV')[0]
-    list_file = open("/cms/ldap_home/jaehyeok/flist/flist_"+process+".txt", "w")
+    list_file = open("/cms/ldap_home/jaehyeok/flist/"+year+"/flist_"+process+".txt", "w")
     for subdir in f_list:
-      f_list_subdir = os.listdir("/xrootd/store/mc/RunIIFall17NanoAODv4/"+splits[0]+"/"+subdir)
+      f_list_subdir = os.listdir("/xrootd/store/mc/"+inputmctag+"/"+splits[0]+"/"+subdir)
       for files in f_list_subdir:
-        filename="/xrootd/store/mc/RunIIFall17NanoAODv4/"+splits[0]+"/"+subdir+"/"+files+"\n"
+        filename="/xrootd/store/mc/"+inputmctag+"/"+splits[0]+"/"+subdir+"/"+files+"\n"
         if "BB833C07-5ECA-5E43-8A99-38083AACE497" not in filename:
           list_file.write(filename)
     condor_file = open("submit_scripts/condor_"+process+".jds", "w")
@@ -58,7 +66,7 @@ for line in lines:
   elif "Run201" in splits[0]:
     f_list = os.listdir(splits[0])
     process=line.split('/')[5]+line.split('/')[4]
-    list_file = open("/cms/ldap_home/jaehyeok/flist/flist_"+process+".txt", "w")
+    list_file = open("/cms/ldap_home/jaehyeok/flist/"+year+"/flist_"+process+".txt", "w")
     for subdir in f_list:
       f_list_subdir = os.listdir(splits[0]+"/"+subdir)
       for files in f_list_subdir:
