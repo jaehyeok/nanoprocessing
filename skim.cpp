@@ -63,6 +63,7 @@ void skimonefile(TString inputfile, TString outputdir, TString skim)
   // skim cut
   TString skimcut="0";
   if(skim=="rpvfit") skimcut="ht>1200&&nbm>0&&mj12>500&&njets>=4";
+	else if(skim=="trig") skimcut="nbm>0&&mj12>500&&njets>=4";
 
   TChain ch("tree");
   ch.Add(inputfile);
@@ -116,9 +117,11 @@ int main(int argc, char **argv)
   // get list of files in a directory
   vector<TString> files = globVector(Form("%s/*.root", inputdir.Data())); 
 
+	cout << "skimming " << files.size() << " files" << endl;
+	
   for(int i=0; i<files.size(); i++)
   {
-    if(skim!="rpvfit") continue; 
+    if(skim!="rpvfit" && skim!="trig") continue; 
 
     cout << "skimming: " << files.at(i) << endl; 
     skimonefile(files.at(i), outputdir, skim); 
