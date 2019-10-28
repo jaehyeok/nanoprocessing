@@ -1,32 +1,9 @@
 // ------------------------------------
 // Author : Jae Hyeok Yoo
-//          jaehyeok@hep.ucsb.edu
+//          jaehyeokyoo@korea.ac.kr
+//          jae.hyeok.yoo@cern.ch
+//          2019.10.28
 // ------------------------------------
-//
-// * This code is composed of 3 blocks
-//  
-// Block 1 : Read information about PF candidates from a cfA ntuple   
-//           and write that information on a text file  
-// Block 2 : Read the text file from (1) and run Fastjet package. 
-//           The information of the recontructed jets will be 
-//           written on a text file 
-// Block 3 : Read the text file from (2) and make new branches in 
-//           the input cfA in (1) to store the information 
-// 
-// * Pre-requisites
-//
-// (1) Download(http://fastjet.fr) and set up Fastjet package
-//    * version 3.0.6(http://fastjet.fr/repo/fastjet-3.0.6.tar.gz) 
-//    * manual : http://fastjet.fr/repo/fastjet-doc-3.0.6.pdf
-//      --> Chapter 2 has an instruction to set up the code
-// (2) Turn off some of the printouts so that fastjet_example 
-//     prints out only information of PF candidates, i.e., 
-//     no table header, ... 
-// 
-// * To run this code, do
-//   
-//      $root -b -q makeJetP4_notext.C++\(\"cfA_QCD_HT-250To500_TuneZ2star_8TeV-madgraph-pythia6_Summer12_DR53X-PU_S10_START53_V7A-v1_AODSIM_UCSB2047_v71_f6_1_OWX_Test.root\",1.2,10\)
-// 
 #include <iostream>
 #include <fstream>
 #include <vector>
@@ -61,17 +38,7 @@
 #include "inJSON2012.h"  
 
 // compile 
-//  $ g++ process_nano.C  `fastjet-config --cxxflags --libs --plugins` `root-config --cflags --glibs` -o process_nano.exe
-
-// In order to use vector of vectors : vector<vector<int> >
-// ACLiC makes dictionary for this 
-// [ref] http://root.cern.ch/phpBB3/viewtopic.php?f=3&t=10236&p=44117#p44117
-//#ifdef __MAKECINT__
-//#pragma link C++ class std::vector < std::vector<int> >+;   
-//#endif
-//--> can be separated in an independent file (ex) loader.C. To load the dictionary, do 
-//  root> .L loader.C+
-//  root> gROOT->ProcessLine(".L loader.C+")
+//  $ g++ process_nano.cpp  `fastjet-config --cxxflags --libs --plugins` `root-config --cflags --glibs` -o process_nano.exe
 
 using namespace std;
 
@@ -973,7 +940,7 @@ int main(int argc, char **argv)
   {
     cout << " Please provide proper arguments" << endl;
     cout << "" << endl;
-    cout << "   ./process.exe [input dir] [output dir] [process] [list of processed files]" << endl; 
+    cout << "   ./process_nano.exe [input dir] [output dir] [process] [list of processed files]" << endl; 
     cout << "" << endl;
     return 0;
   }
