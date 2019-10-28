@@ -992,16 +992,27 @@ int main(int argc, char **argv)
     cout << "-----------------------------------------------------------------------" << endl;
   }
 
+	// is this data?
   bool isData = false;
   if(inputdir.Contains("Run201") || process.Contains("Run201"))          isData = true;
   if(inputdir.Contains("JetHT") || process.Contains("JetHT"))            isData = true;
   if(inputdir.Contains("SingleMuon") || process.Contains("SingleMuon"))  isData = true;
+ 
+	// year
+	int year    = 0;
+  if(inputdir.Contains("RunIISummer16")) year = 2016;
+  else if(inputdir.Contains("RunIIFall17")) year = 2017;
+  else if(inputdir.Contains("RunIIAutumn18")) year = 2018;
+  if(inputdir.Contains("Run2016")) year = 2016;
+  else if(inputdir.Contains("Run2017")) year = 2017;
+  else if(inputdir.Contains("Run2018")) year = 2018;
+  cout << " year: " << year << endl;
 
   // get list of files in a directory to calculate w_lumi
   // w_lumi = xsec[fb] * genWeight / sum(genWeights)
   // => https://twiki.cern.ch/twiki/bin/view/Main/CMGMonojetAnalysisTools
   //vector<TString> files = globVector(Form("/xrootd/%s/*/*.root", inputdir.Data())); 
-  vector<TString> files = getFileListFromFile(Form("flist/flist_%s.txt", process.Data())); 
+  vector<TString> files = getFileListFromFile(Form("flist/%s/flist_%s.txt", year, process.Data())); 
   vector<TString> files_original = files; 
   for(int ifile=0; ifile<files.size(); ifile++)
   {
@@ -1040,7 +1051,6 @@ int main(int argc, char **argv)
   		TObjArray *tokens = files.at(i).Tokenize("/"); 
   		TString outputfile = (dynamic_cast<TObjString*>(tokens->At(tokens->GetEntries()-1)))->GetString();
   		outputfile.ReplaceAll(".root", Form("_fatjetbaby_%s.root", process.Data()));
-			cout << outputfile << " " << files_processed.at(j) << endl; // FIXME
 			if(outputfile == files_processed.at(j)) file_is_processed=true;
 		}
    		
