@@ -14,3 +14,8 @@ g++ skim.cpp  `root-config --cflags --glibs` -o skim.exe
 # copy executables to home directory so that they can be picked up by condor
 cp process_nano.exe /cms/ldap_home/jaehyeok
 cp skim.exe         /cms/ldap_home/jaehyeok
+
+# make folders for flists
+mkdir -p ~/flist/2016
+mkdir -p ~/flist/2017
+mkdir -p ~/flist/2018
