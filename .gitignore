@@ -1,4 +1,5 @@
 *.exe
 condor/condor_*.jds
 condor/log
+condor/submit_scripts
 flist
