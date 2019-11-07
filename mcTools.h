@@ -63,7 +63,7 @@ float getXsec(TString process)
   if(process.Contains("TTWJetsToLNu_TuneCP5"))           xsec = 0.2043;
  
   // 4top
-  if(process.Contains("TTTT_TuneCP5"))                   xsec = 0.009103;
+  if(process.Contains("TTTT_Tune"))                   xsec = 0.009103;
 
   cout << "cross section for " << process << " =  " <<  xsec*1000 <<  " fb" << endl; 
   
