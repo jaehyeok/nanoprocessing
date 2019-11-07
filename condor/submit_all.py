@@ -6,7 +6,7 @@ import os.path
 year=sys.argv[1]
 
 #outputdir="/xrootd_user/jaehyeok/xrootd/2017v4/2019_09_09"
-outputdir="root://cms-xrdr.private.lo:2094//xrd/store/user/jaehyeok/2016v4/2019_10_23/"
+outputdir="root://cms-xrdr.private.lo:2094//xrd/store/user/jaehyeok/2016v4/2019_11_07/"
 samplelist="samples/samples2016.txt"
 inputmctag="RunIISummer16NanoAODv4"
 if year == "2017":
@@ -26,11 +26,14 @@ print " sample list: "+samplelist
 print "------------------------------------------------------------------------------------------------------------"
 print ""
 
+# make a directory for submission scripts
+os.system("mkdir submit_scripts")
+
 # open sample list file to write
 f = open(samplelist, 'r')
 
 splits = outputdir.split("/")
-list_processed = "flist_outputdir_"+splits[4]+"_"+splits[5]+".txt"
+list_processed = "flist_outputdir_"+splits[8]+"_"+splits[9]+".txt"
 
 # make file list and condor submisstion script
 lines = f.readlines()
@@ -51,7 +54,7 @@ for line in lines:
           list_file.write(filename)
     condor_file = open("submit_scripts/condor_"+process+".jds", "w")
     condor_file.write("executable              = run.sh\n");
-    condor_file.write("arguments               = "+splits[0]+" "+outputdir+" "+process+" " +list_processed+"\n");
+    condor_file.write("arguments               = /xrootd/store/mc/"+inputmctag+"/"+splits[0]+" "+outputdir+" "+process+" " +list_processed+"\n");
     condor_file.write("transfer_input_files    = process_nano.exe flist_"+process+".txt\n");
     condor_file.write("log                     = log/run_"+process+".$(Cluster).$(Process).log\n");
     condor_file.write("output                  = log/run_"+process+"_output.$(Cluster).$(Process).out\n");

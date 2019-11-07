@@ -6,7 +6,7 @@ import glob
 
 year=sys.argv[1]
 
-outputdir="/xrootd_user/jaehyeok/xrootd/2016v4/2019_10_23/"
+outputdir="/xrootd_user/jaehyeok/xrootd/2016v4/2019_11_07/"
 if year == "2017":
 	outputdir="/xrootd_user/jaehyeok/xrootd/2017v4/2019_10_23/"
 if year == "2018":
@@ -19,6 +19,8 @@ print('-------------------------------------------------------------------------
 
 # compare flist and the output directory, and generate a status summary table
 flists = os.listdir(flistdir)
+flists.sort()
+
 for flist in flists:
 #flist_WW_TuneCP5.txt
 	tag=flist.replace('.txt','').replace('flist_','') # extract tag
