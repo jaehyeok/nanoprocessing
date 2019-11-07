@@ -979,7 +979,7 @@ int main(int argc, char **argv)
   // w_lumi = xsec[fb] * genWeight / sum(genWeights)
   // => https://twiki.cern.ch/twiki/bin/view/Main/CMGMonojetAnalysisTools
   //vector<TString> files = globVector(Form("/xrootd/%s/*/*.root", inputdir.Data())); 
-  vector<TString> files = getFileListFromFile(Form("flist/%s/flist_%s.txt", year, process.Data())); 
+  vector<TString> files = getFileListFromFile(Form("flist/%d/flist_%s.txt", year, process.Data())); 
   vector<TString> files_original = files; 
   for(int ifile=0; ifile<files.size(); ifile++)
   {
