@@ -52,7 +52,7 @@ for line in lines:
         filename="/xrootd/store/mc/"+inputmctag+"/"+splits[0]+"/"+subdir+"/"+files+"\n"
         if "BB833C07-5ECA-5E43-8A99-38083AACE497" not in filename:
           list_file.write(filename)
-    condor_file = open("submit_scripts/condor_"+process+".jds", "w")
+    condor_file = open("submit_scripts/condor_"+process+"_"+year+".jds", "w")
     condor_file.write("executable              = run.sh\n");
     condor_file.write("arguments               = /xrootd/store/mc/"+inputmctag+"/"+splits[0]+" "+outputdir+" "+process+" " +list_processed+"\n");
     condor_file.write("transfer_input_files    = process_nano.exe flist_"+process+".txt\n");
@@ -63,7 +63,7 @@ for line in lines:
     condor_file.write("#when_to_transfer_output = ON_EXIT\n");
     condor_file.write("queue");
     condor_file.close()
-    print("condor_submit submit_scripts/condor_"+process+".jds")
+    print("condor_submit submit_scripts/condor_"+process+"_"+year+".jds")
     #os.system("condor_submit condor_"+process+".jds")
   # data
   elif "Run201" in splits[0]:
