@@ -21,14 +21,24 @@ print('-------------------------------------------------------------------------
 flists = os.listdir(flistdir)
 flists.sort()
 
+# counting
+total=0
+total_processed=0
+
 for flist in flists:
 #flist_WW_TuneCP5.txt
-	tag=flist.replace('.txt','').replace('flist_','') # extract tag
+	tag=flist.replace('.txt','').replace('flist','') # extract tag
 	if "outputdir" in tag:
 		continue
+	#if "SingleMuonRun2016" in tag:
+	#	continue
 	num_lines = sum(1 for line in open(flistdir+"/"+flist)) # number of files in flist
 	num_processed = sum(1 for line in glob.glob(outputdir+"/*"+tag+"*")) # number of files processed
 	print('%50s %10d %15d %15.1f%%' %(tag, num_lines, num_processed, 1.0*num_processed/num_lines*100))
+	total+=num_lines;
+	total_processed+=num_processed;
+print('------------------------------------------------------------------------------------------------')
+print('%50s %10d %15d %15.1f%%' %("total", total, total_processed, 1.0*total_processed/total*100))
 print('------------------------------------------------------------------------------------------------')
 
 
