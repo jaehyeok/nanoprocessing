@@ -9,58 +9,59 @@ float getXsec(TString process)
   float xsec = -0.001; 
 
   // ttbar 
-  if(process.Contains("TTJets_TuneCP5"))               xsec = 815.96; 
+  if(process.Contains("TTJets_Tune"))               											xsec = 815.96; 
+  if(process.Contains("TT_Tune") && !process.Contains("TTTT_Tune"))       xsec = 815.96; 
  
   // wjets
-  if(process.Contains("WJetsToLNu_TuneCP5"))       xsec=61526.7; //NNLO from Lesya's summary table 
-  if(process.Contains("WJetsToLNu_HT-200To400_TuneCP5"))       xsec=360.*1.21; //NNLO from Lesya's summary table 
-  if(process.Contains("WJetsToLNu_HT-400To600_TuneCP5"))       xsec=48.98*1.21;  
-  if(process.Contains("WJetsToLNu_HT-600To800_TuneCP5"))       xsec=12.05*1.21;  
-  if(process.Contains("WJetsToLNu_HT-800To1200_TuneCP5"))      xsec=5.501*1.21;  
-  if(process.Contains("WJetsToLNu_HT-1200To2500_TuneCP5"))     xsec=1.329*1.21;  
-  if(process.Contains("WJetsToLNu_HT-2500ToInf_TuneCP5"))      xsec=0.03216*1.21;  
+  if(process.Contains("WJetsToLNu_Tune"))       						xsec=61526.7; //NNLO from Lesya's summary table 
+  if(process.Contains("WJetsToLNu_HT-200To400_Tune"))       xsec=360.*1.21; //NNLO from Lesya's summary table 
+  if(process.Contains("WJetsToLNu_HT-400To600_Tune"))       xsec=48.98*1.21;  
+  if(process.Contains("WJetsToLNu_HT-600To800_Tune"))       xsec=12.05*1.21;  
+  if(process.Contains("WJetsToLNu_HT-800To1200_Tune"))      xsec=5.501*1.21;  
+  if(process.Contains("WJetsToLNu_HT-1200To2500_Tune"))     xsec=1.329*1.21;  
+  if(process.Contains("WJetsToLNu_HT-2500ToInf_Tune"))      xsec=0.03216*1.21;  
  
   // QCD 
-  if(process.Contains("QCD_HT100to200_TuneCP5"))   xsec = 27540000;
-  if(process.Contains("QCD_HT200to300_TuneCP5"))   xsec = 1735000;
-  if(process.Contains("QCD_HT300to500_TuneCP5"))   xsec = 366800;
-  if(process.Contains("QCD_HT500to700_TuneCP5"))   xsec = 29370;
-  if(process.Contains("QCD_HT700to1000_TuneCP5"))  xsec = 6524;
-  if(process.Contains("QCD_HT1000to1500_TuneCP5")) xsec = 1064;
-  if(process.Contains("QCD_HT1500to2000_TuneCP5")) xsec = 121.5;
-  if(process.Contains("QCD_HT2000toInf_TuneCP5"))  xsec = 25.42;
+  if(process.Contains("QCD_HT100to200_Tune"))   xsec = 27540000;
+  if(process.Contains("QCD_HT200to300_Tune"))   xsec = 1735000;
+  if(process.Contains("QCD_HT300to500_Tune"))   xsec = 366800;
+  if(process.Contains("QCD_HT500to700_Tune"))   xsec = 29370;
+  if(process.Contains("QCD_HT700to1000_Tune"))  xsec = 6524;
+  if(process.Contains("QCD_HT1000to1500_Tune")) xsec = 1064;
+  if(process.Contains("QCD_HT1500to2000_Tune")) xsec = 121.5;
+  if(process.Contains("QCD_HT2000toInf_Tune"))  xsec = 25.42;
 
   // DY
-  if(process.Contains("DYJetsToLL_M-10to50_TuneCP5")) xsec = 18610*1.23;
-  if(process.Contains("DYJetsToLL_M-50_TuneCP5"))     xsec = 4895*1.23;
+  if(process.Contains("DYJetsToLL_M-10to50_Tune")) xsec = 18610*1.23;
+  if(process.Contains("DYJetsToLL_M-50_Tune"))     xsec = 4895*1.23;
   
   // single top 
   // https://twiki.cern.ch/twiki/bin/view/LHCPhysics/SingleTopRefXsec
-  if(process.Contains("ST_s-channel_4f_leptonDecays_TuneCP5"))              xsec = 3.34;
-  if(process.Contains("ST_t-channel_top_4f_inclusiveDecays_TuneCP5"))       xsec = 136.02; 
-  if(process.Contains("ST_t-channel_antitop_4f_inclusiveDecays_TuneCP5"))   xsec = 80.95;
-  if(process.Contains("ST_tW_top_5f_inclusiveDecays_TuneCP5"))              xsec = 35.85; 
-  if(process.Contains("ST_tW_antitop_5f_inclusiveDecays_TuneCP5"))          xsec = 35.85;
+  if(process.Contains("ST_s-channel_4f_leptonDecays_Tune") || process.Contains("ST_s-channel_4f_leptonDecays_13TeV"))              						xsec = 3.34;
+  if(process.Contains("ST_t-channel_top_4f_inclusiveDecays_Tune") || process.Contains("ST_t-channel_top_4f_inclusiveDecays_13TeV"))       		xsec = 136.02; 
+  if(process.Contains("ST_t-channel_antitop_4f_inclusiveDecays_Tune") || process.Contains("ST_t-channel_antitop_4f_inclusiveDecays_13TeV"))   xsec = 80.95;
+  if(process.Contains("ST_tW_top_5f_inclusiveDecays_Tune") || process.Contains("ST_tW_top_5f_inclusiveDecays_13TeV"))              						xsec = 35.85; 
+  if(process.Contains("ST_tW_antitop_5f_inclusiveDecays_Tune") || process.Contains("ST_tW_antitop_5f_inclusiveDecays_13TeV"))          				xsec = 35.85;
   
   // diboson 
   // https://twiki.cern.ch/twiki/bin/viewauth/CMS/SummaryTable1G25ns
-  if(process.Contains("WW_TuneCP5") && !process.Contains("TTWW_TuneCP5"))   xsec = 12.178+49.997+51.723; // 2l2v + lvqq + qqqq (is qqqq supposed to be added?)  
-  if(process.Contains("WZ_TuneCP5"))   xsec = 47.13; 
-  if(process.Contains("ZZ_TuneCP5"))   xsec = 16.523; // from Xsec.txt 
+  if(process.Contains("WW_Tune") && !process.Contains("TTWW_Tune"))   xsec = 12.178+49.997+51.723; // 2l2v + lvqq + qqqq (is qqqq supposed to be added?)  
+  if(process.Contains("WZ_Tune") && !process.Contains("WWZ"))   xsec = 47.13; 
+  if(process.Contains("ZZ_Tune") && !process.Contains("ZZZ") && !process.Contains("WZZ"))   xsec = 16.523; // from Xsec.txt 
   
   // triboson 
-  if(process.Contains("WWW_4F_TuneCP5"))  xsec = 0.2086;
-  if(process.Contains("WWZ_4F_TuneCP5"))  xsec = 0.1651; 
-  if(process.Contains("WZZ_TuneCP5"))  xsec = 0.05565; 
-  if(process.Contains("ZZZ_TuneCP5"))  xsec = 0.01398; 
+  if(process.Contains("WWW_4F_Tune"))  xsec = 0.2086;
+  if(process.Contains("WWZ_4F_Tune"))  xsec = 0.1651; 
+  if(process.Contains("WZZ_Tune"))  xsec = 0.05565; 
+  if(process.Contains("ZZZ_Tune"))  xsec = 0.01398; 
  
   // ttV: need inclusive samples
   //if(process.Contains("TTZJets_Tune4C_13TeV-madgraph-tauola"))    xsec = 0.7598;
   //if(process.Contains("TTWJets_Tune4C_13TeV-madgraph-tauola"))    xsec = 0.5662;
-  if(process.Contains("TTZToQQ_TuneCP5"))                xsec = 0.5297;
-  if(process.Contains("TTZToLLNuNu_M-10_TuneCP5"))       xsec = 0.2529;
-  if(process.Contains("TTWJetsToQQ_TuneCP5"))            xsec = 0.4062;
-  if(process.Contains("TTWJetsToLNu_TuneCP5"))           xsec = 0.2043;
+  if(process.Contains("TTZToQQ_Tune"))                xsec = 0.5297;
+  if(process.Contains("TTZToLLNuNu_M-10_Tune"))       xsec = 0.2529;
+  if(process.Contains("TTWJetsToQQ_Tune"))            xsec = 0.4062;
+  if(process.Contains("TTWJetsToLNu_Tune"))           xsec = 0.2043;
  
   // 4top
   if(process.Contains("TTTT_Tune"))                   xsec = 0.009103;
