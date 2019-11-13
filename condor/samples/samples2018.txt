@@ -18,36 +18,32 @@ TTJets_TuneCP5_13TeV-madgraphMLM-pythia8/NANOAODSIM/Nano14Dec2018_102X_upgrade20
 #	TTTT
 TTTT_TuneCP5_13TeV-amcatnlo-pythia8/NANOAODSIM/Nano14Dec2018_102X_upgrade2018_realistic_v16_ext1-v1	
 #	ttV
-TTTo2L2Nu_TuneCP5_13TeV-powheg-pythia8/NANOAODSIM/Nano14Dec2018_102X_upgrade2018_realistic_v16-v1	
-TTToHadronic_TuneCP5_13TeV-powheg-pythia8/NANOAODSIM/Nano14Dec2018_102X_upgrade2018_realistic_v16-v1	
-TTToSemiLeptonic_TuneCP5_13TeV-powheg-pythia8/NANOAODSIM/Nano14Dec2018_102X_upgrade2018_realistic_v16-v1	
 TTWJetsToLNu_TuneCP5_13TeV-amcatnloFXFX-madspin-pythia8/NANOAODSIM/Nano14Dec2018_102X_upgrade2018_realistic_v16_ext1-v1	
 TTWJetsToQQ_TuneCP5_13TeV-amcatnloFXFX-madspin-pythia8/NANOAODSIM/Nano14Dec2018_102X_upgrade2018_realistic_v16-v1	
 TTZToLLNuNu_M-10_TuneCP5_13TeV-amcatnlo-pythia8/NANOAODSIM/Nano14Dec2018_102X_upgrade2018_realistic_v16_ext1-v1	
 TTZToQQ_TuneCP5_13TeV-amcatnlo-pythia8/NANOAODSIM/Nano14Dec2018_102X_upgrade2018_realistic_v16-v1	
 #	Wjets
-WJetsToLNu_HT-100To200_TuneCP5_13TeV-madgraphMLM-pythia8/NANOAODSIM/Nano14Dec2018_102X_upgrade2018_realistic_v16-v1	
 WJetsToLNu_HT-1200To2500_TuneCP5_13TeV-madgraphMLM-pythia8/NANOAODSIM/Nano14Dec2018_102X_upgrade2018_realistic_v16-v1	
 WJetsToLNu_HT-200To400_TuneCP5_13TeV-madgraphMLM-pythia8/NANOAODSIM/Nano14Dec2018_102X_upgrade2018_realistic_v16-v1	
 WJetsToLNu_HT-2500ToInf_TuneCP5_13TeV-madgraphMLM-pythia8/NANOAODSIM/Nano14Dec2018_102X_upgrade2018_realistic_v16-v1	
 WJetsToLNu_HT-400To600_TuneCP5_13TeV-madgraphMLM-pythia8/NANOAODSIM/Nano14Dec2018_102X_upgrade2018_realistic_v16-v1	
 WJetsToLNu_HT-600To800_TuneCP5_13TeV-madgraphMLM-pythia8/NANOAODSIM/Nano14Dec2018_102X_upgrade2018_realistic_v16-v1	
-WJetsToLNu_HT-70To100_TuneCP5_13TeV-madgraphMLM-pythia8/NANOAODSIM/Nano14Dec2018_102X_upgrade2018_realistic_v16-v1	
 WJetsToLNu_HT-800To1200_TuneCP5_13TeV-madgraphMLM-pythia8/NANOAODSIM/Nano14Dec2018_102X_upgrade2018_realistic_v16-v1	
-WJetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8/NANOAODSIM/Nano14Dec2018_102X_upgrade2018_realistic_v16-v1	
-#	diboson & triboson
+#WJetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8/NANOAODSIM/Nano14Dec2018_102X_upgrade2018_realistic_v16-v1	
+#	diboson
+WW_TuneCP5_13TeV-pythia8/NANOAODSIM/Nano14Dec2018_102X_upgrade2018_realistic_v16-v1	
+WZ_TuneCP5_13TeV-pythia8/NANOAODSIM/Nano14Dec2018_102X_upgrade2018_realistic_v16-v1	
+ZZ_TuneCP5_13TeV-pythia8/NANOAODSIM/Nano14Dec2018_102X_upgrade2018_realistic_v16-v1	
+#	triboson
 WWW_4F_TuneCP5_13TeV-amcatnlo-pythia8/NANOAODSIM/Nano14Dec2018_102X_upgrade2018_realistic_v16_ext1-v1	
 WWZ_TuneCP5_13TeV-amcatnlo-pythia8/NANOAODSIM/Nano14Dec2018_102X_upgrade2018_realistic_v16_ext1-v1	
-WW_TuneCP5_13TeV-pythia8/NANOAODSIM/Nano14Dec2018_102X_upgrade2018_realistic_v16-v1	
 WZZ_TuneCP5_13TeV-amcatnlo-pythia8/NANOAODSIM/Nano14Dec2018_102X_upgrade2018_realistic_v16_ext1-v1	
-WZ_TuneCP5_13TeV-pythia8/NANOAODSIM/Nano14Dec2018_102X_upgrade2018_realistic_v16-v1	
 ZZZ_TuneCP5_13TeV-amcatnlo-pythia8/NANOAODSIM/Nano14Dec2018_102X_upgrade2018_realistic_v16_ext1-v1	
-ZZ_TuneCP5_13TeV-pythia8/NANOAODSIM/Nano14Dec2018_102X_upgrade2018_realistic_v16-v1	
 # SingleMuon
-#/xrootd/store/data/Run2018A/SingleMuon/NANOAOD/Nano14Dec2018-v1				SingleMuonRun2017A
-#/xrootd/store/data/Run2018B/SingleMuon/NANOAOD/Nano14Dec2018-v1				SingleMuonRun2017B
-#/xrootd/store/data/Run2018C/SingleMuon/NANOAOD/Nano14Dec2018-v1				SingleMuonRun2017C
-#/xrootd/store/data/Run2018D/SingleMuon/NANOAOD/Nano14Dec2018_ver2-v1	SingleMuonRun2017D
+/xrootd/store/data/Run2018A/SingleMuon/NANOAOD/Nano14Dec2018-v1				SingleMuonRun2017A
+/xrootd/store/data/Run2018B/SingleMuon/NANOAOD/Nano14Dec2018-v1				SingleMuonRun2017B
+/xrootd/store/data/Run2018C/SingleMuon/NANOAOD/Nano14Dec2018-v1				SingleMuonRun2017C
+/xrootd/store/data/Run2018D/SingleMuon/NANOAOD/Nano14Dec2018_ver2-v1	SingleMuonRun2017D
 #	JetHT
 /xrootd/store/data/Run2018A/JetHT/NANOAOD/Nano14Dec2018-v1	
 /xrootd/store/data/Run2018B/JetHT/NANOAOD/Nano14Dec2018-v1	
