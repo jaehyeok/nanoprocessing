@@ -65,6 +65,24 @@ float getXsec(TString process)
  
   // 4top
   if(process.Contains("TTTT_Tune"))                   xsec = 0.009103;
+  
+	// RPV signal 
+	// Taken from https://twiki.cern.ch/twiki/bin/view/LHCPhysics/SUSYCrossSections13TeVgluglu
+	// Note that numbers are different from babymaker 
+	// It seems that cross section numbers changed 
+  if(process.Contains("mGluino1000"))                  xsec = 0.385E+00;
+  if(process.Contains("mGluino1100"))                  xsec = 0.191E+00;
+  if(process.Contains("mGluino1200"))                  xsec = 0.985E-01;
+  if(process.Contains("mGluino1300"))                  xsec = 0.522E-01;
+  if(process.Contains("mGluino1400"))                  xsec = 0.284E-01;
+  if(process.Contains("mGluino1500"))                  xsec = 0.157E-01;
+  if(process.Contains("mGluino1600"))                  xsec = 0.887E-02;
+  if(process.Contains("mGluino1700"))                  xsec = 0.507E-02;
+  if(process.Contains("mGluino1800"))                  xsec = 0.293E-02;
+  if(process.Contains("mGluino1900"))                  xsec = 0.171E-02;
+  if(process.Contains("mGluino2000"))                  xsec = 0.101E-02;
+  if(process.Contains("mGluino2100"))                  xsec = 0.598E-03;
+  if(process.Contains("mGluino2200"))                  xsec = 0.356E-03;
 
   cout << "cross section for " << process << " =  " <<  xsec*1000 <<  " fb" << endl; 
   
