@@ -38,8 +38,8 @@ float getXsec(TString process)
   // single top 
   // https://twiki.cern.ch/twiki/bin/view/LHCPhysics/SingleTopRefXsec
   if(process.Contains("ST_s-channel_4f_leptonDecays_Tune") || process.Contains("ST_s-channel_4f_leptonDecays_13TeV"))              						xsec = 3.34;
-  if(process.Contains("ST_t-channel_top_4f_inclusiveDecays_Tune") || process.Contains("ST_t-channel_top_4f_inclusiveDecays_13TeV"))       		xsec = 136.02; 
-  if(process.Contains("ST_t-channel_antitop_4f_inclusiveDecays_Tune") || process.Contains("ST_t-channel_antitop_4f_inclusiveDecays_13TeV"))   xsec = 80.95;
+  if(process.Contains("ST_t-channel_top_4f_InclusiveDecays_Tune") || process.Contains("ST_t-channel_top_4f_InclusiveDecays_13TeV"))       		xsec = 136.02; 
+  if(process.Contains("ST_t-channel_antitop_4f_InclusiveDecays_Tune") || process.Contains("ST_t-channel_antitop_4f_InclusiveDecays_13TeV"))   xsec = 80.95;
   if(process.Contains("ST_tW_top_5f_inclusiveDecays_Tune") || process.Contains("ST_tW_top_5f_inclusiveDecays_13TeV"))              						xsec = 35.85; 
   if(process.Contains("ST_tW_antitop_5f_inclusiveDecays_Tune") || process.Contains("ST_tW_antitop_5f_inclusiveDecays_13TeV"))          				xsec = 35.85;
   
@@ -51,7 +51,7 @@ float getXsec(TString process)
   
   // triboson 
   if(process.Contains("WWW_4F_Tune"))  xsec = 0.2086;
-  if(process.Contains("WWZ_4F_Tune"))  xsec = 0.1651; 
+  if(process.Contains("WWZ_Tune"))  xsec = 0.1651; 
   if(process.Contains("WZZ_Tune"))  xsec = 0.05565; 
   if(process.Contains("ZZZ_Tune"))  xsec = 0.01398; 
  
