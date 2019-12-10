@@ -35,7 +35,8 @@
 //#include "utilities.h" // included in jetTools.h  
 #include "jetTools.h"  
 #include "mcTools.h"  
-#include "inJSON2012.h"  
+#include "lepTools.h"  
+#include "inJSON.h"  
 
 // compile 
 //  $ g++ process_nano.cpp  `fastjet-config --cxxflags --libs --plugins` `root-config --cflags --glibs` -o process_nano.exe
@@ -151,17 +152,21 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   Float_t Electron_eta[25];  
   Float_t Electron_phi[25]; 
   Int_t   Electron_cutBased[25];  // cut-based ID Fall17 V2: susy recommendation, use medium(https://github.com/richstu/babymaker/blob/master/bmaker/src/lepton_tools.cc#L289)
+  Int_t   Electron_cutBased_Spring15[25];  // Spring15 ID to compare with AN-2016/187 (1L MJ 2016 data)  
   Int_t   Electron_jetIdx[25];    // index of the associated jet (-1 if none)  
   Int_t   Electron_pdgId[25];   
-  Int_t   Electron_miniPFRelIso_all[25];   
+  Float_t   Electron_miniPFRelIso_all[25];   
+  Float_t   Electron_pfRelIso03_all[25];   
+  Int_t   Electron_vidNestedWPBitmap[25];   
+  Int_t   Electron_vidNestedWPBitmapSpring15[25];   
   UInt_t  nMuon=0;  
   Float_t Muon_pt[25]; 
   Float_t Muon_eta[25];  
   Float_t Muon_phi[25]; 
-  Int_t   Muon_mediumId[25];  // medium id taken from babymaker: https://github.com/richstu/babymaker/blob/master/bmaker/src/lepton_tools.cc#L190  
+  Bool_t   Muon_mediumId[25];  // medium id taken from babymaker: https://github.com/richstu/babymaker/blob/master/bmaker/src/lepton_tools.cc#L190  
   Int_t   Muon_jetIdx[25];    // index of the associated jet (-1 if none)  
   Int_t   Muon_pdgId[25];   
-  Int_t   Muon_miniPFRelIso_all[25];   
+  Float_t   Muon_miniPFRelIso_all[25];   
   // jets
   UInt_t     nJet=0;  
   Float_t    Jet_pt[100];
@@ -225,9 +230,13 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   tree->SetBranchAddress("Electron_eta",        &Electron_eta);
   tree->SetBranchAddress("Electron_phi",        &Electron_phi);
   tree->SetBranchAddress("Electron_cutBased",   &Electron_cutBased);
+  tree->SetBranchAddress("Electron_cutBased_Spring15",   &Electron_cutBased_Spring15);
   tree->SetBranchAddress("Electron_jetIdx",     &Electron_jetIdx);
   tree->SetBranchAddress("Electron_pdgId",      &Electron_pdgId);
   tree->SetBranchAddress("Electron_miniPFRelIso_all", &Electron_miniPFRelIso_all);
+  tree->SetBranchAddress("Electron_pfRelIso03_all", &Electron_pfRelIso03_all);
+  tree->SetBranchAddress("Electron_vidNestedWPBitmap", &Electron_vidNestedWPBitmap);
+  tree->SetBranchAddress("Electron_vidNestedWPBitmapSpring15", &Electron_vidNestedWPBitmapSpring15);
   tree->SetBranchAddress("nMuon",               &nMuon);
   tree->SetBranchAddress("Muon_pt",             &Muon_pt);
   tree->SetBranchAddress("Muon_eta",            &Muon_eta);
@@ -363,7 +372,9 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   //std::vector<float> els_sceta;
   std::vector<float> els_phi;
   std::vector<bool> els_sigid;
+  std::vector<bool> els_spr15_sigid;
   std::vector<float> els_miniso;
+  std::vector<float> els_reliso;
   //std::vector<bool> els_ispf;
   //std::vector<float> els_d0;
   //std::vector<float> els_dz;
@@ -453,7 +464,9 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   babyTree_->Branch("els_eta",       	&els_eta);    
   babyTree_->Branch("els_phi",       	&els_phi);    
   babyTree_->Branch("els_sigid",     	&els_sigid);    
+  babyTree_->Branch("els_spr15_sigid",     	&els_spr15_sigid);    
   babyTree_->Branch("els_miniso",    	&els_miniso);    
+  babyTree_->Branch("els_reliso",   	&els_reliso);    
   // jets 
   babyTree_->Branch("njets",    	  &njets);    
   babyTree_->Branch("nbm",    	    &nbm);    
@@ -544,7 +557,9 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
     els_eta.clear();       	 
     els_phi.clear();       	 
     els_sigid.clear();     	   
+    els_spr15_sigid.clear();     	   
     els_miniso.clear();    	    
+    els_reliso.clear();    	    
     // jets 
     njets      =   0;    	  
     nbm        =   0;    	    
@@ -596,11 +611,13 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
       els_pt.push_back(Electron_pt[iE]); 
       els_eta.push_back(Electron_eta[iE]); 
       els_phi.push_back(Electron_phi[iE]); 
-      els_sigid.push_back(Electron_cutBased[iE]>=3); 
+      els_sigid.push_back(idElectron_noIso(Electron_vidNestedWPBitmap[iE], 3)); /* 3 = medium */ 
+      els_spr15_sigid.push_back(idElectron_noIso(Electron_vidNestedWPBitmapSpring15[iE], 3));  /* 3 = medium */
       els_miniso.push_back(Electron_miniPFRelIso_all[iE]); 
+      els_reliso.push_back(Electron_pfRelIso03_all[iE]); 
       if(Electron_pt[iE]<20)  continue;           
       if(abs(Electron_eta[iE])>2.5)  continue;           
-      if(Electron_cutBased[iE]<3) continue;           // medium WP
+      if(!idElectron_noIso(Electron_vidNestedWPBitmap[iE], 3)) continue;           // medium WP
       if(Electron_miniPFRelIso_all[iE]>0.1) continue; // miniso
       nels++;
       leps_pt.push_back(Electron_pt[iE]); 
