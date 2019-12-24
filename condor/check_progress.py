@@ -3,48 +3,52 @@ import sys
 import os
 import os.path
 import glob
-
+import ROOT
+from ROOT import TChain, TSelector, TTree, TH1F, TCanvas, TPad, TStyle, TString
+ROOT.gROOT.SetBatch(True)
 year=sys.argv[1]
 
-outputdir="/xrootd_user/jaehyeok/xrootd/2016v4/2019_11_07/"
+outputdir="/xrootd_user/yjeong/xrootd/nanoprocessing/2016/"
 if year == "2017":
-	outputdir="/xrootd_user/jaehyeok/xrootd/2017v4/2019_10_23/"
+	outputdir="/xrootd_user/yjeong/xrootd/nanoprocessing/2017/"
 if year == "2018":
-	outputdir="/xrootd_user/jaehyeok/xrootd/2018v4/2019_10_23/"
+	outputdir="/xrootd_user/yjeong/xrootd/nanoprocessing/2018/"
 
-flistdir="/cms/ldap_home/jaehyeok/flist/"+year
-print('------------------------------------------------------------------------------------------------')
-print('%50s %10s %15s %15s' %("tag", "flist", "processed", "completion"))
-print('------------------------------------------------------------------------------------------------')
+flistdir="/cms/ldap_home/yjeong/flist/"+year
+flists = os.listdir(flistdir)
+
+print('---------------------------------------------cross section check----------------------------------------------')
+print('%46s %3s %26s' %(year, "tag", "Xsection"))
+print('--------------------------------------------------------------------------------------------------------------')
+for i, mcname in enumerate(flists):
+	tag=mcname.replace('.txt','').replace('flist_','')
+	mc = TChain("tree")
+	mc.Add(outputdir+"*_fatjetbaby_"+tag+".root")
+	mc.GetEntry()
+	print('%50s %26.1f' %(tag, mc.xsec))
+print('--------------------------------------------------------------------------------------------------------------')
+
+
+print('--------------------------------------------------------------------------------------------------------------')
+print('%46s %3s %10s %15s %15s' %(year, "tag", "flist", "processed", "completion"))
+print('--------------------------------------------------------------------------------------------------------------')
 
 # compare flist and the output directory, and generate a status summary table
-flists = os.listdir(flistdir)
-flists.sort()
-
-# counting
-total=0
-total_processed=0
 
 for flist in flists:
 #flist_WW_TuneCP5.txt
-	tag=flist.replace('.txt','').replace('flist','') # extract tag
+	tag=flist.replace('.txt','').replace('flist_','') # extract tag
 	if "outputdir" in tag:
 		continue
-	#if "SingleMuonRun2016" in tag:
-	#	continue
 	num_lines = sum(1 for line in open(flistdir+"/"+flist)) # number of files in flist
-	num_processed = sum(1 for line in glob.glob(outputdir+"/*"+tag+"*")) # number of files processed
-	print('%50s %10d %15d %15.1f%%' %(tag, num_lines, num_processed, 1.0*num_processed/num_lines*100))
-	total+=num_lines;
-	total_processed+=num_processed;
-print('------------------------------------------------------------------------------------------------')
-print('%50s %10d %15d %15.1f%%' %("total", total, total_processed, 1.0*total_processed/total*100))
-print('------------------------------------------------------------------------------------------------')
+	num_processed = sum(1 for line in glob.glob(outputdir+"*_fatjetbaby_"+tag+"*")) # number of files processed
 
+	print('%50s %10d %15d %15.1f%%' %(tag, num_lines, num_processed, 1.0*num_processed/num_lines*100))
+print('--------------------------------------------------------------------------------------------------------------')
 
 # generate list of files that have been processed
 splits = outputdir.split("/")
-list_output_file = open("/cms/ldap_home/jaehyeok/flist/flist_outputdir_"+splits[4]+"_"+splits[5]+".txt", "w")
+list_output_file = open("/cms/ldap_home/yjeong/flist/flist_outputdir_"+splits[4]+"_"+splits[5]+".txt", "w")
 
 lines = os.listdir(outputdir)
 for line in lines:
