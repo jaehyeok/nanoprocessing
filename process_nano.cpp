@@ -446,6 +446,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   babyTree_->Branch("w_btag_dcsv",   	&w_btag_dcsv);
   babyTree_->Branch("w_lumi",    	    &w_lumi);
   babyTree_->Branch("w_pu",      	    &w_pu);
+  babyTree_->Branch("xsec",		&xsec);
   // leptons 
   babyTree_->Branch("nleps",       	  &nleps);    
   babyTree_->Branch("leps_pt",       	&leps_pt);    
