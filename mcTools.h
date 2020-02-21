@@ -31,21 +31,21 @@ float getXsec(TString process)
   if(process.Contains("QCD_HT1500to2000_Tune")) xsec = 121.5;
   if(process.Contains("QCD_HT2000toInf_Tune"))  xsec = 25.42;
 
-  // DY
-  if(process.Contains("DYJetsToLL_M-10to50_Tune")) xsec = 18610*1.23;
-  if(process.Contains("DYJetsToLL_M-50_Tune"))     xsec = 4895*1.23;
-  if(process.Contains("DYJetsToLL_M-50_HT-200to400_Tune"))     xsec = 42.75*1.23;
-  if(process.Contains("DYJetsToLL_M-50_HT-400to600_Tune"))     xsec = 5.497*1.23;
-  if(process.Contains("DYJetsToLL_M-50_HT-600to800_Tune"))     xsec = 1.363*1.23;
-  if(process.Contains("DYJetsToLL_M-50_HT-800to1200_Tune"))     xsec = 0.6759*1.23;
-  if(process.Contains("DYJetsToLL_M-50_HT-1200to2500_Tune"))     xsec = 0.116*1.23;
-  if(process.Contains("DYJetsToLL_M-50_HT-2500toInf_Tune"))     xsec = 0.002592*1.23;
-  if(process.Contains("DYJetsToLL_M-5to50_HT-200to400_Tune"))     xsec = 37.19;
-  if(process.Contains("DYJetsToLL_M-5to50_HT-400to600_Tune"))     xsec = 3.581;
-  if(process.Contains("DYJetsToLL_M-5to50_HT-600toInf_Tune"))     xsec = 1.124;
-  if(process.Contains("DYJetsToLL_M-1to5_HT-200to400_Tune"))     xsec = 107;
-  if(process.Contains("DYJetsToLL_M-1to5_HT-400to600_Tune"))     xsec = 10.85;
-  if(process.Contains("DYJetsToLL_M-1to5_HT-600toInf_Tune"))     xsec = 3.412;
+  // DY // kFactor = 1.23, LO+NLO/LO
+  if(process.Contains("DYJetsToLL_M-10to50_Tune")) xsec = 18610*1.23;//update
+  if(process.Contains("DYJetsToLL_M-50_Tune"))     xsec = 4895*1.23;//X
+  if(process.Contains("DYJetsToLL_M-50_HT-200to400_Tune"))     xsec = 40.99*1.23;//update
+  if(process.Contains("DYJetsToLL_M-50_HT-400to600_Tune"))     xsec = 5.678*1.23;//update
+  if(process.Contains("DYJetsToLL_M-50_HT-600to800_Tune"))     xsec = 1.363*1.23;//update
+  if(process.Contains("DYJetsToLL_M-50_HT-800to1200_Tune"))     xsec = 0.6759*1.23;//update
+  if(process.Contains("DYJetsToLL_M-50_HT-1200to2500_Tune"))     xsec = 0.116*1.23;//update
+  if(process.Contains("DYJetsToLL_M-50_HT-2500toInf_Tune"))     xsec = 0.002592*1.23;//update
+  if(process.Contains("DYJetsToLL_M-5to50_HT-200to400_Tune"))     xsec = 37.19*1.23;//update
+  if(process.Contains("DYJetsToLL_M-5to50_HT-400to600_Tune"))     xsec = 3.581*1.23;//update
+  if(process.Contains("DYJetsToLL_M-5to50_HT-600toInf_Tune"))     xsec = 1.124*1.23;//update
+  if(process.Contains("DYJetsToLL_M-1to5_HT-200to400_Tune"))     xsec = 107*1.23;//update
+  if(process.Contains("DYJetsToLL_M-1to5_HT-400to600_Tune"))     xsec = 10.85*1.23;//update
+  if(process.Contains("DYJetsToLL_M-1to5_HT-600toInf_Tune"))     xsec = 3.412*1.23;//update
   
   // single top 
   // https://twiki.cern.ch/twiki/bin/view/LHCPhysics/SingleTopRefXsec
