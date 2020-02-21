@@ -40,6 +40,12 @@ float getXsec(TString process)
   if(process.Contains("DYJetsToLL_M-50_HT-800to1200_Tune"))     xsec = 0.6759*1.23;
   if(process.Contains("DYJetsToLL_M-50_HT-1200to2500_Tune"))     xsec = 0.116*1.23;
   if(process.Contains("DYJetsToLL_M-50_HT-2500toInf_Tune"))     xsec = 0.002592*1.23;
+  if(process.Contains("DYJetsToLL_M-5to50_HT-200to400_Tune"))     xsec = 37.19;
+  if(process.Contains("DYJetsToLL_M-5to50_HT-400to600_Tune"))     xsec = 3.581;
+  if(process.Contains("DYJetsToLL_M-5to50_HT-600toInf_Tune"))     xsec = 1.124;
+  if(process.Contains("DYJetsToLL_M-1to5_HT-200to400_Tune"))     xsec = 107;
+  if(process.Contains("DYJetsToLL_M-1to5_HT-400to600_Tune"))     xsec = 10.85;
+  if(process.Contains("DYJetsToLL_M-1to5_HT-600toInf_Tune"))     xsec = 3.412;
   
   // single top 
   // https://twiki.cern.ch/twiki/bin/view/LHCPhysics/SingleTopRefXsec
