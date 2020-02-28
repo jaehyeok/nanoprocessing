@@ -8,12 +8,16 @@ float getXsec(TString process)
   // cross sections are in pb
   float xsec = -0.001; 
 
-  // ttbar 
-  if(process.Contains("TTJets_Tune"))               											xsec = 815.96; 
+  // ttbar //TTJets_HT kFactor = 1.625 LO+NLO/LO
+  if(process.Contains("TTJets_Tune"))	xsec = 815.96;
+  if(process.Contains("TTJets_HT-600to800_Tune"))	xsec = 2.61537118;
+  if(process.Contains("TTJets_HT-800to1200_Tune"))	xsec = 1.07722318;
+  if(process.Contains("TTJets_HT-1200to2500_Tune"))	xsec = 0.194972521;
+  if(process.Contains("TTJets_HT-2500toInf_Tune"))	xsec = 0.0023234211;
   if(process.Contains("TT_Tune") && !process.Contains("TTTT_Tune"))       xsec = 815.96; 
  
   // wjets
-  if(process.Contains("WJetsToLNu_Tune"))       						xsec=61526.7; //NNLO from Lesya's summary table 
+  if(process.Contains("WJetsToLNu_Tune"))		xsec=61526.7; //NNLO from Lesya's summary table 
   if(process.Contains("WJetsToLNu_HT-200To400_Tune"))       xsec=360.*1.21; //NNLO from Lesya's summary table 
   if(process.Contains("WJetsToLNu_HT-400To600_Tune"))       xsec=48.98*1.21;  
   if(process.Contains("WJetsToLNu_HT-600To800_Tune"))       xsec=12.05*1.21;  
@@ -32,6 +36,7 @@ float getXsec(TString process)
   if(process.Contains("QCD_HT2000toInf_Tune"))  xsec = 25.42;
 
   // DY // kFactor = 1.23, LO+NLO/LO
+  float DY_kFactor = 1.23;
   if(process.Contains("DYJetsToLL_M-10to50_Tune")) xsec = 18610*1.23;//update
   if(process.Contains("DYJetsToLL_M-50_Tune"))     xsec = 4895*1.23;//X
   if(process.Contains("DYJetsToLL_M-50_HT-200to400_Tune"))     xsec = 40.99*1.23;//update
