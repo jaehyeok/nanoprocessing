@@ -4,6 +4,7 @@
 //          jae.hyeok.yoo@cern.ch
 //          2019.10.28
 // ------------------------------------
+// command: ./skim.exe /xrootd_user/jaehyeok/xrootd/2016v4/2019_12_10/processed/ rpvfitnbge0
 #include <iostream>
 #include <fstream>
 #include <vector>
@@ -138,6 +139,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   Float_t     btagWeight_CSVV2 = 1;
   Float_t     genWeight        = 1;
   // MC 
+  UInt_t  nGenPart=0;
   Float_t GenPart_eta[500];  
   Float_t GenPart_mass[500]; 
   Float_t GenPart_phi[500];  
@@ -215,6 +217,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   if(!isData)
   {
     tree->SetBranchAddress("genWeight",           &genWeight);
+    tree->SetBranchAddress("nGenPart",	          &nGenPart);
     tree->SetBranchAddress("GenPart_eta",         &GenPart_eta);
     tree->SetBranchAddress("GenPart_mass",        &GenPart_mass);
     tree->SetBranchAddress("GenPart_pt",          &GenPart_pt);
@@ -320,10 +323,14 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   float w_btag_csv  =1;
   float w_btag_dcsv =1;
   float w_pu        =1;
-  float w_isr       =1;
+  float w_lumi      =1;
   float w_toppt     =1;
   float w_lep       =1;
-  float w_lumi      =1;
+  float w_isr_tr    =0;
+  float isr_wgt_tr  =0;
+  float isr_norm_tt_tr =0;
+  int nisr_tr = 0;
+
   //std::vector<float> w_pdf;
   //float eff_trig;
   int npv           =-1;
@@ -338,6 +345,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   bool stitch;
   bool pass=true;
   bool fromGS;
+  bool matched_tr;
   /*
   //MC   
   int ntruleps;
@@ -396,6 +404,16 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   //std::vector<int>   jets_fjet_index;
   std::vector<int>   jets_hflavor;
 
+  // GenParticle
+  int ngen;
+  std::vector<float> gen_pt;
+  std::vector<float> gen_eta;
+  std::vector<float> gen_phi;
+  std::vector<float> gen_m;
+  std::vector<int> gen_PartIdxMother;
+  std::vector<int> gen_pdgId;
+  std::vector<int> gen_status;
+  std::vector<int> gen_statusFlags;
 
   //    std::vector<float> dr_bb;
   //Fat Jets   
@@ -447,6 +465,11 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   babyTree_->Branch("w_lumi",    	    &w_lumi);
   babyTree_->Branch("w_pu",      	    &w_pu);
   babyTree_->Branch("xsec",		&xsec);
+  babyTree_->Branch("w_isr_tr",		&w_isr_tr);
+  babyTree_->Branch("isr_wgt_tr",	&isr_wgt_tr);
+  babyTree_->Branch("isr_norm_tt_tr",	&isr_norm_tt_tr);
+  babyTree_->Branch("nisr_tr",		&nisr_tr);
+  babyTree_->Branch("matched_tr",	&matched_tr);
   // leptons 
   babyTree_->Branch("nleps",       	  &nleps);    
   babyTree_->Branch("leps_pt",       	&leps_pt);    
@@ -488,6 +511,16 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   babyTree_->Branch("fjets_phi",       	&fjets_phi);    
   babyTree_->Branch("fjets_m",         	&fjets_m);    
   babyTree_->Branch("fjets_nconst",    	&fjets_nconst);    
+  // GenParticles
+  babyTree_->Branch("ngen",		&ngen);
+  babyTree_->Branch("gen_pt",		&gen_pt);
+  babyTree_->Branch("gen_eta",		&gen_eta);
+  babyTree_->Branch("gen_phi",		&gen_phi);
+  babyTree_->Branch("gen_m",		&gen_m);
+  babyTree_->Branch("gen_PartIdxMother",&gen_PartIdxMother);
+  babyTree_->Branch("gen_pdgId",	&gen_pdgId);
+  babyTree_->Branch("gen_status",	&gen_status);
+  babyTree_->Branch("gen_statusFlags",	&gen_statusFlags);
   // filters
   babyTree_->Branch("pass",    	&pass);    
   // triggers 
@@ -504,6 +537,8 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   //  (2) Bin Entry is the sum over energies of PF candidates in a given bin  
   // 
   TH2F *h2 = new TH2F("h2","h2", 115, -5.0, 5.0, 72, -1*TMath::Pi(), TMath::Pi());
+  TH2F *h3 = new TH2F("h3","nisr vs njets",22,0,22,10,0,10);
+  TH1F *histo_dR = new TH1F("histo_dR","DeltaR recoJet vs GenJet",50,0,1);
 
   // 
   // Loop over entries
@@ -540,6 +575,10 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
     w_btag_csv    =    1;
     w_btag_dcsv   =    1;
     w_pu          =    1;
+    w_isr_tr	  =    1;
+    isr_wgt_tr	  =    1;
+    isr_norm_tt_tr=    1;
+    nisr_tr	  =    0;
     // leptons 
     nleps      =   0;       	  
     leps_pt.clear();       	
@@ -581,6 +620,16 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
     fjets_phi.clear();
     fjets_m.clear();
     fjets_nconst.clear();
+    //
+    ngen = 0;
+    gen_pt.clear();
+    gen_eta.clear();
+    gen_phi.clear();
+    gen_m.clear();
+    gen_PartIdxMother.clear();
+    gen_pdgId.clear();
+    gen_status.clear();
+    gen_statusFlags.clear();
     //    
     pass=true;
     //
@@ -689,6 +738,19 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
       if(!isData) w_btag_dcsv *= getBtagWeight(calibreader, Jet_pt[iJ], Jet_eta[iJ], Jet_hadronFlavour[iJ], Jet_btagDeepB[iJ]);
     }
 
+    for(int iGen = 0; iGen < nGenPart; iGen++)
+    {
+      gen_pt.push_back(GenPart_pt[iGen]);
+      gen_eta.push_back(GenPart_eta[iGen]);
+      gen_phi.push_back(GenPart_phi[iGen]);
+      gen_m.push_back(GenPart_mass[iGen]);
+      gen_pdgId.push_back(GenPart_pdgId[iGen]);
+      gen_PartIdxMother.push_back(GenPart_genPartIdxMother[iGen]);
+      gen_status.push_back(GenPart_status[iGen]);
+      gen_statusFlags.push_back(GenPart_statusFlags[iGen]);
+      ngen++;
+	//cout<<"genParticle_statusFlags: "<<GenPart_statusFlags[iGen]<<endl;
+    }
     // 
     // Fatjet reconstruction 
     // 
@@ -801,6 +863,63 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
         }
       }
     }
+
+    if(!isData){//number of ISR-->TTbar_Madgraph, signal.
+      if(!((inputfile.Contains("SMS-T1tbs_RPV")) || (inputfile.Contains("TTJets_") && inputfile.Contains("madgraphMLM")))) continue;
+      int nisr(0);
+      TLorentzVector JetLV_, GenLV_; 
+      for(size_t ijet(0); ijet<jets_pt.size(); ijet++){
+        bool matched = false;
+	if(jets_pt.at(ijet)<30) continue;
+	if(abs(jets_eta.at(ijet))>2.4) continue;
+	if(jets_id.at(ijet)==0) continue;
+	if(jets_islep.at(ijet)==1) continue;
+
+        JetLV_.SetPtEtaPhiM(jets_pt.at(ijet), jets_eta.at(ijet), jets_phi.at(ijet), jets_m.at(ijet));
+
+        for(size_t imc(0); imc < gen_pt.size(); imc++){
+	  if((gen_PartIdxMother.at(imc))==-1) continue;
+	  int momid = abs(gen_pdgId.at(gen_PartIdxMother.at(imc)));
+	
+	  if(!((gen_statusFlags.at(imc)>>7)&1) || abs(gen_pdgId.at(imc))>5) continue;//pdgId<5: quark from genParticle. GenPart_statusFlags gen status flags stored bitwise, bits are: 0 : isPrompt, 1 : isDecayedLeptonHadron, 2 : isTauDecayProduct, 3 : isPromptTauDecayProduct, 4 : isDirectTauDecayProduct, 5 : isDirectPromptTauDecayProduct, 6 : isDirectHadronDecayProduct, 7 : isHardProcess, 8 : fromHardProcess, 9 : isHardProcessTauDecayProduct, 10 : isDirectHardProcessTauDecayProduct, 11 : fromHardProcessBeforeFSR, 12 : isFirstCopy, 13 : isLastCopy, 14 : isLastCopyBeforeFSR,  : 0 at: 0x7f9e93685030
+
+	  //cout<<"Flags 7: "<< (gen_statusFlags.at(imc)>>7)&1 <<", Flags 8:"<< (gen_statusFlags.at(imc)>>8)&1 << endl;
+
+	  if(!(momid==6 || momid==23 || momid==24 || momid==25 || momid>1e6)) continue;//6: top, 23: Z boson, 24: W boson, 25: Higgs, 1e6<: SUSY particle ---> matching condition is final state Jets.
+          GenLV_.SetPtEtaPhiM(gen_pt.at(imc), gen_eta.at(imc), gen_phi.at(imc), gen_m.at(imc));
+	  float dR = JetLV_.DeltaR(GenLV_);//dR=sqrt(dphi^2+deta^2)
+	  if(dR<0.3){
+	    matched = true;
+	    matched_tr = matched;
+	  }
+	  histo_dR->Fill(dR);
+        }
+        if(matched==false) nisr++;//--> not matched with final state.
+      }
+      histo_dR->GetXaxis()->SetTitle("dR distribution");
+
+      float w_isr = 1.;
+      float isr_norm_tt = 0;
+      if((inputfile.Contains("TTJets_") && inputfile.Contains("madgraphMLM"))) isr_norm_tt =1.101;
+      else if(inputfile.Contains("SMS-T1tbs_RPV")) isr_norm_tt = 1;
+
+      float isr_wgt     = -999.;
+      if(nisr==0)       isr_wgt = 1.; 
+      else if(nisr==1)  isr_wgt = 0.920; 
+      else if(nisr==2)  isr_wgt = 0.821; 
+      else if(nisr==3)  isr_wgt = 0.715; 
+      else if(nisr==4)  isr_wgt = 0.662; 
+      else if(nisr==5)  isr_wgt = 0.561; 
+      else if(nisr>=6)  isr_wgt = 0.511; 
+      w_isr = isr_wgt*isr_norm_tt;
+      w_isr_tr = w_isr;
+      nisr_tr = nisr;
+      isr_wgt_tr = isr_wgt;
+      isr_norm_tt_tr = isr_norm_tt;
+      h3->Fill(njets,nisr);
+    }
+    h3->GetXaxis()->SetTitle("njet");
+    h3->GetYaxis()->SetTitle("nisr");
 
     // 
     // weights 
@@ -927,6 +1046,8 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   {
     babyFile_->cd();
     babyTree_->Write();
+    h3->Write();
+    histo_dR->Write();
     babyFile_->Close();
   }
 
