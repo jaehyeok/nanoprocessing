@@ -938,7 +938,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
       w_lumi      = 1;
       w_pu        = 1;
     }
-    weight    = w_btag_dcsv * w_lumi * w_pu;
+    weight    = w_btag_dcsv * w_lumi * w_pu * w_isr_tr;
 
     // filters and triggers 
     //https://twiki.cern.ch/twiki/bin/viewauth/CMS/MissingETOptionalFiltersRun2
