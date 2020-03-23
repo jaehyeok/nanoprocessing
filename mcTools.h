@@ -24,7 +24,8 @@ float getXsec(TString process)
   if(process.Contains("WJetsToLNu_HT-800To1200_Tune"))      xsec=5.501*1.21;  
   if(process.Contains("WJetsToLNu_HT-1200To2500_Tune"))     xsec=1.329*1.21;  
   if(process.Contains("WJetsToLNu_HT-2500ToInf_Tune"))      xsec=0.03216*1.21;  
- 
+  if(process.Contains("WJetsToQQ_HT-600ToInf_Tune"))      xsec=95.14*1.21;  
+
   // QCD 
   if(process.Contains("QCD_HT100to200_Tune"))   xsec = 27540000;
   if(process.Contains("QCD_HT200to300_Tune"))   xsec = 1735000;
