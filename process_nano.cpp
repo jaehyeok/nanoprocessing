@@ -960,8 +960,8 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
     else if(!((inputfile.Contains("SMS-T1tbs_RPV")) || (inputfile.Contains("TTJets_") ))){
       weight = w_btag_dcsv * w_lumi * w_pu;
       w_isr_tr = 1;
-      lhe_ht = 1;
     }
+    if(!(inputfile.Contains("TTJets_"))) lhe_ht = 1;
 
     // filters and triggers 
     //https://twiki.cern.ch/twiki/bin/viewauth/CMS/MissingETOptionalFiltersRun2
