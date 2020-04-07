@@ -334,6 +334,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   float isr_wgt_tr  =0;
   float isr_norm_tt_tr =0;
   int nisr_tr = 0;
+  bool stitch_ht=true;
 
   //std::vector<float> w_pdf;
   //float eff_trig;
@@ -464,19 +465,20 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   babyTree_->Branch("ht",             	&ht);
   babyTree_->Branch("met",             	&met);
   babyTree_->Branch("met_phi",        	&met_phi);
-  babyTree_->Branch("lhe_ht",		&lhe_ht);
+  babyTree_->Branch("lhe_ht",		        &lhe_ht);
+  babyTree_->Branch("stitch_ht",	    	&stitch_ht);
   // weights 
   babyTree_->Branch("weight",    	    &weight);
   babyTree_->Branch("w_btag_csv",    	&w_btag_csv);
   babyTree_->Branch("w_btag_dcsv",   	&w_btag_dcsv);
   babyTree_->Branch("w_lumi",    	    &w_lumi);
   babyTree_->Branch("w_pu",      	    &w_pu);
-  babyTree_->Branch("xsec",		&xsec);
-  babyTree_->Branch("w_isr_tr",		&w_isr_tr);
-  babyTree_->Branch("isr_wgt_tr",	&isr_wgt_tr);
+  babyTree_->Branch("xsec",						&xsec);
+  babyTree_->Branch("w_isr_tr",				&w_isr_tr);
+  babyTree_->Branch("isr_wgt_tr",			&isr_wgt_tr);
   babyTree_->Branch("isr_norm_tt_tr",	&isr_norm_tt_tr);
-  babyTree_->Branch("nisr_tr",		&nisr_tr);
-  babyTree_->Branch("matched_tr",	&matched_tr);
+  babyTree_->Branch("nisr_tr",				&nisr_tr);
+  babyTree_->Branch("matched_tr",			&matched_tr);
   // leptons 
   babyTree_->Branch("nleps",       	  &nleps);    
   babyTree_->Branch("leps_pt",       	&leps_pt);    
@@ -961,7 +963,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
       weight = w_btag_dcsv * w_lumi * w_pu;
       w_isr_tr = 1;
     }
-    if(!(inputfile.Contains("TTJets_"))) lhe_ht = 1;
+    if((inputfile.Contains("TTJets_Tune")) && lhe_ht>600) stitch_ht = false;
 
     // filters and triggers 
     //https://twiki.cern.ch/twiki/bin/viewauth/CMS/MissingETOptionalFiltersRun2
