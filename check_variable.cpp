@@ -51,8 +51,8 @@ void check_variable(){
 	blist->Print();
 	cout<< blist->GetEntries() <<endl;
 	cout<< typeid(blist->GetEntries()).name() <<endl;
-	cout<<"version4 entries: "<<mytree_1->GetEntries()<<endl;
-	cout<<"version5 entries: "<<mytree_2->GetEntries()<<endl;
+	cout<<"version5 entries: "<<mytree_1->GetEntries()<<endl;
+	cout<<"version6 entries: "<<mytree_2->GetEntries()<<endl;
 	const int nBranch = 72;
 
 	TH1F *h1[nBranch];
@@ -91,6 +91,7 @@ void check_variable(){
 		if(var_name.Contains("pt")) {a=700; b=-1;}
 		if(var_name.Contains("pdgid")) {a=15; b=-15;}
 		if(var_name.Contains("jets_m")) {a=50; b=-1;}
+		if(var_name.Contains("jets_hflavor")) {a=7; b=-1;}
 		if(var_name.Contains("els_miniso") || var_name.Contains("els_reliso") || var_name.Contains("mus_miniso")) {a=10; b=0;}
 
 		x_max[j] = xmax[j]+a;
