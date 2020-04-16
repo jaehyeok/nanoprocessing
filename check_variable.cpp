@@ -67,7 +67,7 @@ void check_variable(){
 	float xmin[nBranch] = {0,};
 	float xmax[nBranch] = {0,};
 	float ymax = 0;
-	int bin = 101;
+	int bin = 100;
 	TString var_name;
 
 	double norm_1 = 1;
@@ -91,7 +91,7 @@ void check_variable(){
 		if(var_name.Contains("pt")) {a=700; b=-1;}
 		if(var_name.Contains("pdgid")) {a=15; b=-15;}
 		if(var_name.Contains("jets_m")) {a=50; b=-1;}
-		if(var_name.Contains("els_miniso") || var_name.Contains("els_reliso")) {a=10; b=0;}
+		if(var_name.Contains("els_miniso") || var_name.Contains("els_reliso") || var_name.Contains("mus_miniso")) {a=10; b=0;}
 
 		x_max[j] = xmax[j]+a;
 		x_min[j] = xmin[j]+b;
