@@ -25,12 +25,9 @@ void set_legend_style(TLegend *l1){
 }
 
 void check_variable(){
-	//TString inputdir_1 = "/xrootd_user/jaehyeok/xrootd/2016v4/2019_12_10/processed/";
-	//TString inputdir_2 = "/xrootd_user/yjeong/xrootd/nanoprocessing/2016/processed/";
 
 	TString inputdir = "/cms/scratch/yjeong/";
 
-	//TString sample_name_1 = "4809C572-5167-514C-9186-FF01CBCA4C9C_fatjetbaby_";//version4
 	TString sample_name_1 = "69F3B720-0CF6-EE4E-BAA3-E332F9DBD180_fatjetbaby_";//version5
 	TString sample_name_2 = "25AFDB82-AB3F-EB48-92BB-70BA8EEFD469_fatjetbaby_";//version6
 
@@ -52,12 +49,11 @@ void check_variable(){
 	blist = mytree_2->GetListOfBranches();
 	//const int nBranch = blist->GetEntries();
 	blist->Print();
-	cout<< blist->GetEntries() <<endl;//56
+	cout<< blist->GetEntries() <<endl;
 	cout<< typeid(blist->GetEntries()).name() <<endl;
 	cout<<"version4 entries: "<<mytree_1->GetEntries()<<endl;
 	cout<<"version5 entries: "<<mytree_2->GetEntries()<<endl;
-	const double nBranch = 56;
-	//const int nBranch__ = blist->GetEntries();
+	const int nBranch = 72;
 
 	TH1F *h1[nBranch];
 	TH1F *h2[nBranch];
@@ -77,20 +73,6 @@ void check_variable(){
 	double norm_1 = 1;
 	double norm_2 = 1;
 	float a=0,b=0;
-	//float w_lumi_ = 0.1;//seperated
-	//float w_lumi_ = 0.05;//seperated 
-	//float w_lumi_ = 0.02;//seperated // x_range: 0.04
-	//float w_lumi_ = 0.01;//one line // x_range: 0.02 //float: seperated
-	//float w_lumi_ = 0.009;//one line //float: seperated
-	//float w_lumi_ = 0.008;//seperated
-	//float w_lumi_ = 0.007;//seperated
-	//float w_lumi_ = 0.006;//seperated
-	//float w_lumi_ = 0.005;//one line // x_range: 0.01
-	//float w_lumi_ = 0.001;//seperated
-	//float w_lumi_ = 0.0001;//seperated 
-	//float w_lumi_ = 0.00003;//serperated
-	float w_lumi_ = 1.2;//serperated
-	//float w_lumi_ = 1;//one line
 
 	float x_min[nBranch] = 0;
 	float x_max[nBranch] = 0;
@@ -109,12 +91,7 @@ void check_variable(){
 		if(var_name.Contains("pt")) {a=700; b=-1;}
 		if(var_name.Contains("pdgid")) {a=15; b=-15;}
 		if(var_name.Contains("jets_m")) {a=50; b=-1;}
-		/*if(j==15){a=15;b=-15;}//leps_pdgID
-		else if(j==33 || j==47 || j==44 || j==18 || j==12 || j==24){a=1000;b=0;}//jets_pt, fjets_m, fjets_pt, mus_pt, leps_pt, els_pt
-		else if(j==29 || j==30 || j==22){a=10;b=0;}//els_miniso, els_reliso, mus_miniso
-		else if(j==36){a=250;b=0;}//jets_m
-		else if(j==6 || j==7 || j==39) b=0;//w_btag_csv, w_btag_dcsv, jets_csv
-		else if(j==8) {a=w_lumi_;b=-w_lumi_;}//w_lumi*/
+		if(var_name.Contains("els_miniso") || var_name.Contains("els_reliso")) {a=10; b=0;}
 
 		x_max[j] = xmax[j]+a;
 		x_min[j] = xmin[j]+b;
