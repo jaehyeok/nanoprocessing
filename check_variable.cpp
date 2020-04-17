@@ -26,12 +26,12 @@ void set_legend_style(TLegend *l1){
 
 void check_variable(){
 
-	TString inputdir = "/cms/scratch/yjeong/";
+	TString inputdir = "/cms/scratch/yjeong/RPV_MC/2016/";
 
-	TString sample_name_1 = "69F3B720-0CF6-EE4E-BAA3-E332F9DBD180_fatjetbaby_";//version5
-	TString sample_name_2 = "25AFDB82-AB3F-EB48-92BB-70BA8EEFD469_fatjetbaby_";//version6
+	TString sample_name_1 = "processed_v5/31CD3EC0-7352-1342-B38F-65BBF755DF0B_fatjetbaby_";//version5
+	TString sample_name_2 = "processed_v6/1A542160-4CF8-384F-88A9-3EBCDA217FB1_fatjetbaby_";//version6
 
-	tag_name = "TT_TuneCUETP8M2T4";
+	tag_name = "TTJets_HT-2500toInf_TuneCUETP8M1";
 
 	TString outputdir = "/cms/scratch/yjeong/CMSSW_7_1_0/src/nanoprocessing/plots/";
 
@@ -113,12 +113,10 @@ void check_variable(){
 		mytree_2->Project(Form("h2_%d",j),blist->At(j)->GetName());
 		plotpad_[j]->cd();
 
-		if(j!=15){
-			norm_1 = h1[j]->Integral();
-			h1[j]->Scale(1/norm_1);
-			norm_2 = h2[j]->Integral();
-			h2[j]->Scale(1/norm_2);
-		}
+		norm_1 = h1[j]->Integral();
+		h1[j]->Scale(1/norm_1);
+		norm_2 = h2[j]->Integral();
+		h2[j]->Scale(1/norm_2);
 
 		ymax = h2[j]->GetMaximum();
 
