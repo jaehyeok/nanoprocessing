@@ -33,7 +33,6 @@ print('-------------------------------------------------------------------------
 
 for flist in process:
 	mc = TChain("tree")
-	mc.Add(inputdir+"*_fatjetbaby_"+flist+"_rpvfitnbge0"+".root")
 	nfiles=mc.Add(inputdir+"*_fatjetbaby_"+flist+"_rpvfitnbge0"+".root")
 	nfiles=str(nfiles)
 	t1 = mc.GetEntries()
