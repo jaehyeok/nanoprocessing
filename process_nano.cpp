@@ -668,7 +668,6 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
     ntrupv  = Pileup_nPU;
     ntrupv_mean  = Pileup_nTrueInt;
     lhe_ht = LHE_HTIncoming;
-    w_lhe_scale = LHEScaleWeight;
 
     //
     // get electrons
