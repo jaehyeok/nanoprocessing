@@ -954,15 +954,17 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
       }
     } 
 
-		//
-		sys_mj12_up   =  getMJ(sys_jets_pt_up, jets_eta, jets_phi, jets_m, jets_id);
-		sys_mj12_down =  getMJ(sys_jets_pt_down, jets_eta, jets_phi, jets_m, jets_id);
-		
-		// fill jec syst branches: vec.at(0) is up and vec.at(1) is down 
-		sys_njets.push_back(sys_njets_up);	sys_njets.push_back(sys_njets_down);	
-		sys_nbm.push_back(sys_nbm_up);			sys_nbm.push_back(sys_nbm_down);	
-		sys_ht.push_back(sys_ht_up);				sys_ht.push_back(sys_ht_down);	
-		sys_mj12.push_back(sys_mj12_up);		sys_mj12.push_back(sys_mj12_down);	
+		// JEC systematics (fill only for MC)
+		if(!isData){
+			sys_mj12_up   =  getMJ(sys_jets_pt_up, jets_eta, jets_phi, jets_m, jets_id);
+			sys_mj12_down =  getMJ(sys_jets_pt_down, jets_eta, jets_phi, jets_m, jets_id);
+
+			// fill jec syst branches: vec.at(0) is up and vec.at(1) is down 
+			sys_njets.push_back(sys_njets_up);	sys_njets.push_back(sys_njets_down);	
+			sys_nbm.push_back(sys_nbm_up);			sys_nbm.push_back(sys_nbm_down);	
+			sys_ht.push_back(sys_ht_up);				sys_ht.push_back(sys_ht_down);	
+			sys_mj12.push_back(sys_mj12_up);		sys_mj12.push_back(sys_mj12_down);	
+		}	
 
 		if(!isData){//number of ISR-->TTbar_Madgraph, signal.
 			int nisr(0);
