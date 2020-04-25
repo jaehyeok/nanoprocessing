@@ -26,12 +26,16 @@
 #include "TLorentzVector.h"
 #include "TChain.h"
 
+// JEC
+#include "JetCorrectorParameters.h"
+#include "JetCorrectionUncertainty.h"
+#include "FactorizedJetCorrector.h"
+
 // fastjet
 #include <fastjet/PseudoJet.hh>
 #include <fastjet/ClusterSequence.hh>
 // btag
 #include "BTagCalibrationStandalone.h"
-//#include "BTagCalibrationStandalone.cpp"
 
 //#include "utilities.h" // included in jetTools.h  
 #include "jetTools.h"  
@@ -39,12 +43,19 @@
 #include "lepTools.h"  
 #include "inJSON.h"  
 
-// compile 
-//  $ g++ process_nano.cpp  `fastjet-config --cxxflags --libs --plugins` `root-config --cflags --glibs` -o process_nano.exe
+// --- compile --- 
+// g++  process_nano.cpp JetCorrectorParameters.cpp FactorizedJetCorrector.cpp SimpleJetCorrector.cpp BTagCalibrationStandalone.cpp `fastjet-config --cxxflags --libs --plugins` `root-config --cflags --glibs` -o process_nano.exe
+// --- run -------
+// ./process_nano.exe /xrootd/store/mc/RunIISummer16NanoAODv4/SMS-T1tbs_RPV_mGluino1600_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/NANOAODSIM/PUMoriond17_Nano14Dec2018_102X_mcRun2_asymptotic_v6_ext1-v1/ root://cms-xrdr.private.lo:2094//xrd/store/user/jaehyeok/2016v4/2019_12_06/ SMS-T1tbs_RPV_mGluino1600_TuneCUETP8M1 flist_outputdir_2016v4_2019_11_07.txt
+
 
 using namespace std;
 
 const bool DEBUG = false; 
+
+// JEC  
+FactorizedJetCorrector *JetCorrector;
+JetCorrectionUncertainty *JecUnc;
 
 void process_nano(TString inputfile, TString outputdir, float sumWeights, TString samplename, int nfiles, int &filenumber) 
 {
@@ -81,8 +92,8 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   cout << " btag sf file: " << csvfile << endl;  
   BTagCalibration calib("DeepCSV", csvfile);
   BTagCalibrationReader calibreader(BTagEntry::OP_RESHAPING,  // operating point
-      "central",                // central sys type
-      {"up_jes", "down_jes"});          // other sys types
+      "central",                															// central sys type
+      {"up_jes", "down_jes"});          											// other sys types
   calibreader.load(calib, BTagEntry::FLAV_B,     "iterativefit");
   calibreader.load(calib, BTagEntry::FLAV_C,     "iterativefit");
   calibreader.load(calib, BTagEntry::FLAV_UDSG,  "iterativefit"); 
@@ -135,6 +146,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   Float_t     MET_phi = 0;
   Float_t     Pileup_nTrueInt = 0; 
   Int_t       Pileup_nPU      = 0; 
+  Float_t     fixedGridRhoFastjetAll = 0; 
   // weights
   Float_t     btagWeight_CSVV2 = 1;
   Float_t     genWeight        = 1;
@@ -180,6 +192,8 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   Float_t    Jet_btagCSVV2[100];
   Float_t    Jet_btagDeepB[100];
   Float_t    Jet_btagDeepC[100];
+  Float_t    Jet_rawFactor[100];
+  Float_t    Jet_area[100];
   Int_t      Jet_jetId[100];
   Int_t      Jet_nElectrons[100];
   Int_t      Jet_nMuons[100];
@@ -207,6 +221,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   tree->SetBranchAddress("luminosityBlock",     &ls_);
   tree->SetBranchAddress("MET_pt",              &MET_pt);
   tree->SetBranchAddress("MET_phi",             &MET_phi);
+  tree->SetBranchAddress("fixedGridRhoFastjetAll",          &fixedGridRhoFastjetAll);
   //LHE HT incoming
   tree->SetBranchAddress("LHE_HTIncoming",	&LHE_HTIncoming);
   if(!isData)
@@ -335,6 +350,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   float isr_norm_tt_tr =0;
   int nisr_tr = 0;
   bool stitch_ht=true;
+  float w_lhe_scale =1;
 
   //std::vector<float> w_pdf;
   //float eff_trig;
@@ -435,7 +451,6 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   //    std::vector<float> fjets_sumcsv;
   //    std::vector<float> fjets_poscsv;
   //    std::vector<int> fjets_btags;
-  /*
   //syst   
   std::vector<float> sys_bctag;
   std::vector<float> sys_udsgtag;
@@ -450,13 +465,13 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   std::vector<int>   sys_njets;
   std::vector<int>   sys_nbm;
   std::vector<bool>  sys_pass;
-  */
   // trigger 
   bool trig_jet450=true; 
   bool trig_ht900=true; 
   bool trig_ht1050=true;
   bool trig_isomu24=true; 
   bool trig_isomu27=true; 
+  bool pass_hbheiso=true;
 
   // global
   babyTree_->Branch("run",            	&run);    
@@ -479,6 +494,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   babyTree_->Branch("isr_norm_tt_tr",	&isr_norm_tt_tr);
   babyTree_->Branch("nisr_tr",				&nisr_tr);
   babyTree_->Branch("matched_tr",			&matched_tr);
+  babyTree_->Branch("w_lhe_scale",			&w_lhe_scale);
   // leptons 
   babyTree_->Branch("nleps",       	  &nleps);    
   babyTree_->Branch("leps_pt",       	&leps_pt);    
@@ -532,12 +548,18 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   babyTree_->Branch("gen_statusFlags",	&gen_statusFlags);
   // filters
   babyTree_->Branch("pass",    	&pass);    
+  // 
+	babyTree_->Branch("sys_mj12",    	&sys_mj12);    
+	babyTree_->Branch("sys_ht",    	&sys_ht);    
+	babyTree_->Branch("sys_nbm",    	&sys_nbm);    
+	babyTree_->Branch("sys_njets",    	&sys_njets);    
   // triggers 
   babyTree_->Branch("trig_jet450",  	&trig_jet450);    
   babyTree_->Branch("trig_ht900",    	&trig_ht900);    
   babyTree_->Branch("trig_ht1050",  	&trig_ht1050);    
   babyTree_->Branch("trig_isomu24",  	&trig_isomu24);    
   babyTree_->Branch("trig_isomu27",  	&trig_isomu27);    
+  babyTree_->Branch("pass_hbheiso",  	&pass_hbheiso);    
 
 
   // 
@@ -585,6 +607,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
     w_btag_csv    =    1;
     w_btag_dcsv   =    1;
     w_pu          =    1;
+    w_lhe_scale   =    1;
     // leptons 
     nleps      =   0;       	  
     leps_pt.clear();       	
@@ -639,11 +662,17 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
     //    
     pass=true;
     //
+		sys_mj12.clear();
+		sys_ht.clear();
+		sys_njets.clear();
+		sys_nbm.clear();
+    //
     trig_jet450=true;
     trig_ht900=true;
     trig_ht1050=true;
     trig_isomu24=true;
     trig_isomu27=true;
+    pass_hbheiso=true;
 
     // apply json in data
     if(isData && !inJSON(VRunLumi,run,ls)) continue;
@@ -711,6 +740,19 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
     //
     // get jets
     //
+		// systematics up/down jets_pt: not stored in the babies
+    std::vector<float> sys_jets_pt_up;
+    std::vector<float> sys_jets_pt_down;
+    sys_jets_pt_up.clear();
+    sys_jets_pt_down.clear(); 
+		int sys_njets_up = 0;
+		int sys_njets_down = 0;
+		int sys_nbm_up = 0;
+		int sys_nbm_down = 0;
+		float sys_ht_up = 0;
+		float sys_ht_down = 0;
+		float sys_mj12_up = 0;
+		float sys_mj12_down = 0;
     for(int iJ = 0; iJ < nJet; iJ++) 
     {
       jets_pt.push_back(Jet_pt[iJ]); 
@@ -729,21 +771,59 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
       bool jetislep = false;
       jetislep = jetIsLepton(Jet_eta[iJ], Jet_phi[iJ], leps_eta, leps_phi);
       jets_islep.push_back(jetislep);
+  
+			//JEC systematics 
+			if(0)
+			{
+				JetCorrector->setJetPt(Jet_pt[iJ]*(1-Jet_rawFactor[iJ]));
+				JetCorrector->setJetEta(Jet_eta[iJ]);
+				JetCorrector->setJetA(Jet_area[iJ]);
+				JetCorrector->setRho(fixedGridRhoFastjetAll);
+				//sys_jets_pt.push_back(JetCorrector->getCorrection()*Jet_pt[iJ]*(1-Jet_rawFactor[iJ]));
+			} 
 
-      // jet selection
-      if(jets_pt.at(iJ)<30)    continue;
+			JecUnc->setJetPt(Jet_pt[iJ]); // here you must use the CORRECTED jet pt
+			JecUnc->setJetEta(Jet_eta[iJ]);
+			float jec_unc = JecUnc->getUncertainty(true);
+      sys_jets_pt_up.push_back(Jet_pt[iJ]*(1+jec_unc)); 
+      sys_jets_pt_down.push_back(Jet_pt[iJ]*(1-jec_unc)); 
+
+			// jet selection
       if(abs(Jet_eta[iJ])>2.4) continue;
       if(!jetid)               continue; 
       if(jetislep)             continue; 
-        
-      njets++;
-      ht += Jet_pt[iJ];
-      float csv_cut = 0.6321; 
-      if(year==2017) csv_cut = 0.4941;
-      if(year==2018) csv_cut = 0.4184;
-      if(Jet_btagDeepB[iJ]>csv_cut) nbm++;
-      if(!isData) w_btag_dcsv *= getBtagWeight(calibreader, Jet_pt[iJ], Jet_eta[iJ], Jet_hadronFlavour[iJ], Jet_btagDeepB[iJ]);
+     
+			// deepCSV  cuts
+			float csv_cut = 0.6321; 
+			if(year==2017) csv_cut = 0.4941;
+			if(year==2018) csv_cut = 0.4184;
+			
+			// nominal 
+			if(jets_pt.at(iJ)>30)
+			{
+				njets++;
+				ht += Jet_pt[iJ];
+				if(Jet_btagDeepB[iJ]>csv_cut) nbm++;
+				if(!isData) w_btag_dcsv *= getBtagWeight(calibreader, Jet_pt[iJ], Jet_eta[iJ], Jet_hadronFlavour[iJ], Jet_btagDeepB[iJ]);
+			}
+			// jec syst up 
+			if(sys_jets_pt_up.at(iJ)>30)
+			{
+				sys_njets_up++;
+				sys_ht_up += sys_jets_pt_up.at(iJ);
+				if(Jet_btagDeepB[iJ]>csv_cut) sys_nbm_up++;
+			}
+			// jec syst down 
+			if(sys_jets_pt_down.at(iJ)>30)
+			{
+				sys_njets_down++;
+				sys_ht_down += sys_jets_pt_down.at(iJ);
+				if(Jet_btagDeepB[iJ]>csv_cut) sys_nbm_down++;
+			}
     }
+		//cout << "ht: " << ht << " " << sys_ht_up << " " << sys_ht_down << endl; 
+		//cout << "njets: " << njets << " " << sys_njets_up << " " << sys_njets_down << endl; 
+		//cout << "nbm: " << nbm << " " << sys_nbm_up << " " << sys_nbm_down << endl; 
 
     for(int iGen = 0; iGen < nGenPart; iGen++)
     {
@@ -756,8 +836,8 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
       gen_status.push_back(GenPart_status[iGen]);
       gen_statusFlags.push_back(GenPart_statusFlags[iGen]);
       ngen++;
-	//cout<<"genParticle_statusFlags: "<<GenPart_statusFlags[iGen]<<endl;
     }
+
     // 
     // Fatjet reconstruction 
     // 
@@ -777,7 +857,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
 
       // jet selection
       if(jets_pt.at(iJ)<30)           continue;
-      if(abs(jets_eta.at(iJ))>2.4)     continue;
+      if(abs(jets_eta.at(iJ))>2.4)    continue;
       if(jets_id.at(iJ)==false)       continue;
 
       input_particles.push_back(fastjet::PseudoJet(JetLV.Px(), JetLV.Py(), JetLV.Pz(), JetLV.E()));
@@ -869,65 +949,75 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
             << endl; 
         }
       }
-    }
+    } 
 
-    if(!isData){//number of ISR-->TTbar_Madgraph, signal.
-      int nisr(0);
-      TLorentzVector JetLV_, GenLV_; 
-      for(size_t ijet(0); ijet<jets_pt.size(); ijet++){
-        bool matched = false;
-	if(jets_pt.at(ijet)<30) continue;
-	if(abs(jets_eta.at(ijet))>2.4) continue;
-	if(jets_id.at(ijet)==0) continue;
-	if(jets_islep.at(ijet)==1) continue;
+		//
+		sys_mj12_up   =  getMJ(sys_jets_pt_up, jets_eta, jets_phi, jets_m, jets_id);
+		sys_mj12_down =  getMJ(sys_jets_pt_down, jets_eta, jets_phi, jets_m, jets_id);
+		
+		// fill jec syst branches: vec.at(0) is up and vec.at(1) is down 
+		sys_njets.push_back(sys_njets_up);	sys_njets.push_back(sys_njets_down);	
+		sys_nbm.push_back(sys_nbm_up);			sys_nbm.push_back(sys_nbm_down);	
+		sys_ht.push_back(sys_ht_up);				sys_ht.push_back(sys_ht_down);	
+		sys_mj12.push_back(sys_mj12_up);		sys_mj12.push_back(sys_mj12_down);	
 
-        JetLV_.SetPtEtaPhiM(jets_pt.at(ijet), jets_eta.at(ijet), jets_phi.at(ijet), jets_m.at(ijet));
+		if(!isData){//number of ISR-->TTbar_Madgraph, signal.
+			int nisr(0);
+			TLorentzVector JetLV_, GenLV_; 
+			for(size_t ijet(0); ijet<jets_pt.size(); ijet++){
+				bool matched = false;
+				if(jets_pt.at(ijet)<30) continue;
+				if(abs(jets_eta.at(ijet))>2.4) continue;
+				if(jets_id.at(ijet)==0) continue;
+				if(jets_islep.at(ijet)==1) continue;
 
-        for(size_t imc(0); imc < gen_pt.size(); imc++){
-	  if((gen_PartIdxMother.at(imc))==-1) continue;
-	  int momid = abs(gen_pdgId.at(gen_PartIdxMother.at(imc)));
-	
-	  if(!((gen_statusFlags.at(imc)>>7)&1) || abs(gen_pdgId.at(imc))>5) continue;
+				JetLV_.SetPtEtaPhiM(jets_pt.at(ijet), jets_eta.at(ijet), jets_phi.at(ijet), jets_m.at(ijet));
 
-	//pdgId<5: quark from genParticle. GenPart_statusFlags gen status flags stored bitwise, bits are: 0 : isPrompt, 1 : isDecayedLeptonHadron, 2 : isTauDecayProduct, 3 : isPromptTauDecayProduct, 4 : isDirectTauDecayProduct, 5 : isDirectPromptTauDecayProduct, 6 : isDirectHadronDecayProduct, 7 : isHardProcess, 8 : fromHardProcess, 9 : isHardProcessTauDecayProduct, 10 : isDirectHardProcessTauDecayProduct, 11 : fromHardProcessBeforeFSR, 12 : isFirstCopy, 13 : isLastCopy, 14 : isLastCopyBeforeFSR,  : 0 at: 0x7f9e93685030
+				for(size_t imc(0); imc < gen_pt.size(); imc++){
+					if((gen_PartIdxMother.at(imc))==-1) continue;
+					int momid = abs(gen_pdgId.at(gen_PartIdxMother.at(imc)));
 
-	  //cout<<"Flags 7: "<< (gen_statusFlags.at(imc)>>7)&1 <<", Flags 8:"<< (gen_statusFlags.at(imc)>>8)&1 << endl;
+					if(!((gen_statusFlags.at(imc)>>7)&1) || abs(gen_pdgId.at(imc))>5) continue;
 
-	  if(!(momid==6 || momid==23 || momid==24 || momid==25 || momid>1e6)) continue;//6: top, 23: Z boson, 24: W boson, 25: Higgs, 1e6<: SUSY particle ---> matching condition is final state Jets.
-          GenLV_.SetPtEtaPhiM(gen_pt.at(imc), gen_eta.at(imc), gen_phi.at(imc), gen_m.at(imc));
-	  float dR = JetLV_.DeltaR(GenLV_);//dR=sqrt(dphi^2+deta^2)
-	  if(dR<0.3){
-	    matched = true;
-	    matched_tr = matched;
-	  }
-	  histo_dR->Fill(dR);
-        }
-        if(matched==false) nisr++;//--> not matched with final state.
-      }
-      histo_dR->GetXaxis()->SetTitle("dR distribution");
+					//pdgId<5: quark from genParticle. GenPart_statusFlags gen status flags stored bitwise, bits are: 0 : isPrompt, 1 : isDecayedLeptonHadron, 2 : isTauDecayProduct, 3 : isPromptTauDecayProduct, 4 : isDirectTauDecayProduct, 5 : isDirectPromptTauDecayProduct, 6 : isDirectHadronDecayProduct, 7 : isHardProcess, 8 : fromHardProcess, 9 : isHardProcessTauDecayProduct, 10 : isDirectHardProcessTauDecayProduct, 11 : fromHardProcessBeforeFSR, 12 : isFirstCopy, 13 : isLastCopy, 14 : isLastCopyBeforeFSR,  : 0 at: 0x7f9e93685030
 
-      float w_isr = 1.;
-      float isr_norm_tt = 0;
-      if((inputfile.Contains("TTJets_") && inputfile.Contains("madgraphMLM"))) isr_norm_tt =1.101;
-      else if(inputfile.Contains("SMS-T1tbs_RPV")) isr_norm_tt = 1;
+					//cout<<"Flags 7: "<< (gen_statusFlags.at(imc)>>7)&1 <<", Flags 8:"<< (gen_statusFlags.at(imc)>>8)&1 << endl;
 
-      float isr_wgt     = -999.;
-      if(nisr==0)       isr_wgt = 1.; 
-      else if(nisr==1)  isr_wgt = 0.920; 
-      else if(nisr==2)  isr_wgt = 0.821; 
-      else if(nisr==3)  isr_wgt = 0.715; 
-      else if(nisr==4)  isr_wgt = 0.662; 
-      else if(nisr==5)  isr_wgt = 0.561; 
-      else if(nisr>=6)  isr_wgt = 0.511; 
-      w_isr = isr_wgt*isr_norm_tt;
-      w_isr_tr = w_isr;
-      nisr_tr = nisr;
-      isr_wgt_tr = isr_wgt;
-      isr_norm_tt_tr = isr_norm_tt;
-      h3->Fill(njets,nisr);
-    }
-    h3->GetXaxis()->SetTitle("njet");
-    h3->GetYaxis()->SetTitle("nisr");
+					if(!(momid==6 || momid==23 || momid==24 || momid==25 || momid>1e6)) continue;//6: top, 23: Z boson, 24: W boson, 25: Higgs, 1e6<: SUSY particle ---> matching condition is final state Jets.
+					GenLV_.SetPtEtaPhiM(gen_pt.at(imc), gen_eta.at(imc), gen_phi.at(imc), gen_m.at(imc));
+					float dR = JetLV_.DeltaR(GenLV_);//dR=sqrt(dphi^2+deta^2)
+					if(dR<0.3){
+						matched = true;
+						matched_tr = matched;
+					}
+					histo_dR->Fill(dR);
+				}
+				if(matched==false) nisr++;//--> not matched with final state.
+			}
+			histo_dR->GetXaxis()->SetTitle("dR distribution");
+
+			float w_isr = 1.;
+			float isr_norm_tt = 0;
+			if((inputfile.Contains("TTJets_") && inputfile.Contains("madgraphMLM"))) isr_norm_tt =1.101;
+			else if(inputfile.Contains("SMS-T1tbs_RPV")) isr_norm_tt = 1;
+
+			float isr_wgt     = -999.;
+			if(nisr==0)       isr_wgt = 1.; 
+			else if(nisr==1)  isr_wgt = 0.920; 
+			else if(nisr==2)  isr_wgt = 0.821; 
+			else if(nisr==3)  isr_wgt = 0.715; 
+			else if(nisr==4)  isr_wgt = 0.662; 
+			else if(nisr==5)  isr_wgt = 0.561; 
+			else if(nisr>=6)  isr_wgt = 0.511; 
+			w_isr = isr_wgt*isr_norm_tt;
+			w_isr_tr = w_isr;
+			nisr_tr = nisr;
+			isr_wgt_tr = isr_wgt;
+			isr_norm_tt_tr = isr_norm_tt;
+			h3->Fill(njets,nisr);
+		}
+		h3->GetXaxis()->SetTitle("njet");
+		h3->GetYaxis()->SetTitle("nisr");
 
     /*if(!isData){
     float genHT(0);
@@ -1138,6 +1228,25 @@ int main(int argc, char **argv)
   else if(inputdir.Contains("Run2017")) year = 2017;
   else if(inputdir.Contains("Run2018")) year = 2018;
   cout << " year: " << year << endl;
+	
+	// JECs
+	if(0)
+	{
+		JetCorrectorParameters *L1JetPar  = new JetCorrectorParameters("data/jec/Summer16_07Aug2017_V11_MC_L1FastJet_AK4PFchs.txt","");
+		JetCorrectorParameters *L2JetPar  = new JetCorrectorParameters("data/jec/Summer16_07Aug2017_V11_MC_L2Relative_AK4PFchs.txt");
+		JetCorrectorParameters *L3JetPar  = new JetCorrectorParameters("data/jec/Summer16_07Aug2017_V11_MC_L3Absolute_AK4PFchs.txt");
+		JetCorrectorParameters *ResJetPar = new JetCorrectorParameters("data/jec/Summer16_07Aug2017_V11_MC_L2L3Residual_AK4PFchs.txt"); 
+		//  Load the JetCorrectorParameter objects into a vector, IMPORTANT: THE ORDER MATTERS HERE !!!! 
+		vector<JetCorrectorParameters> vPar;
+		vPar.push_back(*L1JetPar);
+		vPar.push_back(*L2JetPar);
+		vPar.push_back(*L3JetPar);
+		vPar.push_back(*ResJetPar);
+		static FactorizedJetCorrector *jetCorrector = 0; 
+		JetCorrector = new FactorizedJetCorrector(vPar);
+	}
+	// JEC systs
+	JecUnc  = new JetCorrectionUncertainty("data/jec/Summer16_07Aug2017_V11_MC_Uncertainty_AK4PFchs.txt");
 
   // get list of files in a directory to calculate w_lumi
   // w_lumi = xsec[fb] * genWeight / sum(genWeights)
@@ -1150,6 +1259,7 @@ int main(int argc, char **argv)
     cout << files.at(ifile) << endl;
     if(useCondor) files.at(ifile).ReplaceAll("/xrootd","root://cms-xrdr.private.lo:2094//xrd");
   }
+
 
   float sumWeights = 1;
   int nfiles = files.size();

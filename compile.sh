@@ -8,7 +8,8 @@ cd -
 
 # compile scripts
 #  - note that fastsim path is correctly set
-g++ process_nano.cpp  `fastjet-config --cxxflags --libs --plugins` `root-config --cflags --glibs` -o process_nano.exe
+#g++ process_nano.cpp  `fastjet-config --cxxflags --libs --plugins` `root-config --cflags --glibs` -o process_nano.exe
+g++  process_nano.cpp JetCorrectorParameters.cpp FactorizedJetCorrector.cpp SimpleJetCorrector.cpp JetCorrectionUncertainty.cpp SimpleJetCorrectionUncertainty.cpp BTagCalibrationStandalone.cpp `fastjet-config --cxxflags --libs --plugins` `root-config --cflags --glibs` -o process_nano.exe
 g++ skim.cpp  `root-config --cflags --glibs` -o skim.exe
 
 # copy executables to home directory so that they can be picked up by condor
