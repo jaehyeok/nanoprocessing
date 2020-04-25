@@ -4,28 +4,26 @@ import ROOT
 from ROOT import TChain, TSelector, TTree, TH1F, TCanvas, TPad, TStyle, TString
 year=sys.argv[1]
 
-simple_in = "/cms/ldap_home/jaehyeok/nanoprocessing/condor/xrootd/"
-simple_out = "/cms/scratch/yjeong/CMSSW_7_1_0/src/nanoprocessing/mc_merged/"
+simple_PATH = "/xrootd_user/yjeong/xrootd/nanoprocessing/"
 
-inputdir = simple_in+"2016v4/2019_12_10/skim_rpvfitnbge0/"
-outputdir = simple_out+"2016_1/"
-flists = os.listdir(inputdir)
+inputdir = simple_PATH+"2016/skim_rpvfitnbge0_v5/"
+outputdir = simple_PATH+"2016/merged_rpvfitnbge0_v5/"
 
 if year == "2017":
-	inputdir = simple_in+"2017v4/2019_10_23/skim_rpvfit/"
-	outputdir = simple_out+"2017/"
-	flists = os.listdir(inputdir)
+	inputdir = simple_PATH+"2017/skim_rpvfitnbge0/"
+	outputdir = simple_PATH+"2017/merged_rpvfitnbge0/"
 
 if year == "2018":
-	inputdir = simple_in+"2018v4/2019_10_23/skim_rpvfit/"
-	outputdir = simple_out+"2018/"
-	flists = os.listdir(inputdir)
+	inputdir = simple_PATH+"2018/skim_rpvfitnbge0/"
+	outputdir = simple_PATH+"2018/merged_rpvfitnbge0/"
 
+flistdir = "/cms/ldap_home/yjeong/flist/"+year
+flists = os.listdir(flistdir)
 process=[]
 
-for i in range(0,len(flists)-1):
-	tag=flists[i].replace('_rpvfitnbge0','').replace('.root','').split('fatjetbaby_')
-	process.append(tag[1])
+for flist_ in flists:
+	tag=flist_.replace('.txt','').replace('flist_','')
+	process.append(tag)
 
 process = list(set(process))
 
@@ -35,7 +33,6 @@ print('-------------------------------------------------------------------------
 
 for flist in process:
 	mc = TChain("tree")
-	mc.Add(inputdir+"*_fatjetbaby_"+flist+"_rpvfitnbge0"+".root")
 	nfiles=mc.Add(inputdir+"*_fatjetbaby_"+flist+"_rpvfitnbge0"+".root")
 	nfiles=str(nfiles)
 	t1 = mc.GetEntries()

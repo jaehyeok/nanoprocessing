@@ -151,7 +151,9 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   Float_t     btagWeight_CSVV2 = 1;
   Float_t     genWeight        = 1;
   //LHE HT incomming
-  Float_t    LHE_HTIncoming = 0;
+  Float_t     LHE_HTIncoming = 0;
+  //LHE Scale Weight
+  Float_t     LHEScaleWeight = 0;
   // MC 
   UInt_t  nGenPart=0;
   Float_t GenPart_eta[500];  
@@ -224,6 +226,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   tree->SetBranchAddress("fixedGridRhoFastjetAll",          &fixedGridRhoFastjetAll);
   //LHE HT incoming
   tree->SetBranchAddress("LHE_HTIncoming",	&LHE_HTIncoming);
+  tree->SetBranchAddress("LHEScaleWeight",	&LHEScaleWeight);
   if(!isData)
   {
     tree->SetBranchAddress("Pileup_nTrueInt",     &Pileup_nTrueInt);
@@ -1039,6 +1042,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
       w_btag_csv = btagWeight_CSVV2;
       w_lumi     = xsec*genWeight/sumWeights;//getXsec(samplename)*genWeight/sumWeights; // cross section in fb
       w_pu       = getPUweight(samplename, year, ntrupv_mean, 0); // syst=-1 0 1 (down nominal up)
+      w_lhe_scale = LHEScaleWeight;
     }
 
     if(isData) 
@@ -1047,6 +1051,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
       w_btag_dcsv = 1;
       w_lumi      = 1;
       w_pu        = 1;
+      w_lhe_scale = 1;
     }
     if ((inputfile.Contains("SMS-T1tbs_RPV")) || (inputfile.Contains("TTJets_") )) weight = w_btag_dcsv * w_lumi * w_pu * w_isr_tr;
     else if(!((inputfile.Contains("SMS-T1tbs_RPV")) || (inputfile.Contains("TTJets_") ))){
@@ -1109,6 +1114,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
     }
    trig_isomu24  = HLT_IsoMu24;
    trig_isomu27  = HLT_IsoMu27;
+   pass_hbheiso = Flag_HBHENoiseIsoFilter;
 
    
     // Fill the branches 
