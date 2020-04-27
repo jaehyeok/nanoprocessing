@@ -571,8 +571,8 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   //  (2) Bin Entry is the sum over energies of PF candidates in a given bin  
   // 
   TH2F *h2 = new TH2F("h2","h2", 115, -5.0, 5.0, 72, -1*TMath::Pi(), TMath::Pi());
-  TH2F *h3 = new TH2F("h3","nisr vs njets",22,0,22,10,0,10);
-  TH1F *histo_dR = new TH1F("histo_dR","DeltaR recoJet vs GenJet",50,0,1);
+  //TH2F *h3 = new TH2F("h3","nisr vs njets",22,0,22,10,0,10);
+  //TH1F *histo_dR = new TH1F("histo_dR","DeltaR recoJet vs GenJet",50,0,1);
 
   // 
   // Loop over entries
@@ -995,11 +995,11 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
 						matched = true;
 						matched_tr = matched;
 					}
-					histo_dR->Fill(dR);
+					//histo_dR->Fill(dR);
 				}
 				if(matched==false) nisr++;//--> not matched with final state.
 			}
-			histo_dR->GetXaxis()->SetTitle("dR distribution");
+			//histo_dR->GetXaxis()->SetTitle("dR distribution");
 
 			float w_isr = 1.;
 			float isr_norm_tt = 0;
@@ -1019,10 +1019,10 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
 			nisr_tr = nisr;
 			isr_wgt_tr = isr_wgt;
 			isr_norm_tt_tr = isr_norm_tt;
-			h3->Fill(njets,nisr);
+			//h3->Fill(njets,nisr);
 		}
-		h3->GetXaxis()->SetTitle("njet");
-		h3->GetYaxis()->SetTitle("nisr");
+		//h3->GetXaxis()->SetTitle("njet");
+		//h3->GetYaxis()->SetTitle("nisr");
 
     /*if(!isData){
     float genHT(0);
@@ -1169,8 +1169,8 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   {
     babyFile_->cd();
     babyTree_->Write();
-    h3->Write();
-    histo_dR->Write();
+    //h3->Write();
+    //histo_dR->Write();
     babyFile_->Close();
   }
 
@@ -1260,7 +1260,7 @@ int main(int argc, char **argv)
   // w_lumi = xsec[fb] * genWeight / sum(genWeights)
   // => https://twiki.cern.ch/twiki/bin/view/Main/CMGMonojetAnalysisTools
   //vector<TString> files = globVector(Form("/xrootd/%s/*/*.root", inputdir.Data())); 
-  vector<TString> files = getFileListFromFile(Form("flist/%d/flist_%s.txt", year, process.Data())); 
+  vector<TString> files = getFileListFromFile(Form("flist/%d/flist_%s.txt", year, process.Data()));
   vector<TString> files_original = files; 
   for(int ifile=0; ifile<files.size(); ifile++)
   {
