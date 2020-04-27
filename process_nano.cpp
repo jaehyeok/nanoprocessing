@@ -348,10 +348,10 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   float w_lumi      =1;
   float w_toppt     =1;
   float w_lep       =1;
-  float w_isr_tr    =0;
-  float isr_wgt_tr  =0;
-  float isr_norm_tt_tr =0;
-  int nisr_tr = 0;
+  float w_isr    =0;
+  float isr_wgt  =0;
+  float isr_norm =0;
+  int nisr = 0;
   bool stitch_ht=true;
   float w_lhe_scale =1;
 
@@ -371,7 +371,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   bool stitch;
   bool pass=true;
   bool fromGS;
-  bool matched_tr;
+  bool matched;
   /*
   //MC   
   int ntruleps;
@@ -492,11 +492,11 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   babyTree_->Branch("w_lumi",    	    &w_lumi);
   babyTree_->Branch("w_pu",      	    &w_pu);
   babyTree_->Branch("xsec",						&xsec);
-  babyTree_->Branch("w_isr_tr",				&w_isr_tr);
-  babyTree_->Branch("isr_wgt_tr",			&isr_wgt_tr);
-  babyTree_->Branch("isr_norm_tt_tr",	&isr_norm_tt_tr);
-  babyTree_->Branch("nisr_tr",				&nisr_tr);
-  babyTree_->Branch("matched_tr",			&matched_tr);
+  babyTree_->Branch("w_isr",				&w_isr);
+  babyTree_->Branch("isr_wgt",			&isr_wgt);
+  babyTree_->Branch("isr_norm",	&isr_norm);
+  babyTree_->Branch("nisr",				&nisr);
+  babyTree_->Branch("matched",			&matched);
   babyTree_->Branch("w_lhe_scale",			&w_lhe_scale);
   // leptons 
   babyTree_->Branch("nleps",       	  &nleps);    
@@ -967,10 +967,10 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
 		}	
 
 		if(!isData){//number of ISR-->TTbar_Madgraph, signal.
-			int nisr(0);
+			int nisr_(0);
 			TLorentzVector JetLV_, GenLV_; 
 			for(size_t ijet(0); ijet<jets_pt.size(); ijet++){
-				bool matched = false;
+				bool matched_ = false;
 				if(jets_pt.at(ijet)<30) continue;
 				if(abs(jets_eta.at(ijet))>2.4) continue;
 				if(jets_id.at(ijet)==0) continue;
@@ -992,33 +992,33 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
 					GenLV_.SetPtEtaPhiM(gen_pt.at(imc), gen_eta.at(imc), gen_phi.at(imc), gen_m.at(imc));
 					float dR = JetLV_.DeltaR(GenLV_);//dR=sqrt(dphi^2+deta^2)
 					if(dR<0.3){
-						matched = true;
-						matched_tr = matched;
+						matched_ = true;
+						matched = matched_;
 					}
 					//histo_dR->Fill(dR);
 				}
-				if(matched==false) nisr++;//--> not matched with final state.
+				if(matched_==false) nisr_++;//--> not matched with final state.
 			}
 			//histo_dR->GetXaxis()->SetTitle("dR distribution");
 
-			float w_isr = 1.;
-			float isr_norm_tt = 0;
-			if((inputfile.Contains("TTJets_") && inputfile.Contains("madgraphMLM"))) isr_norm_tt =1.101;
-			else if(inputfile.Contains("SMS-T1tbs_RPV")) isr_norm_tt = 1;
+			float w_isr_ = 1.;
+			float isr_norm_ = 0;
+			if((inputfile.Contains("TTJets_") && inputfile.Contains("madgraphMLM"))) isr_norm_ =1.101;
+			else if(inputfile.Contains("SMS-T1tbs_RPV")) isr_norm_ = 1;
 
-			float isr_wgt     = -999.;
-			if(nisr==0)       isr_wgt = 1.; 
-			else if(nisr==1)  isr_wgt = 0.920; 
-			else if(nisr==2)  isr_wgt = 0.821; 
-			else if(nisr==3)  isr_wgt = 0.715; 
-			else if(nisr==4)  isr_wgt = 0.662; 
-			else if(nisr==5)  isr_wgt = 0.561; 
-			else if(nisr>=6)  isr_wgt = 0.511; 
-			w_isr = isr_wgt*isr_norm_tt;
-			w_isr_tr = w_isr;
-			nisr_tr = nisr;
-			isr_wgt_tr = isr_wgt;
-			isr_norm_tt_tr = isr_norm_tt;
+			float isr_wgt_     = -999.;
+			if(nisr_==0)       isr_wgt_ = 1.; 
+			else if(nisr_==1)  isr_wgt_ = 0.920; 
+			else if(nisr_==2)  isr_wgt_ = 0.821; 
+			else if(nisr_==3)  isr_wgt_ = 0.715; 
+			else if(nisr_==4)  isr_wgt_ = 0.662; 
+			else if(nisr_==5)  isr_wgt_ = 0.561; 
+			else if(nisr_>=6)  isr_wgt_ = 0.511; 
+			w_isr_ = isr_wgt_*isr_norm_;
+			w_isr = w_isr_;
+			nisr = nisr_;
+			isr_wgt = isr_wgt_;
+			isr_norm = isr_norm_;
 			//h3->Fill(njets,nisr);
 		}
 		//h3->GetXaxis()->SetTitle("njet");
@@ -1055,10 +1055,10 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
       w_pu        = 1;
       w_lhe_scale = 1;
     }
-    if ((inputfile.Contains("SMS-T1tbs_RPV")) || (inputfile.Contains("TTJets_") )) weight = w_btag_dcsv * w_lumi * w_pu * w_isr_tr;
+    if ((inputfile.Contains("SMS-T1tbs_RPV")) || (inputfile.Contains("TTJets_") )) weight = w_btag_dcsv * w_lumi * w_pu * w_isr;
     else if(!((inputfile.Contains("SMS-T1tbs_RPV")) || (inputfile.Contains("TTJets_") ))){
       weight = w_btag_dcsv * w_lumi * w_pu;
-      w_isr_tr = 1;
+      w_isr = 1;
     }
     if((inputfile.Contains("TTJets_Tune")) && lhe_ht>600) stitch_ht = false;
 
