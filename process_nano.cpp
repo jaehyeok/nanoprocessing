@@ -348,12 +348,12 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   float w_lumi      =1;
   float w_toppt     =1;
   float w_lep       =1;
-  float w_isr_tr    =0;
-  float isr_wgt_tr  =0;
-  float isr_norm_tt_tr =0;
-  int nisr_tr = 0;
+  float w_isr    =0;
+  float isr_wgt  =0;
+  float isr_norm =0;
+  int nisr = 0;
   bool stitch_ht=true;
-  float w_lhe_scale =1;
+  float w_lhe_scale =1; // FIXME: to be removed 
 
   //std::vector<float> w_pdf;
   //float eff_trig;
@@ -371,7 +371,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   bool stitch;
   bool pass=true;
   bool fromGS;
-  bool matched_tr;
+  bool matched;
   /*
   //MC   
   int ntruleps;
@@ -486,18 +486,18 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   babyTree_->Branch("lhe_ht",            &lhe_ht);
   babyTree_->Branch("stitch_ht",        &stitch_ht);
   // weights 
-  babyTree_->Branch("weight",          &weight);
-  babyTree_->Branch("w_btag_csv",      &w_btag_csv);
-  babyTree_->Branch("w_btag_dcsv",     &w_btag_dcsv);
-  babyTree_->Branch("w_lumi",          &w_lumi);
-  babyTree_->Branch("w_pu",            &w_pu);
-  babyTree_->Branch("xsec",            &xsec);
-  babyTree_->Branch("w_isr_tr",        &w_isr_tr);
-  babyTree_->Branch("isr_wgt_tr",      &isr_wgt_tr);
-  babyTree_->Branch("isr_norm_tt_tr",  &isr_norm_tt_tr);
-  babyTree_->Branch("nisr_tr",        &nisr_tr);
-  babyTree_->Branch("matched_tr",      &matched_tr);
-  babyTree_->Branch("w_lhe_scale",      &w_lhe_scale);
+  babyTree_->Branch("weight",    	    &weight);
+  babyTree_->Branch("w_btag_csv",    	&w_btag_csv);
+  babyTree_->Branch("w_btag_dcsv",   	&w_btag_dcsv);
+  babyTree_->Branch("w_lumi",    	    &w_lumi);
+  babyTree_->Branch("w_pu",      	    &w_pu);
+  babyTree_->Branch("xsec",						&xsec);
+  babyTree_->Branch("w_isr",				&w_isr);
+  babyTree_->Branch("isr_wgt",			&isr_wgt);
+  babyTree_->Branch("isr_norm",	&isr_norm);
+  babyTree_->Branch("nisr",				&nisr);
+  babyTree_->Branch("matched",			&matched);
+  babyTree_->Branch("w_lhe_scale",			&w_lhe_scale);
   // leptons 
   babyTree_->Branch("nleps",           &nleps);    
   babyTree_->Branch("leps_pt",         &leps_pt);    
@@ -571,8 +571,6 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   //  (2) Bin Entry is the sum over energies of PF candidates in a given bin  
   // 
   TH2F *h2 = new TH2F("h2","h2", 115, -5.0, 5.0, 72, -1*TMath::Pi(), TMath::Pi());
-  TH2F *h3 = new TH2F("h3","nisr vs njets",22,0,22,10,0,10);
-  TH1F *histo_dR = new TH1F("histo_dR","DeltaR recoJet vs GenJet",50,0,1);
 
   // 
   // Loop over entries
@@ -959,87 +957,66 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
       }
     } 
 
-    // JEC systematics (fill only for MC)
-    if(!isData){
-      sys_mj12_up   =  getMJ(sys_jets_pt_up, jets_eta, jets_phi, jets_m, jets_id);
-      sys_mj12_down =  getMJ(sys_jets_pt_down, jets_eta, jets_phi, jets_m, jets_id);
+		// JEC systematics (fill only for MC)
+		if(!isData){
+			sys_mj12_up   =  getMJ(sys_jets_pt_up, jets_eta, jets_phi, jets_m, jets_id);
+			sys_mj12_down =  getMJ(sys_jets_pt_down, jets_eta, jets_phi, jets_m, jets_id);
 
-      // fill jec syst branches: vec.at(0) is up and vec.at(1) is down 
-      sys_njets.push_back(sys_njets_up);  sys_njets.push_back(sys_njets_down);  
-      sys_nbm.push_back(sys_nbm_up);      sys_nbm.push_back(sys_nbm_down);  
-      sys_ht.push_back(sys_ht_up);        sys_ht.push_back(sys_ht_down);  
-      sys_mj12.push_back(sys_mj12_up);    sys_mj12.push_back(sys_mj12_down);  
-    }  
+			// fill jec syst branches: vec.at(0) is up and vec.at(1) is down 
+			sys_njets.push_back(sys_njets_up);	sys_njets.push_back(sys_njets_down);	
+			sys_nbm.push_back(sys_nbm_up);			sys_nbm.push_back(sys_nbm_down);	
+			sys_ht.push_back(sys_ht_up);				sys_ht.push_back(sys_ht_down);	
+			sys_mj12.push_back(sys_mj12_up);		sys_mj12.push_back(sys_mj12_down);	
+		}	
 
-    if(!isData){//number of ISR-->TTbar_Madgraph, signal.
-      int nisr(0);
-      TLorentzVector JetLV_, GenLV_; 
-      for(size_t ijet(0); ijet<jets_pt.size(); ijet++){
-        bool matched = false;
-        if(jets_pt.at(ijet)<30) continue;
-        if(abs(jets_eta.at(ijet))>2.4) continue;
-        if(jets_id.at(ijet)==0) continue;
-        if(jets_islep.at(ijet)==1) continue;
+		if(!isData){//number of ISR-->TTbar_Madgraph, signal.
+			int nisr_(0);
+			TLorentzVector JetLV_, GenLV_; 
+			for(size_t ijet(0); ijet<jets_pt.size(); ijet++){
+				bool matched_ = false;
+				if(jets_pt.at(ijet)<30) continue;
+				if(abs(jets_eta.at(ijet))>2.4) continue;
+				if(jets_id.at(ijet)==0) continue;
+				if(jets_islep.at(ijet)==1) continue;
 
-        JetLV_.SetPtEtaPhiM(jets_pt.at(ijet), jets_eta.at(ijet), jets_phi.at(ijet), jets_m.at(ijet));
+				JetLV_.SetPtEtaPhiM(jets_pt.at(ijet), jets_eta.at(ijet), jets_phi.at(ijet), jets_m.at(ijet));
 
-        for(size_t imc(0); imc < gen_pt.size(); imc++){
-          if((gen_PartIdxMother.at(imc))==-1) continue;
-          int momid = abs(gen_pdgId.at(gen_PartIdxMother.at(imc)));
+				for(size_t imc(0); imc < gen_pt.size(); imc++){
+					if((gen_PartIdxMother.at(imc))==-1) continue;
+					int momid = abs(gen_pdgId.at(gen_PartIdxMother.at(imc)));
 
-          if(!((gen_statusFlags.at(imc)>>7)&1) || abs(gen_pdgId.at(imc))>5) continue;
+					if(!((gen_statusFlags.at(imc)>>7)&1) || abs(gen_pdgId.at(imc))>5) continue;
 
-          //pdgId<5: quark from genParticle. GenPart_statusFlags gen status flags stored bitwise, bits are: 0 : isPrompt, 1 : isDecayedLeptonHadron, 2 : isTauDecayProduct, 3 : isPromptTauDecayProduct, 4 : isDirectTauDecayProduct, 5 : isDirectPromptTauDecayProduct, 6 : isDirectHadronDecayProduct, 7 : isHardProcess, 8 : fromHardProcess, 9 : isHardProcessTauDecayProduct, 10 : isDirectHardProcessTauDecayProduct, 11 : fromHardProcessBeforeFSR, 12 : isFirstCopy, 13 : isLastCopy, 14 : isLastCopyBeforeFSR,  : 0 at: 0x7f9e93685030
+					if(!(momid==6 || momid==23 || momid==24 || momid==25 || momid>1e6)) continue;//6: top, 23: Z boson, 24: W boson, 25: Higgs, 1e6<: SUSY particle ---> matching condition is final state Jets.
+					GenLV_.SetPtEtaPhiM(gen_pt.at(imc), gen_eta.at(imc), gen_phi.at(imc), gen_m.at(imc));
+					float dR = JetLV_.DeltaR(GenLV_);//dR=sqrt(dphi^2+deta^2)
+					if(dR<0.3){
+						matched_ = true;
+						matched = matched_;
+					}
+				}
+				if(matched_==false) nisr_++;//--> not matched with final state.
+			}
 
-          //cout<<"Flags 7: "<< (gen_statusFlags.at(imc)>>7)&1 <<", Flags 8:"<< (gen_statusFlags.at(imc)>>8)&1 << endl;
+			float w_isr_ = 1.;
+			float isr_norm_ = 0;
+			if((inputfile.Contains("TTJets_") && inputfile.Contains("madgraphMLM"))) isr_norm_ =1.101;
+			else if(inputfile.Contains("SMS-T1tbs_RPV")) isr_norm_ = 1;
 
-          if(!(momid==6 || momid==23 || momid==24 || momid==25 || momid>1e6)) continue;//6: top, 23: Z boson, 24: W boson, 25: Higgs, 1e6<: SUSY particle ---> matching condition is final state Jets.
-          GenLV_.SetPtEtaPhiM(gen_pt.at(imc), gen_eta.at(imc), gen_phi.at(imc), gen_m.at(imc));
-          float dR = JetLV_.DeltaR(GenLV_);//dR=sqrt(dphi^2+deta^2)
-          if(dR<0.3){
-            matched = true;
-            matched_tr = matched;
-          }
-          histo_dR->Fill(dR);
-        }
-        if(matched==false) nisr++;//--> not matched with final state.
-      }
-      histo_dR->GetXaxis()->SetTitle("dR distribution");
-
-      float w_isr = 1.;
-      float isr_norm_tt = 0;
-      if((inputfile.Contains("TTJets_") && inputfile.Contains("madgraphMLM"))) isr_norm_tt =1.101;
-      else if(inputfile.Contains("SMS-T1tbs_RPV")) isr_norm_tt = 1;
-
-      float isr_wgt     = -999.;
-      if(nisr==0)       isr_wgt = 1.; 
-      else if(nisr==1)  isr_wgt = 0.920; 
-      else if(nisr==2)  isr_wgt = 0.821; 
-      else if(nisr==3)  isr_wgt = 0.715; 
-      else if(nisr==4)  isr_wgt = 0.662; 
-      else if(nisr==5)  isr_wgt = 0.561; 
-      else if(nisr>=6)  isr_wgt = 0.511; 
-      w_isr = isr_wgt*isr_norm_tt;
-      w_isr_tr = w_isr;
-      nisr_tr = nisr;
-      isr_wgt_tr = isr_wgt;
-      isr_norm_tt_tr = isr_norm_tt;
-      h3->Fill(njets,nisr);
-    }
-    h3->GetXaxis()->SetTitle("njet");
-    h3->GetYaxis()->SetTitle("nisr");
-
-    /*if(!isData){
-    float genHT(0);
-      for(size_t igen=0; igen<gen_pt.size();igen++){
-        if((gen_PartIdxMother.at(igen))==-1) continue;
-  int momid = abs(gen_pdgId.at(gen_PartIdxMother.at(igen)));
-  if(!((gen_statusFlags.at(igen)>>8)&1) || abs(gen_pdgId.at(igen))>5) continue;
-  if(momid==6 || momid==23 || momid==24 || momid==25 || momid>1e6) continue;// selected only ISR parton
-  //if(!(gen_status.at(igen)==1 && abs((gen_pdgId.at(igen))<6 || abs(gen_pdgId.at(igen))==21) && momid!=6 && momid!=23 && momid!=24 && momid!=25)) continue;
-  genHT+=gen_pt.at(igen);
-      }
-    }*/
+			float isr_wgt_     = -999.;
+			if(nisr_==0)       isr_wgt_ = 1.; 
+			else if(nisr_==1)  isr_wgt_ = 0.920; 
+			else if(nisr_==2)  isr_wgt_ = 0.821; 
+			else if(nisr_==3)  isr_wgt_ = 0.715; 
+			else if(nisr_==4)  isr_wgt_ = 0.662; 
+			else if(nisr_==5)  isr_wgt_ = 0.561; 
+			else if(nisr_>=6)  isr_wgt_ = 0.511; 
+			w_isr_ = isr_wgt_*isr_norm_;
+			w_isr = w_isr_;
+			nisr = nisr_;
+			isr_wgt = isr_wgt_;
+			isr_norm = isr_norm_;
+		}
 
     // 
     // weights 
@@ -1060,41 +1037,15 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
       w_pu        = 1;
       w_lhe_scale = 1;
     }
-    if ((inputfile.Contains("SMS-T1tbs_RPV")) || (inputfile.Contains("TTJets_") )) weight = w_btag_dcsv * w_lumi * w_pu * w_isr_tr;
+    if ((inputfile.Contains("SMS-T1tbs_RPV")) || (inputfile.Contains("TTJets_") )) weight = w_btag_dcsv * w_lumi * w_pu * w_isr;
     else if(!((inputfile.Contains("SMS-T1tbs_RPV")) || (inputfile.Contains("TTJets_") ))){
       weight = w_btag_dcsv * w_lumi * w_pu;
-      w_isr_tr = 1;
+      w_isr = 1;
     }
     if((inputfile.Contains("TTJets_Tune")) && lhe_ht>600) stitch_ht = false;
 
     // filters and triggers 
     //https://twiki.cern.ch/twiki/bin/viewauth/CMS/MissingETOptionalFiltersRun2
-    //2018 
-    // Flag_goodVertices
-    // Flag_globalSuperTightHalo2016Filter 
-    // Flag_HBHENoiseFilter
-    // Flag_HBHENoiseIsoFilter
-    // Flag_EcalDeadCellTriggerPrimitiveFilter
-    // Flag_BadPFMuonFilter
-    // Flag_eeBadScFilter
-    // ecalBadCalibReducedMINIAODFilter: need to rerun on miniAOD
-    // 2017
-    // Flag_goodVertices
-    // Flag_globalSuperTightHalo2016Filter
-    // Flag_HBHENoiseFilter
-    // Flag_HBHENoiseIsoFilter
-    // Flag_EcalDeadCellTriggerPrimitiveFilter
-    // Flag_BadPFMuonFilter
-    // Flag_eeBadScFilter
-    // ecalBadCalibReducedMINIAODFilter: need to rerun on miniAOD
-    // 2016 
-    // Flag_goodVertices
-    // Flag_globalSuperTightHalo2016Filter
-    // Flag_HBHENoiseFilter
-    // Flag_HBHENoiseIsoFilter
-    // EcalDeadCellTriggerPrimitiveFilter
-    // Flag_BadPFMuonFilter
-    //
     if(year==2016)
     {
       pass = Flag_goodVertices*
@@ -1156,14 +1107,6 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
 
     } 
 
-    // Clear vectors for the next event 
-    //fjets_pt.clear();
-    //fjets_eta.clear();
-    //fjets_phi.clear();
-    //fjets_m.clear();
-    //fjets_nconst.clear();
-
-
   } // event loop
 
 
@@ -1174,8 +1117,6 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   {
     babyFile_->cd();
     babyTree_->Write();
-    h3->Write();
-    histo_dR->Write();
     babyFile_->Close();
   }
 
@@ -1265,7 +1206,7 @@ int main(int argc, char **argv)
   // w_lumi = xsec[fb] * genWeight / sum(genWeights)
   // => https://twiki.cern.ch/twiki/bin/view/Main/CMGMonojetAnalysisTools
   //vector<TString> files = globVector(Form("/xrootd/%s/*/*.root", inputdir.Data())); 
-  vector<TString> files = getFileListFromFile(Form("flist/%d/flist_%s.txt", year, process.Data())); 
+  vector<TString> files = getFileListFromFile(Form("flist/%d/flist_%s.txt", year, process.Data()));
   vector<TString> files_original = files; 
   for(int ifile=0; ifile<files.size(); ifile++)
   {
