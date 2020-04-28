@@ -92,8 +92,8 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   cout << " btag sf file: " << csvfile << endl;  
   BTagCalibration calib("DeepCSV", csvfile);
   BTagCalibrationReader calibreader(BTagEntry::OP_RESHAPING,  // operating point
-      "central",                															// central sys type
-      {"up_jes", "down_jes"});          											// other sys types
+      "central",                                              // central sys type
+      {"up_jes", "down_jes"});                                // other sys types
   calibreader.load(calib, BTagEntry::FLAV_B,     "iterativefit");
   calibreader.load(calib, BTagEntry::FLAV_C,     "iterativefit");
   calibreader.load(calib, BTagEntry::FLAV_UDSG,  "iterativefit"); 
@@ -225,8 +225,8 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   tree->SetBranchAddress("MET_phi",             &MET_phi);
   tree->SetBranchAddress("fixedGridRhoFastjetAll",          &fixedGridRhoFastjetAll);
   //LHE HT incoming
-  tree->SetBranchAddress("LHE_HTIncoming",	&LHE_HTIncoming);
-  tree->SetBranchAddress("LHEScaleWeight",	&LHEScaleWeight);
+  tree->SetBranchAddress("LHE_HTIncoming",  &LHE_HTIncoming);
+  tree->SetBranchAddress("LHEScaleWeight",  &LHEScaleWeight);
   if(!isData)
   {
     tree->SetBranchAddress("Pileup_nTrueInt",     &Pileup_nTrueInt);
@@ -239,7 +239,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   if(!isData)
   {
     tree->SetBranchAddress("genWeight",           &genWeight);
-    tree->SetBranchAddress("nGenPart",	          &nGenPart);
+    tree->SetBranchAddress("nGenPart",            &nGenPart);
     tree->SetBranchAddress("GenPart_eta",         &GenPart_eta);
     tree->SetBranchAddress("GenPart_mass",        &GenPart_mass);
     tree->SetBranchAddress("GenPart_pt",          &GenPart_pt);
@@ -298,14 +298,14 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   tree->SetBranchAddress("Flag_eeBadScFilter",                      &Flag_eeBadScFilter);
   // trigger
   if(year==2016)
-	{
+  {
     tree->SetBranchAddress("HLT_PFHT900",     &HLT_PFHT900);
     tree->SetBranchAddress("HLT_PFJet450",    &HLT_PFJet450);
   }
   if(year>2016)
-	{
+  {
     tree->SetBranchAddress("HLT_PFHT1050",    &HLT_PFHT1050);
-	}
+  }
   tree->SetBranchAddress("HLT_IsoMu24",   &HLT_IsoMu24);
   tree->SetBranchAddress("HLT_IsoMu27",   &HLT_IsoMu27);
 
@@ -365,7 +365,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   float ht          =0;
   //float mt;
   //LHE_HTIncoming
-  float lhe_ht	    =-1;
+  float lhe_ht      =-1;
 
   std::vector<bool> trig;
   bool stitch;
@@ -477,92 +477,92 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   bool pass_hbheiso=true;
 
   // global
-  babyTree_->Branch("run",            	&run);    
-  babyTree_->Branch("ls",              	&ls);    
-  babyTree_->Branch("event",           	&event);
-  babyTree_->Branch("ht",             	&ht);
-  babyTree_->Branch("met",             	&met);
-  babyTree_->Branch("met_phi",        	&met_phi);
-  babyTree_->Branch("lhe_ht",		        &lhe_ht);
-  babyTree_->Branch("stitch_ht",	    	&stitch_ht);
+  babyTree_->Branch("run",              &run);    
+  babyTree_->Branch("ls",                &ls);    
+  babyTree_->Branch("event",             &event);
+  babyTree_->Branch("ht",               &ht);
+  babyTree_->Branch("met",               &met);
+  babyTree_->Branch("met_phi",          &met_phi);
+  babyTree_->Branch("lhe_ht",            &lhe_ht);
+  babyTree_->Branch("stitch_ht",        &stitch_ht);
   // weights 
-  babyTree_->Branch("weight",    	    &weight);
-  babyTree_->Branch("w_btag_csv",    	&w_btag_csv);
-  babyTree_->Branch("w_btag_dcsv",   	&w_btag_dcsv);
-  babyTree_->Branch("w_lumi",    	    &w_lumi);
-  babyTree_->Branch("w_pu",      	    &w_pu);
-  babyTree_->Branch("xsec",						&xsec);
-  babyTree_->Branch("w_isr_tr",				&w_isr_tr);
-  babyTree_->Branch("isr_wgt_tr",			&isr_wgt_tr);
-  babyTree_->Branch("isr_norm_tt_tr",	&isr_norm_tt_tr);
-  babyTree_->Branch("nisr_tr",				&nisr_tr);
-  babyTree_->Branch("matched_tr",			&matched_tr);
-  babyTree_->Branch("w_lhe_scale",			&w_lhe_scale);
+  babyTree_->Branch("weight",          &weight);
+  babyTree_->Branch("w_btag_csv",      &w_btag_csv);
+  babyTree_->Branch("w_btag_dcsv",     &w_btag_dcsv);
+  babyTree_->Branch("w_lumi",          &w_lumi);
+  babyTree_->Branch("w_pu",            &w_pu);
+  babyTree_->Branch("xsec",            &xsec);
+  babyTree_->Branch("w_isr_tr",        &w_isr_tr);
+  babyTree_->Branch("isr_wgt_tr",      &isr_wgt_tr);
+  babyTree_->Branch("isr_norm_tt_tr",  &isr_norm_tt_tr);
+  babyTree_->Branch("nisr_tr",        &nisr_tr);
+  babyTree_->Branch("matched_tr",      &matched_tr);
+  babyTree_->Branch("w_lhe_scale",      &w_lhe_scale);
   // leptons 
-  babyTree_->Branch("nleps",       	  &nleps);    
-  babyTree_->Branch("leps_pt",       	&leps_pt);    
+  babyTree_->Branch("nleps",           &nleps);    
+  babyTree_->Branch("leps_pt",         &leps_pt);    
   babyTree_->Branch("leps_eta",       &leps_eta);    
   babyTree_->Branch("leps_phi",       &leps_phi);    
   babyTree_->Branch("leps_pdgid",     &leps_pdgid);    
   babyTree_->Branch("leps_miniso",    &leps_miniso);    
-  babyTree_->Branch("nmus",       	  &nmus);    
-  babyTree_->Branch("mus_pt",       	&mus_pt);    
-  babyTree_->Branch("mus_eta",       	&mus_eta);    
-  babyTree_->Branch("mus_phi",       	&mus_phi);    
-  babyTree_->Branch("mus_sigid",     	&mus_sigid);    
-  babyTree_->Branch("mus_miniso",    	&mus_miniso);    
-  babyTree_->Branch("nels",       	  &nels);    
-  babyTree_->Branch("els_pt",       	&els_pt);    
-  babyTree_->Branch("els_eta",       	&els_eta);    
-  babyTree_->Branch("els_phi",       	&els_phi);    
-  babyTree_->Branch("els_sigid",     	&els_sigid);    
-  babyTree_->Branch("els_spr15_sigid",     	&els_spr15_sigid);    
-  babyTree_->Branch("els_miniso",    	&els_miniso);    
-  babyTree_->Branch("els_reliso",   	&els_reliso);    
+  babyTree_->Branch("nmus",           &nmus);    
+  babyTree_->Branch("mus_pt",         &mus_pt);    
+  babyTree_->Branch("mus_eta",         &mus_eta);    
+  babyTree_->Branch("mus_phi",         &mus_phi);    
+  babyTree_->Branch("mus_sigid",       &mus_sigid);    
+  babyTree_->Branch("mus_miniso",      &mus_miniso);    
+  babyTree_->Branch("nels",           &nels);    
+  babyTree_->Branch("els_pt",         &els_pt);    
+  babyTree_->Branch("els_eta",         &els_eta);    
+  babyTree_->Branch("els_phi",         &els_phi);    
+  babyTree_->Branch("els_sigid",       &els_sigid);    
+  babyTree_->Branch("els_spr15_sigid",       &els_spr15_sigid);    
+  babyTree_->Branch("els_miniso",      &els_miniso);    
+  babyTree_->Branch("els_reliso",     &els_reliso);    
   // jets 
-  babyTree_->Branch("njets",    	  &njets);    
-  babyTree_->Branch("nbm",    	    &nbm);    
-  babyTree_->Branch("jets_pt",    	&jets_pt);    
-  babyTree_->Branch("jets_eta",    	&jets_eta);    
-  babyTree_->Branch("jets_phi",    	&jets_phi);    
-  babyTree_->Branch("jets_m",    	  &jets_m);    
-  babyTree_->Branch("jets_csv",    	&jets_csv);    
-  babyTree_->Branch("jets_dcsvb",  	&jets_dcsvb);    
-  babyTree_->Branch("jets_dcsvc",  	&jets_dcsvc);    
-  babyTree_->Branch("jets_id",    	&jets_id);    
+  babyTree_->Branch("njets",        &njets);    
+  babyTree_->Branch("nbm",          &nbm);    
+  babyTree_->Branch("jets_pt",      &jets_pt);    
+  babyTree_->Branch("jets_eta",      &jets_eta);    
+  babyTree_->Branch("jets_phi",      &jets_phi);    
+  babyTree_->Branch("jets_m",        &jets_m);    
+  babyTree_->Branch("jets_csv",      &jets_csv);    
+  babyTree_->Branch("jets_dcsvb",    &jets_dcsvb);    
+  babyTree_->Branch("jets_dcsvc",    &jets_dcsvc);    
+  babyTree_->Branch("jets_id",      &jets_id);    
   babyTree_->Branch("jets_islep",   &jets_islep);    
-  babyTree_->Branch("jets_hflavor",	&jets_hflavor);    
+  babyTree_->Branch("jets_hflavor",  &jets_hflavor);    
   // fatjet
   babyTree_->Branch("mj12",             &mj12);    
-  babyTree_->Branch("fjets_pt",       	&fjets_pt);    
-  babyTree_->Branch("fjets_eta",       	&fjets_eta);    
-  babyTree_->Branch("fjets_phi",       	&fjets_phi);    
-  babyTree_->Branch("fjets_m",         	&fjets_m);    
-  babyTree_->Branch("fjets_nconst",    	&fjets_nconst);    
+  babyTree_->Branch("fjets_pt",         &fjets_pt);    
+  babyTree_->Branch("fjets_eta",         &fjets_eta);    
+  babyTree_->Branch("fjets_phi",         &fjets_phi);    
+  babyTree_->Branch("fjets_m",           &fjets_m);    
+  babyTree_->Branch("fjets_nconst",      &fjets_nconst);    
   // GenParticles
-  babyTree_->Branch("ngen",		&ngen);
-  babyTree_->Branch("gen_pt",		&gen_pt);
-  babyTree_->Branch("gen_eta",		&gen_eta);
-  babyTree_->Branch("gen_phi",		&gen_phi);
-  babyTree_->Branch("gen_m",		&gen_m);
+  babyTree_->Branch("ngen",    &ngen);
+  babyTree_->Branch("gen_pt",    &gen_pt);
+  babyTree_->Branch("gen_eta",    &gen_eta);
+  babyTree_->Branch("gen_phi",    &gen_phi);
+  babyTree_->Branch("gen_m",    &gen_m);
   babyTree_->Branch("gen_PartIdxMother",&gen_PartIdxMother);
-  babyTree_->Branch("gen_pdgId",	&gen_pdgId);
-  babyTree_->Branch("gen_status",	&gen_status);
-  babyTree_->Branch("gen_statusFlags",	&gen_statusFlags);
+  babyTree_->Branch("gen_pdgId",  &gen_pdgId);
+  babyTree_->Branch("gen_status",  &gen_status);
+  babyTree_->Branch("gen_statusFlags",  &gen_statusFlags);
   // filters
-  babyTree_->Branch("pass",    	&pass);    
-  // 
-	babyTree_->Branch("sys_mj12",    	&sys_mj12);    
-	babyTree_->Branch("sys_ht",    	&sys_ht);    
-	babyTree_->Branch("sys_nbm",    	&sys_nbm);    
-	babyTree_->Branch("sys_njets",    	&sys_njets);    
+  babyTree_->Branch("pass",      &pass);    
+  //
+  babyTree_->Branch("sys_mj12",      &sys_mj12);    
+  babyTree_->Branch("sys_ht",      &sys_ht);    
+  babyTree_->Branch("sys_nbm",      &sys_nbm);    
+  babyTree_->Branch("sys_njets",      &sys_njets);    
   // triggers 
-  babyTree_->Branch("trig_jet450",  	&trig_jet450);    
-  babyTree_->Branch("trig_ht900",    	&trig_ht900);    
-  babyTree_->Branch("trig_ht1050",  	&trig_ht1050);    
-  babyTree_->Branch("trig_isomu24",  	&trig_isomu24);    
-  babyTree_->Branch("trig_isomu27",  	&trig_isomu27);    
-  babyTree_->Branch("pass_hbheiso",  	&pass_hbheiso);    
+  babyTree_->Branch("trig_jet450",    &trig_jet450);    
+  babyTree_->Branch("trig_ht900",      &trig_ht900);    
+  babyTree_->Branch("trig_ht1050",    &trig_ht1050);    
+  babyTree_->Branch("trig_isomu24",    &trig_isomu24);    
+  babyTree_->Branch("trig_isomu27",    &trig_isomu27);    
+  babyTree_->Branch("pass_hbheiso",    &pass_hbheiso);    
 
 
   // 
@@ -603,7 +603,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
     met_phi    =   -1;
     ntrupv        =   0;
     ntrupv_mean   =   0;
-    lhe_ht 	=     -1;
+    lhe_ht   =     -1;
     // weights 
     weight        =    1;
     w_lumi        =    1;
@@ -612,39 +612,39 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
     w_pu          =    1;
     w_lhe_scale   =    1;
     // leptons 
-    nleps      =   0;       	  
-    leps_pt.clear();       	
-    leps_eta.clear();       	 
-    leps_phi.clear();       	 
-    leps_pdgid.clear();     	   
-    leps_miniso.clear();    	    
-    nmus       =   0;       	  
-    mus_pt.clear();       	
-    mus_eta.clear();       	 
-    mus_phi.clear();       	 
-    mus_sigid.clear();     	   
-    mus_miniso.clear();    	    
-    nels       =   0;       	  
-    els_pt.clear();       	
-    els_eta.clear();       	 
-    els_phi.clear();       	 
-    els_sigid.clear();     	   
-    els_spr15_sigid.clear();     	   
-    els_miniso.clear();    	    
-    els_reliso.clear();    	    
+    nleps      =   0;           
+    leps_pt.clear();         
+    leps_eta.clear();          
+    leps_phi.clear();          
+    leps_pdgid.clear();          
+    leps_miniso.clear();          
+    nmus       =   0;           
+    mus_pt.clear();         
+    mus_eta.clear();          
+    mus_phi.clear();          
+    mus_sigid.clear();          
+    mus_miniso.clear();          
+    nels       =   0;           
+    els_pt.clear();         
+    els_eta.clear();          
+    els_phi.clear();          
+    els_sigid.clear();          
+    els_spr15_sigid.clear();          
+    els_miniso.clear();          
+    els_reliso.clear();          
     // jets 
-    njets      =   0;    	  
-    nbm        =   0;    	    
-    jets_pt.clear();    	
-    jets_eta.clear();    	
-    jets_phi.clear();    	
-    jets_m.clear();    	  
-    jets_csv.clear();    	
-    jets_dcsvb.clear();  	  
-    jets_dcsvc.clear();  	  
-    jets_id.clear();    	
+    njets      =   0;        
+    nbm        =   0;          
+    jets_pt.clear();      
+    jets_eta.clear();      
+    jets_phi.clear();      
+    jets_m.clear();        
+    jets_csv.clear();      
+    jets_dcsvb.clear();      
+    jets_dcsvc.clear();      
+    jets_id.clear();      
     jets_islep.clear();     
-    jets_hflavor.clear();	    
+    jets_hflavor.clear();      
     //
     mj12         =   0;
     fjets_pt.clear();
@@ -665,10 +665,10 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
     //    
     pass=true;
     //
-		sys_mj12.clear();
-		sys_ht.clear();
-		sys_njets.clear();
-		sys_nbm.clear();
+    sys_mj12.clear();
+    sys_ht.clear();
+    sys_njets.clear();
+    sys_nbm.clear();
     //
     trig_jet450=true;
     trig_ht900=true;
@@ -743,19 +743,19 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
     //
     // get jets
     //
-		// systematics up/down jets_pt: not stored in the babies
+    // systematics up/down jets_pt: not stored in the babies
     std::vector<float> sys_jets_pt_up;
     std::vector<float> sys_jets_pt_down;
     sys_jets_pt_up.clear();
     sys_jets_pt_down.clear(); 
-		int sys_njets_up = 0;
-		int sys_njets_down = 0;
-		int sys_nbm_up = 0;
-		int sys_nbm_down = 0;
-		float sys_ht_up = 0;
-		float sys_ht_down = 0;
-		float sys_mj12_up = 0;
-		float sys_mj12_down = 0;
+    int sys_njets_up = 0;
+    int sys_njets_down = 0;
+    int sys_nbm_up = 0;
+    int sys_nbm_down = 0;
+    float sys_ht_up = 0;
+    float sys_ht_down = 0;
+    float sys_mj12_up = 0;
+    float sys_mj12_down = 0;
     for(int iJ = 0; iJ < nJet; iJ++) 
     {
       jets_pt.push_back(Jet_pt[iJ]); 
@@ -774,59 +774,64 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
       bool jetislep = false;
       jetislep = jetIsLepton(Jet_eta[iJ], Jet_phi[iJ], leps_eta, leps_phi);
       jets_islep.push_back(jetislep);
+      
   
-			//JEC systematics 
-			if(0)
-			{
-				JetCorrector->setJetPt(Jet_pt[iJ]*(1-Jet_rawFactor[iJ]));
-				JetCorrector->setJetEta(Jet_eta[iJ]);
-				JetCorrector->setJetA(Jet_area[iJ]);
-				JetCorrector->setRho(fixedGridRhoFastjetAll);
-				//sys_jets_pt.push_back(JetCorrector->getCorrection()*Jet_pt[iJ]*(1-Jet_rawFactor[iJ]));
-			} 
+      //JEC systematics 
+      if(0)
+      {
+        JetCorrector->setJetPt(Jet_pt[iJ]*(1-Jet_rawFactor[iJ]));
+        JetCorrector->setJetEta(Jet_eta[iJ]);
+        JetCorrector->setJetA(Jet_area[iJ]);
+        JetCorrector->setRho(fixedGridRhoFastjetAll);
+        //sys_jets_pt.push_back(JetCorrector->getCorrection()*Jet_pt[iJ]*(1-Jet_rawFactor[iJ]));
+      } 
 
-			JecUnc->setJetPt(Jet_pt[iJ]); // here you must use the CORRECTED jet pt
-			JecUnc->setJetEta(Jet_eta[iJ]);
-			float jec_unc = JecUnc->getUncertainty(true);
+      JecUnc->setJetPt(Jet_pt[iJ]); // here you must use the CORRECTED jet pt
+			// Contain Jet_eta within -5.4 ~ 5.4
+			float Jet_eta_lessthan5p4 = Jet_eta[iJ];
+			if(Jet_eta_lessthan5p4>5.4) Jet_eta_lessthan5p4=5.4; 
+			if(Jet_eta_lessthan5p4<-5.4) Jet_eta_lessthan5p4=-5.4; 
+      JecUnc->setJetEta(Jet_eta_lessthan5p4);
+      float jec_unc = JecUnc->getUncertainty(true);
       sys_jets_pt_up.push_back(Jet_pt[iJ]*(1+jec_unc)); 
       sys_jets_pt_down.push_back(Jet_pt[iJ]*(1-jec_unc)); 
-
-			// jet selection
+			
+			// more jet selection
       if(abs(Jet_eta[iJ])>2.4) continue;
       if(!jetid)               continue; 
       if(jetislep)             continue; 
      
-			// deepCSV  cuts
-			float csv_cut = 0.6321; 
-			if(year==2017) csv_cut = 0.4941;
-			if(year==2018) csv_cut = 0.4184;
-			
-			// nominal 
-			if(jets_pt.at(iJ)>30)
-			{
-				njets++;
-				ht += Jet_pt[iJ];
-				if(Jet_btagDeepB[iJ]>csv_cut) nbm++;
-				if(!isData) w_btag_dcsv *= getBtagWeight(calibreader, Jet_pt[iJ], Jet_eta[iJ], Jet_hadronFlavour[iJ], Jet_btagDeepB[iJ]);
-			}
-			// jec syst up 
-			if(sys_jets_pt_up.at(iJ)>30)
-			{
-				sys_njets_up++;
-				sys_ht_up += sys_jets_pt_up.at(iJ);
-				if(Jet_btagDeepB[iJ]>csv_cut) sys_nbm_up++;
-			}
-			// jec syst down 
-			if(sys_jets_pt_down.at(iJ)>30)
-			{
-				sys_njets_down++;
-				sys_ht_down += sys_jets_pt_down.at(iJ);
-				if(Jet_btagDeepB[iJ]>csv_cut) sys_nbm_down++;
-			}
+      // deepCSV  cuts
+      float csv_cut = 0.6321; 
+      if(year==2017) csv_cut = 0.4941;
+      if(year==2018) csv_cut = 0.4184;
+      
+      // nominal 
+      if(jets_pt.at(iJ)>30)
+      {
+        njets++;
+        ht += Jet_pt[iJ];
+        if(Jet_btagDeepB[iJ]>csv_cut) nbm++; 
+        if(!isData) w_btag_dcsv *= getBtagWeight(calibreader, Jet_pt[iJ], Jet_eta[iJ], Jet_hadronFlavour[iJ], Jet_btagDeepB[iJ]);
+      }
+      // jec syst up 
+      if(sys_jets_pt_up.at(iJ)>30)
+      {
+        sys_njets_up++;
+        sys_ht_up += sys_jets_pt_up.at(iJ);
+        if(Jet_btagDeepB[iJ]>csv_cut) sys_nbm_up++;
+      }
+      // jec syst down 
+      if(sys_jets_pt_down.at(iJ)>30)
+      {
+        sys_njets_down++;
+        sys_ht_down += sys_jets_pt_down.at(iJ);
+        if(Jet_btagDeepB[iJ]>csv_cut) sys_nbm_down++;
+      }
     }
-		//cout << "ht: " << ht << " " << sys_ht_up << " " << sys_ht_down << endl; 
-		//cout << "njets: " << njets << " " << sys_njets_up << " " << sys_njets_down << endl; 
-		//cout << "nbm: " << nbm << " " << sys_nbm_up << " " << sys_nbm_down << endl; 
+    //cout << "ht: " << ht << " " << sys_ht_up << " " << sys_ht_down << endl; 
+    //cout << "njets: " << njets << " " << sys_njets_up << " " << sys_njets_down << endl; 
+    //cout << "nbm: " << nbm << " " << sys_nbm_up << " " << sys_nbm_down << endl; 
 
     for(int iGen = 0; iGen < nGenPart; iGen++)
     {
@@ -954,85 +959,85 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
       }
     } 
 
-		// JEC systematics (fill only for MC)
-		if(!isData){
-			sys_mj12_up   =  getMJ(sys_jets_pt_up, jets_eta, jets_phi, jets_m, jets_id);
-			sys_mj12_down =  getMJ(sys_jets_pt_down, jets_eta, jets_phi, jets_m, jets_id);
+    // JEC systematics (fill only for MC)
+    if(!isData){
+      sys_mj12_up   =  getMJ(sys_jets_pt_up, jets_eta, jets_phi, jets_m, jets_id);
+      sys_mj12_down =  getMJ(sys_jets_pt_down, jets_eta, jets_phi, jets_m, jets_id);
 
-			// fill jec syst branches: vec.at(0) is up and vec.at(1) is down 
-			sys_njets.push_back(sys_njets_up);	sys_njets.push_back(sys_njets_down);	
-			sys_nbm.push_back(sys_nbm_up);			sys_nbm.push_back(sys_nbm_down);	
-			sys_ht.push_back(sys_ht_up);				sys_ht.push_back(sys_ht_down);	
-			sys_mj12.push_back(sys_mj12_up);		sys_mj12.push_back(sys_mj12_down);	
-		}	
+      // fill jec syst branches: vec.at(0) is up and vec.at(1) is down 
+      sys_njets.push_back(sys_njets_up);  sys_njets.push_back(sys_njets_down);  
+      sys_nbm.push_back(sys_nbm_up);      sys_nbm.push_back(sys_nbm_down);  
+      sys_ht.push_back(sys_ht_up);        sys_ht.push_back(sys_ht_down);  
+      sys_mj12.push_back(sys_mj12_up);    sys_mj12.push_back(sys_mj12_down);  
+    }  
 
-		if(!isData){//number of ISR-->TTbar_Madgraph, signal.
-			int nisr(0);
-			TLorentzVector JetLV_, GenLV_; 
-			for(size_t ijet(0); ijet<jets_pt.size(); ijet++){
-				bool matched = false;
-				if(jets_pt.at(ijet)<30) continue;
-				if(abs(jets_eta.at(ijet))>2.4) continue;
-				if(jets_id.at(ijet)==0) continue;
-				if(jets_islep.at(ijet)==1) continue;
+    if(!isData){//number of ISR-->TTbar_Madgraph, signal.
+      int nisr(0);
+      TLorentzVector JetLV_, GenLV_; 
+      for(size_t ijet(0); ijet<jets_pt.size(); ijet++){
+        bool matched = false;
+        if(jets_pt.at(ijet)<30) continue;
+        if(abs(jets_eta.at(ijet))>2.4) continue;
+        if(jets_id.at(ijet)==0) continue;
+        if(jets_islep.at(ijet)==1) continue;
 
-				JetLV_.SetPtEtaPhiM(jets_pt.at(ijet), jets_eta.at(ijet), jets_phi.at(ijet), jets_m.at(ijet));
+        JetLV_.SetPtEtaPhiM(jets_pt.at(ijet), jets_eta.at(ijet), jets_phi.at(ijet), jets_m.at(ijet));
 
-				for(size_t imc(0); imc < gen_pt.size(); imc++){
-					if((gen_PartIdxMother.at(imc))==-1) continue;
-					int momid = abs(gen_pdgId.at(gen_PartIdxMother.at(imc)));
+        for(size_t imc(0); imc < gen_pt.size(); imc++){
+          if((gen_PartIdxMother.at(imc))==-1) continue;
+          int momid = abs(gen_pdgId.at(gen_PartIdxMother.at(imc)));
 
-					if(!((gen_statusFlags.at(imc)>>7)&1) || abs(gen_pdgId.at(imc))>5) continue;
+          if(!((gen_statusFlags.at(imc)>>7)&1) || abs(gen_pdgId.at(imc))>5) continue;
 
-					//pdgId<5: quark from genParticle. GenPart_statusFlags gen status flags stored bitwise, bits are: 0 : isPrompt, 1 : isDecayedLeptonHadron, 2 : isTauDecayProduct, 3 : isPromptTauDecayProduct, 4 : isDirectTauDecayProduct, 5 : isDirectPromptTauDecayProduct, 6 : isDirectHadronDecayProduct, 7 : isHardProcess, 8 : fromHardProcess, 9 : isHardProcessTauDecayProduct, 10 : isDirectHardProcessTauDecayProduct, 11 : fromHardProcessBeforeFSR, 12 : isFirstCopy, 13 : isLastCopy, 14 : isLastCopyBeforeFSR,  : 0 at: 0x7f9e93685030
+          //pdgId<5: quark from genParticle. GenPart_statusFlags gen status flags stored bitwise, bits are: 0 : isPrompt, 1 : isDecayedLeptonHadron, 2 : isTauDecayProduct, 3 : isPromptTauDecayProduct, 4 : isDirectTauDecayProduct, 5 : isDirectPromptTauDecayProduct, 6 : isDirectHadronDecayProduct, 7 : isHardProcess, 8 : fromHardProcess, 9 : isHardProcessTauDecayProduct, 10 : isDirectHardProcessTauDecayProduct, 11 : fromHardProcessBeforeFSR, 12 : isFirstCopy, 13 : isLastCopy, 14 : isLastCopyBeforeFSR,  : 0 at: 0x7f9e93685030
 
-					//cout<<"Flags 7: "<< (gen_statusFlags.at(imc)>>7)&1 <<", Flags 8:"<< (gen_statusFlags.at(imc)>>8)&1 << endl;
+          //cout<<"Flags 7: "<< (gen_statusFlags.at(imc)>>7)&1 <<", Flags 8:"<< (gen_statusFlags.at(imc)>>8)&1 << endl;
 
-					if(!(momid==6 || momid==23 || momid==24 || momid==25 || momid>1e6)) continue;//6: top, 23: Z boson, 24: W boson, 25: Higgs, 1e6<: SUSY particle ---> matching condition is final state Jets.
-					GenLV_.SetPtEtaPhiM(gen_pt.at(imc), gen_eta.at(imc), gen_phi.at(imc), gen_m.at(imc));
-					float dR = JetLV_.DeltaR(GenLV_);//dR=sqrt(dphi^2+deta^2)
-					if(dR<0.3){
-						matched = true;
-						matched_tr = matched;
-					}
-					histo_dR->Fill(dR);
-				}
-				if(matched==false) nisr++;//--> not matched with final state.
-			}
-			histo_dR->GetXaxis()->SetTitle("dR distribution");
+          if(!(momid==6 || momid==23 || momid==24 || momid==25 || momid>1e6)) continue;//6: top, 23: Z boson, 24: W boson, 25: Higgs, 1e6<: SUSY particle ---> matching condition is final state Jets.
+          GenLV_.SetPtEtaPhiM(gen_pt.at(imc), gen_eta.at(imc), gen_phi.at(imc), gen_m.at(imc));
+          float dR = JetLV_.DeltaR(GenLV_);//dR=sqrt(dphi^2+deta^2)
+          if(dR<0.3){
+            matched = true;
+            matched_tr = matched;
+          }
+          histo_dR->Fill(dR);
+        }
+        if(matched==false) nisr++;//--> not matched with final state.
+      }
+      histo_dR->GetXaxis()->SetTitle("dR distribution");
 
-			float w_isr = 1.;
-			float isr_norm_tt = 0;
-			if((inputfile.Contains("TTJets_") && inputfile.Contains("madgraphMLM"))) isr_norm_tt =1.101;
-			else if(inputfile.Contains("SMS-T1tbs_RPV")) isr_norm_tt = 1;
+      float w_isr = 1.;
+      float isr_norm_tt = 0;
+      if((inputfile.Contains("TTJets_") && inputfile.Contains("madgraphMLM"))) isr_norm_tt =1.101;
+      else if(inputfile.Contains("SMS-T1tbs_RPV")) isr_norm_tt = 1;
 
-			float isr_wgt     = -999.;
-			if(nisr==0)       isr_wgt = 1.; 
-			else if(nisr==1)  isr_wgt = 0.920; 
-			else if(nisr==2)  isr_wgt = 0.821; 
-			else if(nisr==3)  isr_wgt = 0.715; 
-			else if(nisr==4)  isr_wgt = 0.662; 
-			else if(nisr==5)  isr_wgt = 0.561; 
-			else if(nisr>=6)  isr_wgt = 0.511; 
-			w_isr = isr_wgt*isr_norm_tt;
-			w_isr_tr = w_isr;
-			nisr_tr = nisr;
-			isr_wgt_tr = isr_wgt;
-			isr_norm_tt_tr = isr_norm_tt;
-			h3->Fill(njets,nisr);
-		}
-		h3->GetXaxis()->SetTitle("njet");
-		h3->GetYaxis()->SetTitle("nisr");
+      float isr_wgt     = -999.;
+      if(nisr==0)       isr_wgt = 1.; 
+      else if(nisr==1)  isr_wgt = 0.920; 
+      else if(nisr==2)  isr_wgt = 0.821; 
+      else if(nisr==3)  isr_wgt = 0.715; 
+      else if(nisr==4)  isr_wgt = 0.662; 
+      else if(nisr==5)  isr_wgt = 0.561; 
+      else if(nisr>=6)  isr_wgt = 0.511; 
+      w_isr = isr_wgt*isr_norm_tt;
+      w_isr_tr = w_isr;
+      nisr_tr = nisr;
+      isr_wgt_tr = isr_wgt;
+      isr_norm_tt_tr = isr_norm_tt;
+      h3->Fill(njets,nisr);
+    }
+    h3->GetXaxis()->SetTitle("njet");
+    h3->GetYaxis()->SetTitle("nisr");
 
     /*if(!isData){
     float genHT(0);
       for(size_t igen=0; igen<gen_pt.size();igen++){
         if((gen_PartIdxMother.at(igen))==-1) continue;
-	int momid = abs(gen_pdgId.at(gen_PartIdxMother.at(igen)));
-	if(!((gen_statusFlags.at(igen)>>8)&1) || abs(gen_pdgId.at(igen))>5) continue;
-	if(momid==6 || momid==23 || momid==24 || momid==25 || momid>1e6) continue;// selected only ISR parton
-	//if(!(gen_status.at(igen)==1 && abs((gen_pdgId.at(igen))<6 || abs(gen_pdgId.at(igen))==21) && momid!=6 && momid!=23 && momid!=24 && momid!=25)) continue;
-	genHT+=gen_pt.at(igen);
+  int momid = abs(gen_pdgId.at(gen_PartIdxMother.at(igen)));
+  if(!((gen_statusFlags.at(igen)>>8)&1) || abs(gen_pdgId.at(igen))>5) continue;
+  if(momid==6 || momid==23 || momid==24 || momid==25 || momid>1e6) continue;// selected only ISR parton
+  //if(!(gen_status.at(igen)==1 && abs((gen_pdgId.at(igen))<6 || abs(gen_pdgId.at(igen))==21) && momid!=6 && momid!=23 && momid!=24 && momid!=25)) continue;
+  genHT+=gen_pt.at(igen);
       }
     }*/
 
@@ -1221,14 +1226,14 @@ int main(int argc, char **argv)
     cout << "-----------------------------------------------------------------------" << endl;
   }
 
-	// is this data?
+  // is this data?
   bool isData = false;
   if(inputdir.Contains("Run201") || process.Contains("Run201"))          isData = true;
   if(inputdir.Contains("JetHT") || process.Contains("JetHT"))            isData = true;
   if(inputdir.Contains("SingleMuon") || process.Contains("SingleMuon"))  isData = true;
  
-	// year
-	int year    = 0;
+  // year
+  int year    = 0;
   if(inputdir.Contains("RunIISummer16")) year = 2016;
   else if(inputdir.Contains("RunIIFall17")) year = 2017;
   else if(inputdir.Contains("RunIIAutumn18")) year = 2018;
@@ -1236,25 +1241,25 @@ int main(int argc, char **argv)
   else if(inputdir.Contains("Run2017")) year = 2017;
   else if(inputdir.Contains("Run2018")) year = 2018;
   cout << " year: " << year << endl;
-	
-	// JECs
-	if(0)
-	{
-		JetCorrectorParameters *L1JetPar  = new JetCorrectorParameters("data/jec/Summer16_07Aug2017_V11_MC_L1FastJet_AK4PFchs.txt","");
-		JetCorrectorParameters *L2JetPar  = new JetCorrectorParameters("data/jec/Summer16_07Aug2017_V11_MC_L2Relative_AK4PFchs.txt");
-		JetCorrectorParameters *L3JetPar  = new JetCorrectorParameters("data/jec/Summer16_07Aug2017_V11_MC_L3Absolute_AK4PFchs.txt");
-		JetCorrectorParameters *ResJetPar = new JetCorrectorParameters("data/jec/Summer16_07Aug2017_V11_MC_L2L3Residual_AK4PFchs.txt"); 
-		//  Load the JetCorrectorParameter objects into a vector, IMPORTANT: THE ORDER MATTERS HERE !!!! 
-		vector<JetCorrectorParameters> vPar;
-		vPar.push_back(*L1JetPar);
-		vPar.push_back(*L2JetPar);
-		vPar.push_back(*L3JetPar);
-		vPar.push_back(*ResJetPar);
-		static FactorizedJetCorrector *jetCorrector = 0; 
-		JetCorrector = new FactorizedJetCorrector(vPar);
-	}
-	// JEC systs
-	JecUnc  = new JetCorrectionUncertainty("data/jec/Summer16_07Aug2017_V11_MC_Uncertainty_AK4PFchs.txt");
+  
+  // JECs
+  if(0)
+  {
+    JetCorrectorParameters *L1JetPar  = new JetCorrectorParameters("data/jec/Summer16_07Aug2017_V11_MC_L1FastJet_AK4PFchs.txt","");
+    JetCorrectorParameters *L2JetPar  = new JetCorrectorParameters("data/jec/Summer16_07Aug2017_V11_MC_L2Relative_AK4PFchs.txt");
+    JetCorrectorParameters *L3JetPar  = new JetCorrectorParameters("data/jec/Summer16_07Aug2017_V11_MC_L3Absolute_AK4PFchs.txt");
+    JetCorrectorParameters *ResJetPar = new JetCorrectorParameters("data/jec/Summer16_07Aug2017_V11_MC_L2L3Residual_AK4PFchs.txt"); 
+    //  Load the JetCorrectorParameter objects into a vector, IMPORTANT: THE ORDER MATTERS HERE !!!! 
+    vector<JetCorrectorParameters> vPar;
+    vPar.push_back(*L1JetPar);
+    vPar.push_back(*L2JetPar);
+    vPar.push_back(*L3JetPar);
+    vPar.push_back(*ResJetPar);
+    static FactorizedJetCorrector *jetCorrector = 0; 
+    JetCorrector = new FactorizedJetCorrector(vPar);
+  }
+  // JEC systs
+  JecUnc  = new JetCorrectionUncertainty("data/jec/Summer16_07Aug2017_V11_MC_Uncertainty_AK4PFchs.txt");
 
   // get list of files in a directory to calculate w_lumi
   // w_lumi = xsec[fb] * genWeight / sum(genWeights)
@@ -1292,23 +1297,23 @@ int main(int argc, char **argv)
   vector<TString> files_processed = getFileListFromFile(Form("flist/%s", list_processed.Data())); 
   for(int i=0; i<files.size(); i++)
   {
-		// check if a file is already there in the output directory
-		// if it does, skip it
-		bool file_is_processed = false;
+    // check if a file is already there in the output directory
+    // if it does, skip it
+    bool file_is_processed = false;
     for(int j=0; j<files_processed.size(); j++)
-		{
-  		TObjArray *tokens = files.at(i).Tokenize("/"); 
-  		TString outputfile = (dynamic_cast<TObjString*>(tokens->At(tokens->GetEntries()-1)))->GetString();
-  		outputfile.ReplaceAll(".root", Form("_fatjetbaby_%s.root", process.Data()));
-			if(outputfile == files_processed.at(j)) file_is_processed=true;
-		}
-   		
-	  if(file_is_processed) 
-		{ 
-			cout << "file already exists in " << outputdir << endl; 
-			cout << "skip it!" << endl;
-			continue;
-		}
+    {
+      TObjArray *tokens = files.at(i).Tokenize("/"); 
+      TString outputfile = (dynamic_cast<TObjString*>(tokens->At(tokens->GetEntries()-1)))->GetString();
+      outputfile.ReplaceAll(".root", Form("_fatjetbaby_%s.root", process.Data()));
+      if(outputfile == files_processed.at(j)) file_is_processed=true;
+    }
+       
+    if(file_is_processed) 
+    { 
+      cout << "file already exists in " << outputdir << endl; 
+      cout << "skip it!" << endl;
+      continue;
+    }
     cout << "procesing " << files.at(i) << endl; 
     process_nano(files.at(i), outputdir, sumWeights, process, nfiles, filenumber); 
   }
