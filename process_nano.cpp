@@ -153,7 +153,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   //LHE HT incomming
   Float_t     LHE_HTIncoming = 0;
   //LHE Scale Weight
-  Float_t     LHEScaleWeight = 0;
+  Float_t     LHEScaleWeight[9];
   // MC 
   UInt_t  nGenPart=0;
   Float_t GenPart_eta[500];  
@@ -353,7 +353,6 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   float isr_norm =0;
   int nisr = 0;
   bool stitch_ht=true;
-  float w_lhe_scale =1; // FIXME: to be removed 
 
   //std::vector<float> w_pdf;
   //float eff_trig;
@@ -497,7 +496,6 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   babyTree_->Branch("isr_norm",	&isr_norm);
   babyTree_->Branch("nisr",				&nisr);
   babyTree_->Branch("matched",			&matched);
-  babyTree_->Branch("w_lhe_scale",			&w_lhe_scale);
   // leptons 
   babyTree_->Branch("nleps",           &nleps);    
   babyTree_->Branch("leps_pt",         &leps_pt);    
@@ -556,6 +554,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   babyTree_->Branch("sys_ht",      &sys_ht);    
   babyTree_->Branch("sys_nbm",      &sys_nbm);    
   babyTree_->Branch("sys_njets",      &sys_njets);    
+  babyTree_->Branch("sys_mur",      &sys_mur);    
   // triggers 
   babyTree_->Branch("trig_jet450",    &trig_jet450);    
   babyTree_->Branch("trig_ht900",      &trig_ht900);    
@@ -608,7 +607,6 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
     w_btag_csv    =    1;
     w_btag_dcsv   =    1;
     w_pu          =    1;
-    w_lhe_scale   =    1;
     // leptons 
     nleps      =   0;           
     leps_pt.clear();         
@@ -667,6 +665,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
     sys_ht.clear();
     sys_njets.clear();
     sys_nbm.clear();
+    sys_mur.clear();
     //
     trig_jet450=true;
     trig_ht900=true;
@@ -827,9 +826,21 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
         if(Jet_btagDeepB[iJ]>csv_cut) sys_nbm_down++;
       }
     }
-    //cout << "ht: " << ht << " " << sys_ht_up << " " << sys_ht_down << endl; 
-    //cout << "njets: " << njets << " " << sys_njets_up << " " << sys_njets_down << endl; 
-    //cout << "nbm: " << nbm << " " << sys_nbm_up << " " << sys_nbm_down << endl; 
+
+		// weight systematics 
+		// 1. renorm/factorization scales
+		// Float_t LHE scale variation weights (w_var / w_nominal); 
+		// [0] is mur=0.5 muf=0.5 ; 
+		// [1] is mur=0.5 muf=1 ; 
+		// [2] is mur=0.5 muf=2 ; 
+		// [3] is mur=1    muf=0.5 ; 
+		// [4] is mur=1 muf=1 ; 
+		// [5] is mur=1 muf=2 ; 
+		// [6] is mur=2 muf=0.5 ; 
+		// [7] is mur=2 muf=1 ; 
+		// [8] is mur=2 muf=2 *
+		// 2 is up, 0.5 is down
+		sys_mur.push_back(LHEScaleWeight[7]);	sys_mur.push_back(LHEScaleWeight[1]);	
 
     for(int iGen = 0; iGen < nGenPart; iGen++)
     {
@@ -1026,7 +1037,6 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
       w_btag_csv = btagWeight_CSVV2;
       w_lumi     = xsec*genWeight/sumWeights;//getXsec(samplename)*genWeight/sumWeights; // cross section in fb
       w_pu       = getPUweight(samplename, year, ntrupv_mean, 0); // syst=-1 0 1 (down nominal up)
-      w_lhe_scale = LHEScaleWeight;
     }
 
     if(isData) 
@@ -1035,7 +1045,6 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
       w_btag_dcsv = 1;
       w_lumi      = 1;
       w_pu        = 1;
-      w_lhe_scale = 1;
     }
     if ((inputfile.Contains("SMS-T1tbs_RPV")) || (inputfile.Contains("TTJets_") )) weight = w_btag_dcsv * w_lumi * w_pu * w_isr;
     else if(!((inputfile.Contains("SMS-T1tbs_RPV")) || (inputfile.Contains("TTJets_") ))){
