@@ -15,19 +15,8 @@
 #include "BTagCalibrationStandalone.h"
 //#include "BTagCalibrationStandalone.cpp"
 
-float getBtagWeight(BTagCalibrationReader calibreader, float jet_pt, float jet_eta, float jet_hflavor, float csv) //, char* syst)
+float getBtagWeight(BTagCalibrationReader calibreader, float jet_pt, float jet_eta, float jet_hflavor, float csv, const char* syst="central")
 {
-/*
-  // setup calibration + reader
-BTagCalibration calib("DeepCSV", "data/DeepCSV_2016LegacySF_V1.csv");
-BTagCalibrationReader calibreader(BTagEntry::OP_RESHAPING,  // operating point
-                             "central",                // central sys type
-                             {"up_jes", "down_jes"});          // other sys types
-
-calibreader.load(calib, BTagEntry::FLAV_B,     "iterativefit");
-calibreader.load(calib, BTagEntry::FLAV_C,     "iterativefit");
-calibreader.load(calib, BTagEntry::FLAV_UDSG,  "iterativefit");
-*/
   //
   float btag_weight = 1;
 
@@ -36,13 +25,13 @@ calibreader.load(calib, BTagEntry::FLAV_UDSG,  "iterativefit");
   if(jet_eta<0) jet_abseta = -1*jet_eta;
 
   if (abs(jet_hflavor) == 5 ){    //HF		  
-    btag_weight = calibreader.eval_auto_bounds("central", BTagEntry::FLAV_B, jet_abseta, jet_pt, csv);		  
+    btag_weight = calibreader.eval_auto_bounds(syst, BTagEntry::FLAV_B, jet_abseta, jet_pt, csv);		  
   }
   else if( abs(jet_hflavor) == 4 ){  //C
-    btag_weight = calibreader.eval_auto_bounds("central", BTagEntry::FLAV_C, jet_abseta, jet_pt, csv);
+    btag_weight = calibreader.eval_auto_bounds(syst, BTagEntry::FLAV_C, jet_abseta, jet_pt, csv);
   }
   else { //LF
-    btag_weight = calibreader.eval_auto_bounds("central", BTagEntry::FLAV_UDSG, jet_abseta, jet_pt,csv);
+    btag_weight = calibreader.eval_auto_bounds(syst, BTagEntry::FLAV_UDSG, jet_abseta, jet_pt, csv);
   }
 
   if(btag_weight==0) return 1; 
