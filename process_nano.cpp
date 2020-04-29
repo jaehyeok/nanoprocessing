@@ -861,10 +861,10 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
     // [6] is mur=2 muf=0.5 ; 
     // [7] is mur=2 muf=1 ; 
     // [8] is mur=2 muf=2 *
-    // 0.5 is up, 2 is down
-    sys_mur.push_back(LHEScaleWeight[1]);	sys_mur.push_back(LHEScaleWeight[7]);	
-    sys_muf.push_back(LHEScaleWeight[3]);	sys_muf.push_back(LHEScaleWeight[5]);
-    sys_murf.push_back(LHEScaleWeight[0]);	sys_murf.push_back(LHEScaleWeight[8]);
+    // 2 is up, 0.5 is down
+    sys_mur.push_back(LHEScaleWeight[7]);	sys_mur.push_back(LHEScaleWeight[1]);	
+    sys_muf.push_back(LHEScaleWeight[5]);	sys_muf.push_back(LHEScaleWeight[3]);
+    sys_murf.push_back(LHEScaleWeight[8]);	sys_murf.push_back(LHEScaleWeight[0]);
 
     for(int iGen = 0; iGen < nGenPart; iGen++)
     {
