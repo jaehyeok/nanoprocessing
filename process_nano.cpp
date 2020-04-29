@@ -757,7 +757,8 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
     for(int iJ = 0; iJ < nJet; iJ++) 
     {
       jets_pt.push_back(Jet_pt[iJ]); 
-      jets_eta.push_back(Jet_eta[iJ]); 
+      jets_eta.push_back(Jet_eta[iJ]);
+//cout<< Jet_eta[iJ] <<" <--eta, pt--> " << Jet_pt[iJ] << endl;
       jets_phi.push_back(Jet_phi[iJ]); 
       jets_m.push_back(Jet_m[iJ]); 
       jets_hflavor.push_back(Jet_hadronFlavour[iJ]); 
@@ -786,9 +787,10 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
 
       JecUnc->setJetPt(Jet_pt[iJ]); // here you must use the CORRECTED jet pt
 			// Contain Jet_eta within -5.4 ~ 5.4
-			float Jet_eta_lessthan5p4 = Jet_eta[iJ];
-			if(Jet_eta_lessthan5p4>5.4) Jet_eta_lessthan5p4=5.4; 
-			if(Jet_eta_lessthan5p4<-5.4) Jet_eta_lessthan5p4=-5.4; 
+      float Jet_eta_lessthan5p4 = Jet_eta[iJ];
+      cout<<Jet_eta_lessthan5p4<<endl;
+      if(Jet_eta_lessthan5p4>5.4) Jet_eta_lessthan5p4=5.4; 
+      if(Jet_eta_lessthan5p4<-5.4) Jet_eta_lessthan5p4=-5.4; 
       JecUnc->setJetEta(Jet_eta_lessthan5p4);
       float jec_unc = JecUnc->getUncertainty(true);
       sys_jets_pt_up.push_back(Jet_pt[iJ]*(1+jec_unc)); 

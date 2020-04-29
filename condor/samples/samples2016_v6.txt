@@ -54,9 +54,9 @@ ZZZ_TuneCUETP8M1_13TeV-amcatnlo-pythia8/NANOAODSIM/PUMoriond17_Nano25Oct2019_102
 
 ## DYJets_HT
 #DYJetsToLL_M-10to50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/NANOAODSIM/PUMoriond17_Nano25Oct2019_102X_mcRun2_asymptotic_v7-v1	
-DYJetsToLL_M-1to5_HT-200to400_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/NANOAODSIM/PUMoriond17_Nano25Oct2019_102X_mcRun2_asymptotic_v7-v1	
-DYJetsToLL_M-1to5_HT-400to600_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/NANOAODSIM/PUMoriond17_Nano25Oct2019_102X_mcRun2_asymptotic_v7-v1	
-DYJetsToLL_M-1to5_HT-600toInf_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/NANOAODSIM/PUMoriond17_Nano25Oct2019_102X_mcRun2_asymptotic_v7-v1	
+#DYJetsToLL_M-1to5_HT-200to400_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/NANOAODSIM/PUMoriond17_Nano25Oct2019_102X_mcRun2_asymptotic_v7-v1	
+#DYJetsToLL_M-1to5_HT-400to600_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/NANOAODSIM/PUMoriond17_Nano25Oct2019_102X_mcRun2_asymptotic_v7-v1	
+#DYJetsToLL_M-1to5_HT-600toInf_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/NANOAODSIM/PUMoriond17_Nano25Oct2019_102X_mcRun2_asymptotic_v7-v1	
 DYJetsToLL_M-50_HT-1200to2500_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/NANOAODSIM/PUMoriond17_Nano25Oct2019_102X_mcRun2_asymptotic_v7-v1	
 DYJetsToLL_M-50_HT-200to400_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/NANOAODSIM/PUMoriond17_Nano25Oct2019_102X_mcRun2_asymptotic_v7-v1	
 #DYJetsToLL_M-50_HT-200to400_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/NANOAODSIM/PUMoriond17_Nano25Oct2019_102X_mcRun2_asymptotic_v7_ext1-v1	
@@ -118,11 +118,11 @@ SMS-T1tbs_RPV_mGluino2000_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/NANOAODSIM/PUMo
 SMS-T1tbs_RPV_mGluino2200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/NANOAODSIM/PUMoriond17_Nano25Oct2019_102X_mcRun2_asymptotic_v7-v1	
 
 ## data
-/xrootd/store/data/Run2016B_ver1/JetHT/NANOAOD/Nano25Oct2019_ver1-v1	
-/xrootd/store/data/Run2016B_ver2/JetHT/NANOAOD/Nano25Oct2019_ver2-v1	
-/xrootd/store/data/Run2016C/JetHT/NANOAOD/Nano25Oct2019-v1	
-/xrootd/store/data/Run2016D/JetHT/NANOAOD/Nano25Oct2019-v1	
-/xrootd/store/data/Run2016E/JetHT/NANOAOD/Nano25Oct2019-v1	
-/xrootd/store/data/Run2016F/JetHT/NANOAOD/Nano25Oct2019-v1	
-/xrootd/store/data/Run2016G/JetHT/NANOAOD/Nano25Oct2019-v1	
-/xrootd/store/data/Run2016H/JetHT/NANOAOD/Nano25Oct2019-v1	
+#/xrootd/store/data/Run2016B_ver1/JetHT/NANOAOD/Nano25Oct2019_ver1-v1	
+#/xrootd/store/data/Run2016B_ver2/JetHT/NANOAOD/Nano25Oct2019_ver2-v1	
+#/xrootd/store/data/Run2016C/JetHT/NANOAOD/Nano25Oct2019-v1	
+#/xrootd/store/data/Run2016D/JetHT/NANOAOD/Nano25Oct2019-v1	
+#/xrootd/store/data/Run2016E/JetHT/NANOAOD/Nano25Oct2019-v1	
+#/xrootd/store/data/Run2016F/JetHT/NANOAOD/Nano25Oct2019-v1	
+#/xrootd/store/data/Run2016G/JetHT/NANOAOD/Nano25Oct2019-v1	
+#/xrootd/store/data/Run2016H/JetHT/NANOAOD/Nano25Oct2019-v1	
