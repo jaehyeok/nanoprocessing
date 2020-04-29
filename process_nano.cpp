@@ -93,7 +93,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   BTagCalibration calib("DeepCSV", csvfile);
   BTagCalibrationReader calibreader(BTagEntry::OP_RESHAPING,  // operating point
       "central",                                              // central sys type
-      {"up_jes", "down_jes"});                                // other sys types
+      {"up_hf", "down_hf", "up_lf", "down_lf"});                                // other sys types
   calibreader.load(calib, BTagEntry::FLAV_B,     "iterativefit");
   calibreader.load(calib, BTagEntry::FLAV_C,     "iterativefit");
   calibreader.load(calib, BTagEntry::FLAV_UDSG,  "iterativefit"); 
@@ -557,6 +557,8 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   babyTree_->Branch("sys_mur",      &sys_mur);    
   babyTree_->Branch("sys_muf",      &sys_muf);    
   babyTree_->Branch("sys_murf",      &sys_murf);    
+  babyTree_->Branch("sys_bctag",     &sys_bctag);    
+  babyTree_->Branch("sys_udsgtag",     &sys_udsgtag);    
   // triggers 
   babyTree_->Branch("trig_jet450",    &trig_jet450);    
   babyTree_->Branch("trig_ht900",      &trig_ht900);    
@@ -670,6 +672,8 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
     sys_mur.clear();
     sys_muf.clear();
     sys_murf.clear();
+    sys_bctag.clear();
+    sys_udsgtag.clear();
     //
     trig_jet450=true;
     trig_ht900=true;
@@ -757,6 +761,10 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
     float sys_ht_down = 0;
     float sys_mj12_up = 0;
     float sys_mj12_down = 0;
+    float sys_bctag_up = 1;
+    float sys_bctag_down = 1;
+    float sys_udsgtag_up = 1;
+    float sys_udsgtag_down = 1;
     for(int iJ = 0; iJ < nJet; iJ++) 
     {
       jets_pt.push_back(Jet_pt[iJ]); 
@@ -814,7 +822,14 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
         njets++;
         ht += Jet_pt[iJ];
         if(Jet_btagDeepB[iJ]>csv_cut) nbm++; 
-        if(!isData) w_btag_dcsv *= getBtagWeight(calibreader, Jet_pt[iJ], Jet_eta[iJ], Jet_hadronFlavour[iJ], Jet_btagDeepB[iJ]);
+        if(!isData) 
+				{
+					w_btag_dcsv *= getBtagWeight(calibreader, Jet_pt[iJ], Jet_eta[iJ], Jet_hadronFlavour[iJ], Jet_btagDeepB[iJ]);
+					sys_bctag_up *= getBtagWeight(calibreader, Jet_pt[iJ], Jet_eta[iJ], Jet_hadronFlavour[iJ], Jet_btagDeepB[iJ], "up_hf");
+					sys_bctag_down *= getBtagWeight(calibreader, Jet_pt[iJ], Jet_eta[iJ], Jet_hadronFlavour[iJ], Jet_btagDeepB[iJ], "down_hf");
+					sys_udsgtag_up *= getBtagWeight(calibreader, Jet_pt[iJ], Jet_eta[iJ], Jet_hadronFlavour[iJ], Jet_btagDeepB[iJ], "up_hf");
+					sys_udsgtag_down *= getBtagWeight(calibreader, Jet_pt[iJ], Jet_eta[iJ], Jet_hadronFlavour[iJ], Jet_btagDeepB[iJ], "down_hf");
+				}
       }
       // jec syst up 
       if(sys_jets_pt_up.at(iJ)>30)
@@ -975,8 +990,12 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
       }
     } 
 
-		// JEC systematics (fill only for MC)
+		//
+		// systematics 
+		//
+
 		if(!isData){
+			// JEC systematics (fill only for MC)
 			sys_mj12_up   =  getMJ(sys_jets_pt_up, jets_eta, jets_phi, jets_m, jets_id);
 			sys_mj12_down =  getMJ(sys_jets_pt_down, jets_eta, jets_phi, jets_m, jets_id);
 
@@ -985,9 +1004,15 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
 			sys_nbm.push_back(sys_nbm_up);			sys_nbm.push_back(sys_nbm_down);	
 			sys_ht.push_back(sys_ht_up);				sys_ht.push_back(sys_ht_down);	
 			sys_mj12.push_back(sys_mj12_up);		sys_mj12.push_back(sys_mj12_down);	
-		}	
 
-		if(!isData){//number of ISR-->TTbar_Madgraph, signal.
+			// btagging
+			sys_bctag.push_back(sys_bctag_up);	sys_bctag.push_back(sys_bctag_down);	
+			sys_udsgtag.push_back(sys_udsgtag_up);	sys_udsgtag.push_back(sys_udsgtag_down);	
+		}
+
+
+		
+			if(!isData){//number of ISR-->TTbar_Madgraph, signal.
 			int nisr_(0);
 			TLorentzVector JetLV_, GenLV_; 
 			for(size_t ijet(0); ijet<jets_pt.size(); ijet++){
