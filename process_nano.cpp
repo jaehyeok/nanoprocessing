@@ -787,8 +787,8 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
       JecUnc->setJetPt(Jet_pt[iJ]); // here you must use the CORRECTED jet pt
 			// Contain Jet_eta within -5.4 ~ 5.4
 			float Jet_eta_lessthan5p4 = Jet_eta[iJ];
-			if(Jet_eta_lessthan5p4>5.4) Jet_eta_lessthan5p4=5.4; 
-			if(Jet_eta_lessthan5p4<-5.4) Jet_eta_lessthan5p4=-5.4; 
+			if(Jet_eta_lessthan5p4>5.4) Jet_eta_lessthan5p4=5.39; 
+			if(Jet_eta_lessthan5p4<-5.4) Jet_eta_lessthan5p4=-5.39; 
       JecUnc->setJetEta(Jet_eta_lessthan5p4);
       float jec_unc = JecUnc->getUncertainty(true);
       sys_jets_pt_up.push_back(Jet_pt[iJ]*(1+jec_unc)); 
