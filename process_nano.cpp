@@ -557,6 +557,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   babyTree_->Branch("sys_mur",      &sys_mur);    
   babyTree_->Branch("sys_muf",      &sys_muf);    
   babyTree_->Branch("sys_murf",      &sys_murf);    
+  babyTree_->Branch("sys_isr",      &sys_isr);    
   // triggers 
   babyTree_->Branch("trig_jet450",    &trig_jet450);    
   babyTree_->Branch("trig_ht900",      &trig_ht900);    
@@ -670,6 +671,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
     sys_mur.clear();
     sys_muf.clear();
     sys_murf.clear();
+    sys_isr.clear();
     //
     trig_jet450=true;
     trig_ht900=true;
@@ -1022,7 +1024,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
 			else if(inputfile.Contains("SMS-T1tbs_RPV")) isr_norm_ = 1;
 
 			float isr_wgt_     = -999.;
-			if(nisr_==0)       isr_wgt_ = 1.; 
+			if(nisr_==0)	   isr_wgt_ = 1.; 
 			else if(nisr_==1)  isr_wgt_ = 0.920; 
 			else if(nisr_==2)  isr_wgt_ = 0.821; 
 			else if(nisr_==3)  isr_wgt_ = 0.715; 
@@ -1031,6 +1033,8 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
 			else if(nisr_>=6)  isr_wgt_ = 0.511; 
 			w_isr_ = isr_wgt_*isr_norm_;
 			w_isr = w_isr_;
+			sys_isr.push_back(w_isr+((1-w_isr)/2));
+			sys_isr.push_back(w_isr-((1-w_isr)/2));
 			nisr = nisr_;
 			isr_wgt = isr_wgt_;
 			isr_norm = isr_norm_;
