@@ -71,8 +71,8 @@ void skimonefile(TString inputfile, TString outputdir, TString skim)
 		skimcut="nbm>0&&mj12>500&&njets>=4";
 	}
 	else if(skim=="rpvfitnbge0") {
-		if(inputfile.Contains("TTJets_Tune")) skimcut="ht>1200&&mj12>500&&njets>=4&&stitch_ht==1";
-		else skimcut="ht>1200&&mj12>500&&njets>=4";
+		if(inputfile.Contains("TTJets_Tune")) skimcut="(sys_ht[0]>1200 || sys_ht[1]>1200 || ht>1200) && (sys_mj12[0]>500 || sys_mj12[1]>500 || mj12>500) && (sys_njets[0]>=4 || sys_njets[1]>=4 || njets>=4) && stitch_ht==1";
+		else skimcut="(sys_ht[0]>1200 || sys_ht[1]>1200 || ht>1200) && (sys_mj12[0]>500 || sys_mj12[1]>500 || mj12>500) && (sys_njets[0]>=4 || sys_njets[1]>=4 || njets>=4)";
 	}
 	else if(skim=="ht1000") {
 		skimcut="ht>1000";
@@ -123,7 +123,7 @@ int main(int argc, char **argv)
     skim         = argv[2];
    
     outputdir = inputdir;
-    outputdir.ReplaceAll("processed", Form("skim_%s", skim.Data()));
+    outputdir.ReplaceAll("processed_sys_v1", Form("skim_%s_sys_v1", skim.Data()));
     cout << " input   dir  : " << inputdir << endl;
     cout << " output  dir  : " << outputdir << endl;
     cout << " skim         : " << skim << endl;
@@ -133,7 +133,13 @@ int main(int argc, char **argv)
   gSystem->mkdir(outputdir.Data());
 
   // get list of files in a directory
-  vector<TString> files = globVector(Form("%s/*.root", inputdir.Data())); 
+  //vector<TString> files = globVector(Form("%s/*.root", inputdir.Data())); 
+  //vector<TString> files = globVector(Form("%s/*_QCD*.root", inputdir.Data())); 
+  //vector<TString> files = globVector(Form("%s/*_DYJets*.root", inputdir.Data())); 
+  //vector<TString> files = globVector(Form("%s/*_TT*.root", inputdir.Data())); 
+  //vector<TString> files = globVector(Form("%s/*_W*.root", inputdir.Data())); 
+  //vector<TString> files = globVector(Form("%s/*_ST*.root", inputdir.Data())); 
+  vector<TString> files = globVector(Form("%s/*_SMS*.root", inputdir.Data())); 
 
 	cout << "skimming " << files.size() << " files" << endl;
 	
