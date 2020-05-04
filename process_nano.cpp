@@ -608,6 +608,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
     lhe_ht   =     -1;
     // weights 
     weight        =    1;
+    w_lep         =    1; 
     w_lumi        =    1;
     w_btag_csv    =    1;
     w_btag_dcsv   =    1;
@@ -702,7 +703,15 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
     //
     // get electrons
     //
-    for(int iE = 0; iE < nElectron; iE++) 
+
+    TFile *electronSF = new TFile("bin/ElectronScaleFactors_Run2016.root","read");
+    vector<float> els_SFner;
+    els_SFner.clear();
+    float sys_lep_up   = 1;
+    float sys_lep_down = 1;
+ 
+
+   for(int iE = 0; iE < nElectron; iE++) 
     {
       els_pt.push_back(Electron_pt[iE]); 
       els_eta.push_back(Electron_eta[iE]); 
@@ -715,6 +724,14 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
       if(abs(Electron_eta[iE])>2.5)  continue;           
       if(!idElectron_noIso(Electron_vidNestedWPBitmap[iE], 3)) continue;           // medium WP
       if(Electron_miniPFRelIso_all[iE]>0.1) continue; // miniso
+      els_SFner    =  getLepSF(electronSF, true, Electron_pt[iE], Electron_eta[iE]);
+      w_lep        *= els_SFner.at(0);
+      sys_lep_up   *= (els_SFner.at(0)+els_SFner.at(1));
+      sys_lep_down *= (els_SFner.at(0)-els_SFner.at(1));
+      els_SFner.clear();
+
+      cout<<sys_lep_up<<" "<<sys_lep_down<<endl;
+
       nels++;
       leps_pt.push_back(Electron_pt[iE]); 
       leps_eta.push_back(Electron_eta[iE]); 
@@ -727,7 +744,12 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
     //
     // get muons
     //
-    for(int iM = 0; iM < nMuon; iM++) 
+
+    TFile *muonSF     = new TFile("bin/TnP_NUM_MiniIsoTight_DENOM_LooseID_VAR_map_pt_eta.root","read");
+    vector<float> mus_SFner;
+    mus_SFner.clear();
+
+    for(int iM = 0; iM < nMuon; iM++)
     {
       mus_pt.push_back(Muon_pt[iM]); 
       mus_eta.push_back(Muon_eta[iM]); 
@@ -738,6 +760,15 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
       if(abs(Muon_eta[iM])>2.4)  continue;           
       if(!Muon_mediumId[iM]) continue;                // medium WP
       if(Muon_miniPFRelIso_all[iM]>0.2) continue;     // miniso 
+      
+      mus_SFner    =  getLepSF(muonSF, false, Muon_pt[iM], Muon_eta[iM]);
+      w_lep        *= mus_SFner.at(0);
+      sys_lep_up   *= (mus_SFner.at(0)+mus_SFner.at(1));
+      sys_lep_down *= (mus_SFner.at(0)-mus_SFner.at(1));
+      mus_SFner.clear();
+
+      cout<<sys_lep_up<<" "<<sys_lep_down<<endl;
+
       nmus++;
       leps_pt.push_back(Muon_pt[iM]); 
       leps_eta.push_back(Muon_eta[iM]); 
@@ -746,6 +777,9 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
       leps_miniso.push_back(Muon_miniPFRelIso_all[iM]); 
       nleps++;
     }
+
+    sys_lep.push_back(sys_lep_up);
+    sys_lep.push_back(sys_lep_down);
 
     //
     // get jets
