@@ -123,7 +123,7 @@ int main(int argc, char **argv)
     skim         = argv[2];
    
     outputdir = inputdir;
-    outputdir.ReplaceAll("processed_sys_v1", Form("skim_%s_sys_v1", skim.Data()));
+    outputdir.ReplaceAll("processed_sys_v1", Form("skim_%s_sys_v1-1", skim.Data()));
     cout << " input   dir  : " << inputdir << endl;
     cout << " output  dir  : " << outputdir << endl;
     cout << " skim         : " << skim << endl;
@@ -138,8 +138,8 @@ int main(int argc, char **argv)
   //vector<TString> files = globVector(Form("%s/*_DYJets*.root", inputdir.Data())); 
   //vector<TString> files = globVector(Form("%s/*_TT*.root", inputdir.Data())); 
   //vector<TString> files = globVector(Form("%s/*_W*.root", inputdir.Data())); 
-  //vector<TString> files = globVector(Form("%s/*_ST*.root", inputdir.Data())); 
-  vector<TString> files = globVector(Form("%s/*_SMS*.root", inputdir.Data())); 
+  vector<TString> files = globVector(Form("%s/*_ST*.root", inputdir.Data())); 
+  //vector<TString> files = globVector(Form("%s/*_SMS*.root", inputdir.Data())); 
 
 	cout << "skimming " << files.size() << " files" << endl;
 	

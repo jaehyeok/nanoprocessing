@@ -5,7 +5,7 @@ import os.path
 
 year=sys.argv[1]
 
-outputdir="root://cms-xrdr.private.lo:2094//xrd/store/user/yjeong/nanoprocessing/2016/processed_sys_v1/"
+outputdir="root://cms-xrdr.private.lo:2094//xrd/store/user/yjeong/nanoprocessing/2016/processed_sys_v2/"
 #samplelist="samples/samples2016.txt"
 #inputmctag="RunIISummer16NanoAODv4"
 samplelist="samples/samples2016_v6.txt"

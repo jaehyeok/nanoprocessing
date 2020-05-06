@@ -8,7 +8,7 @@ from ROOT import TChain, TSelector, TTree, TH1F, TCanvas, TPad, TStyle, TString
 ROOT.gROOT.SetBatch(True)
 year=sys.argv[1]
 
-outputdir="/xrootd_user/yjeong/xrootd/nanoprocessing/2016/processed_sys_v1/"
+outputdir="/xrootd_user/yjeong/xrootd/nanoprocessing/2016/processed_sys_v2/"
 if year == "2017":
 	outputdir="/xrootd_user/yjeong/xrootd/nanoprocessing/2017/"
 if year == "2018":
