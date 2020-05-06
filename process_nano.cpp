@@ -709,7 +709,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
     els_SFner.clear();
     float sys_lep_up   = 1;
     float sys_lep_down = 1;
- 
+
 
    for(int iE = 0; iE < nElectron; iE++) 
     {
@@ -730,7 +730,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
       sys_lep_down *= (els_SFner.at(0)-els_SFner.at(1));
       els_SFner.clear();
 
-      //cout<<sys_lep_up<<" "<<sys_lep_down<<endl;
+//      cout<<sys_lep_up<<" "<<sys_lep_down<<" ";
 
       nels++;
       leps_pt.push_back(Electron_pt[iE]); 
@@ -767,7 +767,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
       sys_lep_down *= (mus_SFner.at(0)-mus_SFner.at(1));
       mus_SFner.clear();
 
-      //cout<<sys_lep_up<<" "<<sys_lep_down<<endl;
+//      cout<<sys_lep_up<<" "<<sys_lep_down<<" "<<endl;
 
       nmus++;
       leps_pt.push_back(Muon_pt[iM]); 
@@ -781,6 +781,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
     sys_lep.push_back(sys_lep_up);
     sys_lep.push_back(sys_lep_down);
 
+ //   if(nleps!=0){cout<< nleps << " " << endl;} 
     //
     // get jets
     //
@@ -1077,8 +1078,8 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
 
     float w_isr_ = 1.;
     float isr_norm_ = 0;
-    if((inputfile.Contains("TTJets_") && inputfile.Contains("SMS-T1tbs_RPV") && inputfile.Contains("madgraphMLM"))) isr_norm_ =1.101;
-    else isr_norm_ = 1;
+    if((inputfile.Contains("TTJets_") && inputfile.Contains("madgraphMLM"))) isr_norm_ =1.101;
+    else if(inputfile.Contains("SMS-T1tbs_RPV")) isr_norm_ = 1;
 
     float isr_wgt_     = -999.;
     if(nisr_==0)       isr_wgt_ = 1.; 
@@ -1095,7 +1096,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
     nisr = nisr_;
     isr_wgt = isr_wgt_;
     isr_norm = isr_norm_;
-   }
+  }
 
     // 
     // weights 
@@ -1218,6 +1219,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
 # ifndef __CINT__  // the following code will be invisible for the interpreter
 int main(int argc, char **argv)
 {
+
   bool useCondor = true;
   TString inputdir, outputdir, process, list_processed; 
   
@@ -1237,9 +1239,9 @@ int main(int argc, char **argv)
     list_processed    = argv[4];
     
     cout << "-----------------------------------------------------------------------" << endl;
-    cout << " input   dir  : " << inputdir << endl;
-    cout << " output  dir  : " << outputdir << endl;
-    cout << " process      : " << process << endl;
+    cout << " input   dir                  : " << inputdir << endl;
+    cout << " output  dir                  : " << outputdir << endl;
+    cout << " process                      : " << process << endl;
     cout << " list of processed files      : " << list_processed << endl;
     cout << "-----------------------------------------------------------------------" << endl;
   }
