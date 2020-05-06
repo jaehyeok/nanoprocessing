@@ -740,7 +740,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
       leps_miniso.push_back(Electron_miniPFRelIso_all[iE]); 
       nleps++;
     } 
-    electronSF->close();
+    electronSF->Close();
     //
     // get muons
     //
@@ -777,7 +777,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
       leps_miniso.push_back(Muon_miniPFRelIso_all[iM]); 
       nleps++;
     }
-    muonSF->close();
+    muonSF->Close();
     sys_lep.push_back(sys_lep_up);
     sys_lep.push_back(sys_lep_down);
 
