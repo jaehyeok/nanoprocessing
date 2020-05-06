@@ -464,6 +464,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   std::vector<float> sys_isr;
   std::vector<float> sys_ht;
   std::vector<float> sys_mj12;
+  std::vector<float> sys_lep;
   std::vector<int>   sys_njets;
   std::vector<int>   sys_nbm;
   std::vector<bool>  sys_pass;
