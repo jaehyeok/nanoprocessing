@@ -5,24 +5,20 @@ import os.path
 
 year=sys.argv[1]
 
-<<<<<<< HEAD
 outputdir="root://cms-xrdr.private.lo:2094//xrd/store/user/yjeong/nanoprocessing/2016/processed_sys_v2/"
-=======
-outputdir="root://cms-xrdr.private.lo:2094//xrd/store/user/cwjung/nanoprocessing/2016/processed_sys_v1/"
->>>>>>> e08580badb2dd89c6b23aa1419e8deb5c25f8256
 #samplelist="samples/samples2016.txt"
 #inputmctag="RunIISummer16NanoAODv4"
 samplelist="samples/samples2016_v6.txt"
 inputmctag="RunIISummer16NanoAODv6"
 
 if year == "2017":
-	outputdir="root://cms-xrdr.private.lo:2094//xrd/store/user/cwjung/nanoprocessing/2017/"
-	#outputdir="/xrootd_user/cwjung/xrootd/nanoprocessing/2017"
+	outputdir="root://cms-xrdr.private.lo:2094//xrd/store/user/yjeong/nanoprocessing/2017/"
+	#outputdir="/xrootd_user/yjeong/xrootd/nanoprocessing/2017"
 	samplelist="samples/samples2017.txt"
 	inputmctag="RunIIFall17NanoAODv4"
 if year == "2018":
-	outputdir="root://cms-xrdr.private.lo:2094//xrd/store/user/cwjung/nanoprocessing/2018/"
-	#outputdir="/xrootd_user/cwjung/xrootd/nanoprocessing/2018"
+	outputdir="root://cms-xrdr.private.lo:2094//xrd/store/user/yjeong/nanoprocessing/2018/"
+	#outputdir="/xrootd_user/yjeong/xrootd/nanoprocessing/2018"
 	samplelist="samples/samples2018.txt"
 	inputmctag="RunIIAutumn18NanoAODv4"
 
@@ -51,7 +47,7 @@ for line in lines:
   if "13TeV" in splits[0]:
     f_list = os.listdir("/xrootd/store/mc/"+inputmctag+"/"+splits[0]+"")
     process=line.split('_13TeV')[0]
-    list_file = open("/cms/ldap_home/cwjung/flist/"+year+"/flist_"+process+".txt", "w")
+    list_file = open("/cms/ldap_home/yjeong/flist/"+year+"/flist_"+process+".txt", "w")
     for subdir in f_list:
       f_list_subdir = os.listdir("/xrootd/store/mc/"+inputmctag+"/"+splits[0]+"/"+subdir)
       for files in f_list_subdir:
@@ -75,7 +71,7 @@ for line in lines:
   elif "Run201" in splits[0]:
     f_list = os.listdir(splits[0])
     process=line.split('/')[5]+line.split('/')[4]
-    list_file = open("/cms/ldap_home/cwjung/flist/"+year+"/flist_"+process+".txt", "w")
+    list_file = open("/cms/ldap_home/yjeong/flist/"+year+"/flist_"+process+".txt", "w")
     for subdir in f_list:
       f_list_subdir = os.listdir(splits[0]+"/"+subdir)
       for files in f_list_subdir:
