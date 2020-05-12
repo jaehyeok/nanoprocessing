@@ -706,10 +706,10 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
     //
     // get electrons
     //
-
-    if(year==2016) TFile *electronSF = new TFile("data/ElectronScaleFactors_Run2016.root","read");
-    if(year==2017) TFile *electronSF = new TFile("data/ElectronScaleFactors_Run2017.root","read");
-    if(year==2018) TFile *electronSF = new TFile("data/ElectronScaleFactors_Run2018.root","read");
+    TFile *electronSF;
+    if(year==2016) electronSF = new TFile("data/ElectronScaleFactors_Run2016.root","read");
+    if(year==2017) electronSF = new TFile("data/ElectronScaleFactors_Run2017.root","read");
+    if(year==2018) electronSF = new TFile("data/ElectronScaleFactors_Run2018.root","read");
     vector<float> els_SFner;
     els_SFner.clear();
     float sys_lep_up   = 1;
