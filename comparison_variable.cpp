@@ -32,7 +32,7 @@ void set_hist_style_1(TH1F *h_1){
 
 void set_hist_style_2(TH1F *h_2){
 	h_2->SetLineColor(2);
-	h_2->SetLineStyle(0);
+	h_2->SetLineStyle(2);
 	h_2->SetLineWidth(1);
 }
 
@@ -89,17 +89,18 @@ void comparison_variable(){
 		h3[i] = new TH1F(Form("h3_%d",i),Form("ht_%d",i),50,0,8000);
 
 		tree_[i] = (TTree*)tfile[i]->Get("tree");
-		tree_[i]->SetBranchAddress("ht",&ht);
-		tree_[i]->SetBranchAddress("mj12",&mj12);
-		tree_[i]->SetBranchAddress("w_lumi",&w_lumi);
-		tree_[i]->SetBranchAddress("njets",&njets);
-		tree_[i]->SetBranchAddress("nbm",&nbm);
-		tree_[i]->SetBranchAddress("weight",&weight);
 
-		for(int j=0; j<tree[i]->GetEntries(); j++){
-		//for(int j=0; j<10000; j++){
+		//for(int j=0; j<tree[i]->GetEntries(); j++){
+		for(int j=0; j<100000; j++){
 			tree_[i]->GetEntry(j);
-			h[i]->Fill(njets,w_lumi);
+			tree_[i]->SetBranchAddress("ht",&ht);
+			tree_[i]->SetBranchAddress("mj12",&mj12);
+			tree_[i]->SetBranchAddress("w_lumi",&w_lumi);
+			tree_[i]->SetBranchAddress("njets",&njets);
+			tree_[i]->SetBranchAddress("nbm",&nbm);
+			tree_[i]->SetBranchAddress("weight",&weight);
+
+			h[i]->Fill(njets,w_lumi);//FIXME
 			h1[i]->Fill(mj12,w_lumi);
 			h2[i]->Fill(nbm,w_lumi);
 			h3[i]->Fill(ht,w_lumi);
@@ -173,5 +174,5 @@ void comparison_variable(){
 		else if(i>0)h3[i]->Draw("same");
 
 	}
-	c->SaveAs(outputdir+"w_lumi.png");
-}
+	c->SaveAs(outputdir+"w_lumi.png");//FIXME
+	}

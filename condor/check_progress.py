@@ -16,6 +16,7 @@ if year == "2018":
 
 flistdir="/cms/ldap_home/yjeong/flist/"+year
 flists = os.listdir(flistdir)
+
 '''
 print('---------------------------------------------cross section check----------------------------------------------')
 print('%46s %3s %26s' %(year, "tag", "Xsection"))
