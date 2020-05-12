@@ -26,15 +26,18 @@ std::vector<int> getLepSFBin(TH2F *hist, const bool elmu, const float pt, const 
   vector<int> ret;
   int binx(0), biny(0);
   float pt_ = (float)pt;
+  float eta_ = (float)eta;
   if(elmu){
-    pt_ = min(pt,(const float)499.99999);
-    binx = hist->GetXaxis()->FindBin(eta);
+    pt_ = min(pt,(const float)499.999);
+    eta_ = min(eta, (const float)2.499);
+    binx = hist->GetXaxis()->FindBin(eta_);
     biny = hist->GetYaxis()->FindBin(pt_);
   }
   else{
-    pt_ = min(pt,(const float)119.99999);
+    pt_ = min(pt,(const float)119.999);
+    eta_ = min(eta, (const float)2.399);
     binx = hist->GetXaxis()->FindBin(pt_);
-    biny = hist->GetYaxis()->FindBin(abs(eta));
+    biny = hist->GetYaxis()->FindBin(abs(eta_));
   }
   ret.push_back(binx);
   ret.push_back(biny);
@@ -68,7 +71,7 @@ std::vector<float> getLepSF(TFile *f, const bool elmu, const float pt, const flo
     TH2F *SF      = (TH2F*)f->Get("SF");
     bin           = getLepSFBin(SF,elmu,pt,eta);
     ret_SF        = SF->GetBinContent(bin.at(0),bin.at(1));
-    ret_err       = SF->GetBinError(bin.at(0),bin.at(1));
+    ret_err       = 0.03;
   }
   ret.push_back(ret_SF);
   ret.push_back(ret_err);
