@@ -1270,10 +1270,29 @@ int main(int argc, char **argv)
   // JECs
   if(0)
   {
-    JetCorrectorParameters *L1JetPar  = new JetCorrectorParameters("data/jec/Summer16_07Aug2017_V11_MC_L1FastJet_AK4PFchs.txt","");
-    JetCorrectorParameters *L2JetPar  = new JetCorrectorParameters("data/jec/Summer16_07Aug2017_V11_MC_L2Relative_AK4PFchs.txt");
-    JetCorrectorParameters *L3JetPar  = new JetCorrectorParameters("data/jec/Summer16_07Aug2017_V11_MC_L3Absolute_AK4PFchs.txt");
-    JetCorrectorParameters *ResJetPar = new JetCorrectorParameters("data/jec/Summer16_07Aug2017_V11_MC_L2L3Residual_AK4PFchs.txt"); 
+    JetCorrectorParameters *L1JetPar;
+    JetCorrectorParameters *L2JetPar;
+    JetCorrectorParameters *L3JetPar;
+    JetCorrectorParameters *ResJetPar;
+
+    if(year==2016){
+      L1JetPar  = new JetCorrectorParameters("data/jec/Summer16_07Aug2017_V11_MC_L1FastJet_AK4PFchs.txt","");
+      L2JetPar  = new JetCorrectorParameters("data/jec/Summer16_07Aug2017_V11_MC_L2Relative_AK4PFchs.txt");
+      L3JetPar  = new JetCorrectorParameters("data/jec/Summer16_07Aug2017_V11_MC_L3Absolute_AK4PFchs.txt");
+      ResJetPar = new JetCorrectorParameters("data/jec/Summer16_07Aug2017_V11_MC_L2L3Residual_AK4PFchs.txt");
+    }
+    if(year==2017){
+      L1JetPar  = new JetCorrectorParameters("data/jec/Fall17_17Nov2017_V32_MC_L1FastJet_AK4PFchs.txt","");
+      L2JetPar  = new JetCorrectorParameters("data/jec/Fall17_17Nov2017_V32_MC_L2Relative_AK4PFchs.txt","");
+      L3JetPar  = new JetCorrectorParameters("data/jec/Fall17_17Nov2017_V32_MC_L3Absolute_AK4PFchs.txt","");
+      ResJetPar = new JetCorrectorParameters("data/jec/Fall17_17Nov2017_V32_MC_L2L3Residual_AK4PFchs.txt","");
+    }
+    if(year==2018){
+      L1JetPar  = new JetCorrectorParameters("data/jec/Autumn18_V8_MC_L1FastJet_AK4PFchs.txt","");
+      L2JetPar  = new JetCorrectorParameters("data/jec/Autumn18_V8_MC_L2Relative_AK4PFchs.txt","");
+      L3JetPar  = new JetCorrectorParameters("data/jec/Autumn18_V8_MC_L3Absolute_AK4PFchs.txt","");
+      ResJetPar = new JetCorrectorParameters("data/jec/Autumn18_V8_MC_L2L3Residual_AK4PFchs.txt","");
+    }
     //  Load the JetCorrectorParameter objects into a vector, IMPORTANT: THE ORDER MATTERS HERE !!!! 
     vector<JetCorrectorParameters> vPar;
     vPar.push_back(*L1JetPar);
