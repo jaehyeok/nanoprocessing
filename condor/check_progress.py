@@ -8,11 +8,11 @@ from ROOT import TChain, TSelector, TTree, TH1F, TCanvas, TPad, TStyle, TString
 ROOT.gROOT.SetBatch(True)
 year=sys.argv[1]
 
-outputdir="/xrootd_user/yjeong/xrootd/nanoprocessing/2016/processed_sys_v2/"
+outputdir="/xrootd_user/yjeong/xrootd/nanoprocessing/2016/processed/"
 if year == "2017":
-	outputdir="/xrootd_user/yjeong/xrootd/nanoprocessing/2017/"
+	outputdir="/xrootd_user/yjeong/xrootd/nanoprocessing/2017/processed/"
 if year == "2018":
-	outputdir="/xrootd_user/yjeong/xrootd/nanoprocessing/2018/"
+	outputdir="/xrootd_user/yjeong/xrootd/nanoprocessing/2018/processed/"
 
 flistdir="/cms/ldap_home/yjeong/flist/"+year
 flists = os.listdir(flistdir)

@@ -1087,13 +1087,26 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
     else if(inputfile.Contains("SMS-T1tbs_RPV")) isr_norm_ = 1;
 
     float isr_wgt_     = -999.;
-    if(nisr_==0)       isr_wgt_ = 1.; 
-    else if(nisr_==1)  isr_wgt_ = 0.920; 
-    else if(nisr_==2)  isr_wgt_ = 0.821; 
-    else if(nisr_==3)  isr_wgt_ = 0.715; 
-    else if(nisr_==4)  isr_wgt_ = 0.662; 
-    else if(nisr_==5)  isr_wgt_ = 0.561; 
-    else if(nisr_>=6)  isr_wgt_ = 0.511; 
+    if(year==2016){
+      if(nisr_==0)       isr_wgt_ = 1.; 
+      else if(nisr_==1)  isr_wgt_ = 0.920; 
+      else if(nisr_==2)  isr_wgt_ = 0.821; 
+      else if(nisr_==3)  isr_wgt_ = 0.715; 
+      else if(nisr_==4)  isr_wgt_ = 0.662; 
+      else if(nisr_==5)  isr_wgt_ = 0.561; 
+      else if(nisr_>=6)  isr_wgt_ = 0.511; 
+    }
+
+    if(year>=2017){
+      if(nisr==0)	 isr_wgt_ = 1.;
+      else if(nisr_==1)  isr_wgt_ = 0.914;
+      else if(nisr_==2)  isr_wgt_ = 0.796;
+      else if(nisr_==3)  isr_wgt_ = 0.698;
+      else if(nisr_==4)  isr_wgt_ = 0.602;
+      else if(nisr_==5)  isr_wgt_ = 0.579;
+      else if(nisr_>=6)  isr_wgt_ = 0.580;
+    }
+
     w_isr_ = isr_wgt_*isr_norm_;
     w_isr = w_isr_;
     sys_isr.push_back(w_isr+((1-w_isr)/2));
