@@ -1282,7 +1282,9 @@ int main(int argc, char **argv)
     JetCorrector = new FactorizedJetCorrector(vPar);
   }
   // JEC systs
-  JecUnc  = new JetCorrectionUncertainty("data/jec/Summer16_07Aug2017_V11_MC_Uncertainty_AK4PFchs.txt");
+  if(year==2016) JecUnc  = new JetCorrectionUncertainty("data/jec/Summer16_07Aug2017_V11_MC_Uncertainty_AK4PFchs.txt");
+  if(year==2017) JecUnc  = new JetCorrectionUncertainty("data/jec/Fall17_17Nov2017_V32_MC_Uncertainty_AK4PFchs.txt");
+  if(year==2018) JecUnc  = new JetCorrectionUncertainty("data/jec/Autumn18_V8_MC_Uncertainty_AK4PFchs.txt");
 
   // get list of files in a directory to calculate w_lumi
   // w_lumi = xsec[fb] * genWeight / sum(genWeights)
