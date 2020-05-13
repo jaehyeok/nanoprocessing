@@ -170,13 +170,13 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   Float_t Electron_eta[25];  
   Float_t Electron_phi[25]; 
   Int_t   Electron_cutBased[25];  // cut-based ID Fall17 V2: susy recommendation, use medium(https://github.com/richstu/babymaker/blob/master/bmaker/src/lepton_tools.cc#L289)
-  Int_t   Electron_cutBased_Spring15[25];  // Spring15 ID to compare with AN-2016/187 (1L MJ 2016 data)  
+  //Int_t   Electron_cutBased_Spring15[25];  // Spring15 ID to compare with AN-2016/187 (1L MJ 2016 data)  
   Int_t   Electron_jetIdx[25];    // index of the associated jet (-1 if none)  
   Int_t   Electron_pdgId[25];   
   Float_t   Electron_miniPFRelIso_all[25];   
   Float_t   Electron_pfRelIso03_all[25];   
   Int_t   Electron_vidNestedWPBitmap[25];   
-  Int_t   Electron_vidNestedWPBitmapSpring15[25];   
+  //Int_t   Electron_vidNestedWPBitmapSpring15[25];   
   UInt_t  nMuon=0;  
   Float_t Muon_pt[25]; 
   Float_t Muon_eta[25];  
@@ -255,13 +255,13 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   tree->SetBranchAddress("Electron_eta",        &Electron_eta);
   tree->SetBranchAddress("Electron_phi",        &Electron_phi);
   tree->SetBranchAddress("Electron_cutBased",   &Electron_cutBased);
-  tree->SetBranchAddress("Electron_cutBased_Spring15",   &Electron_cutBased_Spring15);
+  //tree->SetBranchAddress("Electron_cutBased_Spring15",   &Electron_cutBased_Spring15);
   tree->SetBranchAddress("Electron_jetIdx",     &Electron_jetIdx);
   tree->SetBranchAddress("Electron_pdgId",      &Electron_pdgId);
   tree->SetBranchAddress("Electron_miniPFRelIso_all", &Electron_miniPFRelIso_all);
   tree->SetBranchAddress("Electron_pfRelIso03_all", &Electron_pfRelIso03_all);
   tree->SetBranchAddress("Electron_vidNestedWPBitmap", &Electron_vidNestedWPBitmap);
-  tree->SetBranchAddress("Electron_vidNestedWPBitmapSpring15", &Electron_vidNestedWPBitmapSpring15);
+  //tree->SetBranchAddress("Electron_vidNestedWPBitmapSpring15", &Electron_vidNestedWPBitmapSpring15);
   tree->SetBranchAddress("nMuon",               &nMuon);
   tree->SetBranchAddress("Muon_pt",             &Muon_pt);
   tree->SetBranchAddress("Muon_eta",            &Muon_eta);
@@ -703,6 +703,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
     ntrupv_mean  = Pileup_nTrueInt;
     lhe_ht = LHE_HTIncoming;
 
+cout<<"08"<<endl;
     //
     // get electrons
     //
@@ -710,26 +711,30 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
     if(year==2016) electronSF = new TFile("data/ElectronScaleFactors_Run2016.root","read");
     if(year==2017) electronSF = new TFile("data/ElectronScaleFactors_Run2017.root","read");
     if(year==2018) electronSF = new TFile("data/ElectronScaleFactors_Run2018.root","read");
+
     vector<float> els_SFner;
     els_SFner.clear();
     float sys_lep_up   = 1;
     float sys_lep_down = 1;
+cout<<"1"<<endl;
 
-
-   for(int iE = 0; iE < nElectron; iE++) 
+    for(int iE = 0; iE < nElectron; iE++) // error point in 2018 year
     {
+cout<<"2"<<endl;
       els_pt.push_back(Electron_pt[iE]); 
       els_eta.push_back(Electron_eta[iE]); 
       els_phi.push_back(Electron_phi[iE]); 
       els_sigid.push_back(idElectron_noIso(Electron_vidNestedWPBitmap[iE], 3)); /* 3 = medium */ 
-      els_spr15_sigid.push_back(idElectron_noIso(Electron_vidNestedWPBitmapSpring15[iE], 3));  /* 3 = medium */
+      //els_spr15_sigid.push_back(idElectron_noIso(Electron_vidNestedWPBitmapSpring15[iE], 3));  /* 3 = medium */
       els_miniso.push_back(Electron_miniPFRelIso_all[iE]); 
       els_reliso.push_back(Electron_pfRelIso03_all[iE]); 
       if(Electron_pt[iE]<20)  continue;           
       if(abs(Electron_eta[iE])>2.5)  continue;           
       if(!idElectron_noIso(Electron_vidNestedWPBitmap[iE], 3)) continue;           // medium WP
       if(Electron_miniPFRelIso_all[iE]>0.1) continue; // miniso
-      els_SFner    =  getLepSF(electronSF, true, Electron_pt[iE], Electron_eta[iE]);
+cout<<"3"<<endl;
+      els_SFner    =  getLepSF(electronSF, true, Electron_pt[iE], Electron_eta[iE]); // error point in 2017 year
+cout<<"4"<<endl;
       w_lep        *= els_SFner.at(0);
       sys_lep_up   *= (els_SFner.at(0)+els_SFner.at(1));
       sys_lep_down *= (els_SFner.at(0)-els_SFner.at(1));
