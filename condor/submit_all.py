@@ -14,13 +14,13 @@ inputmctag="RunIISummer16NanoAODv6"
 if year == "2017":
 	outputdir="root://cms-xrdr.private.lo:2094//xrd/store/user/yjeong/nanoprocessing/2017/processed/"
 	#outputdir="/xrootd_user/yjeong/xrootd/nanoprocessing/2017"
-	samplelist="samples/samples2017_v5.txt"
-	inputmctag="RunIIFall17NanoAODv5"
+	samplelist="samples/samples2017_v6.txt"
+	inputmctag="RunIIFall17NanoAODv6"
 if year == "2018":
 	outputdir="root://cms-xrdr.private.lo:2094//xrd/store/user/yjeong/nanoprocessing/2018/processed/"
 	#outputdir="/xrootd_user/yjeong/xrootd/nanoprocessing/2018"
-	samplelist="samples/samples2018_v5.txt"
-	inputmctag="RunIIAutumn18NanoAODv5"
+	samplelist="samples/samples2018_v6.txt"
+	inputmctag="RunIIAutumn18NanoAODv6"
 
 # print out inputs
 print "------------------------------------------------------------------------------------------------------------"
