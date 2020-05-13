@@ -752,6 +752,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
 
     TFile *muonSF;
     if(year==2016)muonSF = new TFile("data/TnP_NUM_MiniIsoTight_DENOM_LooseID_VAR_map_pt_eta.root","read");
+    if(year==2017)muonSF = new TFile("data/2017MiniIso0.2AndMediumID_SF.root","read");
     vector<float> mus_SFner;
     mus_SFner.clear();
 
