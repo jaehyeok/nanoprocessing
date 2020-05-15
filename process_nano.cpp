@@ -703,38 +703,35 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
     ntrupv_mean  = Pileup_nTrueInt;
     lhe_ht = LHE_HTIncoming;
 
-cout<<"08"<<endl;
     //
     // get electrons
     //
-    TFile *electronSF;
+    /*TFile *electronSF;
     if(year==2016) electronSF = new TFile("data/ElectronScaleFactors_Run2016.root","read");
-    if(year==2017) electronSF = new TFile("data/ElectronScaleFactors_Run2017.root","read");
-    if(year==2018) electronSF = new TFile("data/ElectronScaleFactors_Run2018.root","read");
+    else if(year==2017) electronSF = new TFile("data/ElectronScaleFactors_Run2017.root","read");
+    else if(year==2018) electronSF = new TFile("data/ElectronScaleFactors_Run2018.root","read");*/
+
+    TFile *electronSF = new TFile("data/ElectronScaleFactors_Run2016.root","read");
 
     vector<float> els_SFner;
     els_SFner.clear();
     float sys_lep_up   = 1;
     float sys_lep_down = 1;
-cout<<"1"<<endl;
 
-    for(int iE = 0; iE < nElectron; iE++) // error point in 2018 year
+    for(int iE = 0; iE < nElectron; iE++) // error point in 2018 year FIXME
     {
-cout<<"2"<<endl;
       els_pt.push_back(Electron_pt[iE]); 
       els_eta.push_back(Electron_eta[iE]); 
       els_phi.push_back(Electron_phi[iE]); 
-      els_sigid.push_back(idElectron_noIso(Electron_vidNestedWPBitmap[iE], 3)); /* 3 = medium */ 
-      //els_spr15_sigid.push_back(idElectron_noIso(Electron_vidNestedWPBitmapSpring15[iE], 3));  /* 3 = medium */
+      els_sigid.push_back(idElectron_noIso(Electron_vidNestedWPBitmap[iE], 3)); // 3 = medium 
+      //els_spr15_sigid.push_back(idElectron_noIso(Electron_vidNestedWPBitmapSpring15[iE], 3));  // 3 = medium 
       els_miniso.push_back(Electron_miniPFRelIso_all[iE]); 
       els_reliso.push_back(Electron_pfRelIso03_all[iE]); 
       if(Electron_pt[iE]<20)  continue;           
       if(abs(Electron_eta[iE])>2.5)  continue;           
       if(!idElectron_noIso(Electron_vidNestedWPBitmap[iE], 3)) continue;           // medium WP
       if(Electron_miniPFRelIso_all[iE]>0.1) continue; // miniso
-cout<<"3"<<endl;
-      els_SFner    =  getLepSF(electronSF, true, Electron_pt[iE], Electron_eta[iE]); // error point in 2017 year
-cout<<"4"<<endl;
+      els_SFner    =  getLepSF(electronSF, true, Electron_pt[iE], Electron_eta[iE]); // error point in 2017 year FIXME
       w_lep        *= els_SFner.at(0);
       sys_lep_up   *= (els_SFner.at(0)+els_SFner.at(1));
       sys_lep_down *= (els_SFner.at(0)-els_SFner.at(1));
@@ -755,9 +752,10 @@ cout<<"4"<<endl;
     // get muons
     //
 
-    TFile *muonSF;
+    /*TFile *muonSF;
     if(year==2016)muonSF = new TFile("data/TnP_NUM_MiniIsoTight_DENOM_LooseID_VAR_map_pt_eta.root","read");
-    if(year==2017)muonSF = new TFile("data/2017MiniIso0.2AndMediumID_SF.root","read");
+    else if(year>=2017)muonSF = new TFile("data/2017MiniIso0.2AndMediumID_SF.root","read");// */
+    TFile *muonSF = new TFile("data/TnP_NUM_MiniIsoTight_DENOM_LooseID_VAR_map_pt_eta.root","read");
     vector<float> mus_SFner;
     mus_SFner.clear();
 
@@ -1104,20 +1102,15 @@ cout<<"4"<<endl;
       else if(nisr_>=6)  isr_wgt_ = 0.511; 
     }
 
-    if(year>=2017){
-      if(nisr==0)	 isr_wgt_ = 1.;
-      else if(nisr_==1)  isr_wgt_ = 0.914;
-      else if(nisr_==2)  isr_wgt_ = 0.796;
-      else if(nisr_==3)  isr_wgt_ = 0.698;
-      else if(nisr_==4)  isr_wgt_ = 0.602;
-      else if(nisr_==5)  isr_wgt_ = 0.579;
-      else if(nisr_>=6)  isr_wgt_ = 0.580;
-    }
+    if(year>=2017 && nisr>=0) isr_wgt_ = 1.;
 
     w_isr_ = isr_wgt_*isr_norm_;
     w_isr = w_isr_;
-    sys_isr.push_back(w_isr+((1-w_isr)/2));
-    sys_isr.push_back(w_isr-((1-w_isr)/2));
+    if(year==2016){
+      sys_isr.push_back(w_isr+((1-w_isr)/2));
+      sys_isr.push_back(w_isr-((1-w_isr)/2));
+    }
+    if(year>=2017) sys_isr.push_back(0);
     nisr = nisr_;
     isr_wgt = isr_wgt_;
     isr_norm = isr_norm_;
