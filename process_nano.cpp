@@ -1102,7 +1102,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
       else if(nisr_>=6)  isr_wgt_ = 0.511; 
     }
 
-    if(year>=2017 && nisr>=0) isr_wgt_ = 1.;
+    if(year>=2017) isr_wgt_ = 1.;
 
     w_isr_ = isr_wgt_*isr_norm_;
     w_isr = w_isr_;
