@@ -16,10 +16,13 @@ g++ skim.cpp  `root-config --cflags --glibs` -o skim.exe
 cp process_nano.exe /cms/ldap_home/yjeong
 cp skim.exe         /cms/ldap_home/yjeong
 
-mkdir -p condor/submit_scripts/2016/
-mkdir -p condor/submit_scripts/2017/
-mkdir -p condor/submit_scripts/2018/
+mkdir -p condor/submit_scripts/2016/log/
+mkdir -p condor/submit_scripts/2017/log/
+mkdir -p condor/submit_scripts/2018/log/
 
+cp condor/run.sh condor/submit_scripts/2016
+cp condor/run.sh condor/submit_scripts/2017
+cp condor/run.sh condor/submit_scripts/2018
 cp process_nano.exe condor/submit_scripts/2016
 cp process_nano.exe condor/submit_scripts/2017
 cp process_nano.exe condor/submit_scripts/2018
