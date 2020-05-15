@@ -56,6 +56,8 @@ const bool DEBUG = false;
 // JEC  
 FactorizedJetCorrector *JetCorrector;
 JetCorrectionUncertainty *JecUnc;
+TFile *electronSF;
+TFile *muonSF;
 
 void process_nano(TString inputfile, TString outputdir, float sumWeights, TString samplename, int nfiles, int &filenumber) 
 {
@@ -97,6 +99,19 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   calibreader.load(calib, BTagEntry::FLAV_B,     "iterativefit");
   calibreader.load(calib, BTagEntry::FLAV_C,     "iterativefit");
   calibreader.load(calib, BTagEntry::FLAV_UDSG,  "iterativefit"); 
+
+
+	// Lepton SF files
+  /*TFile *electronSF;
+  if(year==2016) electronSF = new TFile("data/ElectronScaleFactors_Run2016.root","read");
+  else if(year==2017) electronSF = new TFile("data/ElectronScaleFactors_Run2017.root","read");
+  else if(year==2018) electronSF = new TFile("data/ElectronScaleFactors_Run2018.root","read");*/
+  electronSF = new TFile("data/ElectronScaleFactors_Run2016.root","read");
+    
+	/*TFile *muonSF;
+  if(year==2016)muonSF = new TFile("data/TnP_NUM_MiniIsoTight_DENOM_LooseID_VAR_map_pt_eta.root","read");
+  else if(year>=2017)muonSF = new TFile("data/2017MiniIso0.2AndMediumID_SF.root","read");// */
+  muonSF = new TFile("data/TnP_NUM_MiniIsoTight_DENOM_LooseID_VAR_map_pt_eta.root","read");
 
   // ------------------------------------------------------------------ 
   // json for DATA 
@@ -706,12 +721,6 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
     //
     // get electrons
     //
-    /*TFile *electronSF;
-    if(year==2016) electronSF = new TFile("data/ElectronScaleFactors_Run2016.root","read");
-    else if(year==2017) electronSF = new TFile("data/ElectronScaleFactors_Run2017.root","read");
-    else if(year==2018) electronSF = new TFile("data/ElectronScaleFactors_Run2018.root","read");*/
-
-    TFile *electronSF = new TFile("data/ElectronScaleFactors_Run2016.root","read");
 
     vector<float> els_SFner;
     els_SFner.clear();
@@ -747,15 +756,11 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
       leps_miniso.push_back(Electron_miniPFRelIso_all[iE]); 
       nleps++;
     } 
-    electronSF->Close();
-    //
+    
+		//
     // get muons
     //
 
-    /*TFile *muonSF;
-    if(year==2016)muonSF = new TFile("data/TnP_NUM_MiniIsoTight_DENOM_LooseID_VAR_map_pt_eta.root","read");
-    else if(year>=2017)muonSF = new TFile("data/2017MiniIso0.2AndMediumID_SF.root","read");// */
-    TFile *muonSF = new TFile("data/TnP_NUM_MiniIsoTight_DENOM_LooseID_VAR_map_pt_eta.root","read");
     vector<float> mus_SFner;
     mus_SFner.clear();
 
@@ -787,7 +792,6 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
       leps_miniso.push_back(Muon_miniPFRelIso_all[iM]); 
       nleps++;
     }
-    muonSF->Close();
     sys_lep.push_back(sys_lep_up);
     sys_lep.push_back(sys_lep_down);
 
@@ -1218,6 +1222,8 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
 
   // update the tree and close file
   f->Close();
+  muonSF->Close();
+  electronSF->Close();
 
 
   //
