@@ -71,8 +71,9 @@ void skimonefile(TString inputfile, TString outputdir, TString skim)
 		skimcut="nbm>0&&mj12>500&&njets>=4";
 	}
 	else if(skim=="rpvfitnbge0") {
-		if(inputfile.Contains("TTJets_Tune")) skimcut="(sys_ht[0]>1200 || sys_ht[1]>1200 || ht>1200) && (sys_mj12[0]>500 || sys_mj12[1]>500 || mj12>500) && (sys_njets[0]>=4 || sys_njets[1]>=4 || njets>=4) && stitch_ht==1";
-		else skimcut="(sys_ht[0]>1200 || sys_ht[1]>1200 || ht>1200) && (sys_mj12[0]>500 || sys_mj12[1]>500 || mj12>500) && (sys_njets[0]>=4 || sys_njets[1]>=4 || njets>=4)";
+		if(inputfile.Contains("JetHTRun")) skimcut="(sys_ht[0]>1200 || sys_ht[1]>1200 || ht>1200) && (sys_mj12[0]>500 || sys_mj12[1]>500 || mj12>500) && (sys_njets[0]>=4 || sys_njets[1]>=4 || njets>=4) && stitch_ht==1";
+		else if(inputfile.Contains("TTJets_Tune")) skimcut="(sys_ht[0]>1200 || sys_ht[1]>1200 || ht>1200) && (sys_mj12[0]>500 || sys_mj12[1]>500 || mj12>500) && (sys_njets[0]>=4 || sys_njets[1]>=4 || njets>=4) && stitch_ht==1 && nbm>=2";
+		else skimcut="(sys_ht[0]>1200 || sys_ht[1]>1200 || ht>1200) && (sys_mj12[0]>500 || sys_mj12[1]>500 || mj12>500) && (sys_njets[0]>=4 || sys_njets[1]>=4 || njets>=4) && nbm>=2";
 	}
 	else if(skim=="ht1000") {
 		skimcut="ht>1000";
