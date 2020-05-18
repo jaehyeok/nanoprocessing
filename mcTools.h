@@ -69,7 +69,7 @@ float getXsec(TString process)
   
   // triboson 
   if(process.Contains("WWW_4F_Tune"))  xsec = 0.2086;
-  if(process.Contains("WWZ_Tune"))  xsec = 0.1651; 
+  if(process.Contains("WWZ_Tune") && process.Contains("WWZ_4F_Tune"))  xsec = 0.1651; 
   if(process.Contains("WZZ_Tune"))  xsec = 0.05565; 
   if(process.Contains("ZZZ_Tune"))  xsec = 0.01398; 
  
