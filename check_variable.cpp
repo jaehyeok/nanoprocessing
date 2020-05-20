@@ -27,18 +27,27 @@ void set_legend_style(TLegend *l1){
 void check_variable(){
 
 	TString inputdir = "/cms/scratch/yjeong/check_process/";
-	TString outputdir = "plots/mc/mGluino/16-17/";
 
-	TString tag_name = "SMS-T1tbs_RPV_mGluino1600";
+	/*TString sample_name_16 = "2016_SMS-T1tbs_RPV_mGluino1600_TuneCUETP8M1";
+	TString sample_name_ = "2018_SMS-T1tbs_RPV_mGluino1600_TuneCP2";
+	TString outputdir = "plots/2018/mGluino/";// */
+
+	/*TString sample_name_16 = "2016_TTJets_TuneCUETP8M2T4";
+	TString sample_name_ = "2018_TTJets_TuneCP5";
+	TString outputdir = "plots/2018/TTJets/";// */
+
+	TString sample_name_16 = "JetHTRun2016D_rpvfitnbge0";
+	TString sample_name_ = "JetHTRun2018D_rpvfitnbge0";
+	TString outputdir = "plots/2018/JetHTRun/";// */
 
 	TTree *mytree_1;
 	TTree *mytree_2;
 	TFile *tfile_1;
 	TFile *tfile_2;
 
-	tfile_1 = new TFile(inputdir+"2016_"+tag_name+"_TuneCUETP8M1.root");//2016
+	tfile_1 = new TFile(inputdir+sample_name_16+".root");
 	mytree_1 = (TTree*)tfile_1->Get("tree");
-	tfile_2 = new TFile(inputdir+"2017_"+tag_name+"_TuneCP2.root");//2017
+	tfile_2 = new TFile(inputdir+sample_name_+".root");
 	mytree_2 = (TTree*)tfile_2->Get("tree");
 
 	TObjArray *blist;
@@ -47,8 +56,8 @@ void check_variable(){
 	blist->Print();
 	cout<< blist->GetEntries() <<endl;
 	cout<< typeid(blist->GetEntries()).name() <<endl;
-	cout<<"version5 entries: "<<mytree_1->GetEntries()<<endl;
-	cout<<"version6 entries: "<<mytree_2->GetEntries()<<endl;
+	cout<<"16NanoAOD entries: "<<mytree_1->GetEntries()<<endl;
+	cout<<"18NanoAOD entries: "<<mytree_2->GetEntries()<<endl;
 	const int nBranch = 85;
 
 	TH1F *h1[nBranch];
@@ -108,9 +117,9 @@ void check_variable(){
 		plotpad_[j]->Draw();
 		ratiopad_[j]->Draw();
 
-		h1[j] = new TH1F(Form("h1_%d",j),tag_name,bin,x_min[j],x_max[j]);
+		h1[j] = new TH1F(Form("h1_%d",j),sample_name_,bin,x_min[j],x_max[j]);
 		mytree_1->Project(Form("h1_%d",j),blist->At(j)->GetName());
-		h2[j] = new TH1F(Form("h2_%d",j),tag_name,bin,x_min[j],x_max[j]);
+		h2[j] = new TH1F(Form("h2_%d",j),sample_name_,bin,x_min[j],x_max[j]);
 		mytree_2->Project(Form("h2_%d",j),blist->At(j)->GetName());
 		plotpad_[j]->cd();
 
@@ -127,7 +136,7 @@ void check_variable(){
 		h2[j]->SetLineColor(kBlue);
 
 		l_[j]->AddEntry(h1[j],"2016_NanoAODv6");
-		l_[j]->AddEntry(h2[j],"2017_NanoAODv6");
+		l_[j]->AddEntry(h2[j],"2018_NanoAODv6");
 
 		set_legend_style(l_[j]);
 
@@ -142,6 +151,7 @@ void check_variable(){
 		heff[j]->GetXaxis()->SetTitle(blist->At(j)->GetName());
 		heff[j]->Divide(h2[j],h1[j]);
 		heff[j]->Draw("e");
-		c_[j]->SaveAs(outputdir+tag_name+"_"+blist->At(j)->GetName()+".png");
+		if(!var_name.Contains("els_spr15_sigid"))
+			c_[j]->SaveAs(outputdir+sample_name_+"_"+blist->At(j)->GetName()+".png");
 	}
 }
