@@ -26,23 +26,19 @@ void set_legend_style(TLegend *l1){
 
 void check_variable(){
 
-	TString inputdir = "/cms/scratch/yjeong/RPV_MC/2016/";
+	TString inputdir = "/cms/scratch/yjeong/check_process/";
+	TString outputdir = "plots/mc/mGluino/16-17/";
 
-	TString sample_name_1 = "processed_v5/31CD3EC0-7352-1342-B38F-65BBF755DF0B_fatjetbaby_";//version5
-	TString sample_name_2 = "processed_v6/1A542160-4CF8-384F-88A9-3EBCDA217FB1_fatjetbaby_";//version6
-
-	tag_name = "TTJets_HT-2500toInf_TuneCUETP8M1";
-
-	TString outputdir = "/cms/scratch/yjeong/CMSSW_7_1_0/src/nanoprocessing/plots/";
+	TString tag_name = "SMS-T1tbs_RPV_mGluino1600";
 
 	TTree *mytree_1;
 	TTree *mytree_2;
 	TFile *tfile_1;
 	TFile *tfile_2;
 
-	tfile_1 = new TFile(inputdir+sample_name_1+tag_name+".root");
+	tfile_1 = new TFile(inputdir+"2016_"+tag_name+"_TuneCUETP8M1.root");//2016
 	mytree_1 = (TTree*)tfile_1->Get("tree");
-	tfile_2 = new TFile(inputdir+sample_name_2+tag_name+".root");
+	tfile_2 = new TFile(inputdir+"2017_"+tag_name+"_TuneCP2.root");//2017
 	mytree_2 = (TTree*)tfile_2->Get("tree");
 
 	TObjArray *blist;
@@ -53,7 +49,7 @@ void check_variable(){
 	cout<< typeid(blist->GetEntries()).name() <<endl;
 	cout<<"version5 entries: "<<mytree_1->GetEntries()<<endl;
 	cout<<"version6 entries: "<<mytree_2->GetEntries()<<endl;
-	const int nBranch = 72;
+	const int nBranch = 85;
 
 	TH1F *h1[nBranch];
 	TH1F *h2[nBranch];
@@ -93,6 +89,9 @@ void check_variable(){
 		if(var_name.Contains("jets_m")) {a=50; b=-1;}
 		if(var_name.Contains("jets_hflavor")) {a=7; b=-1;}
 		if(var_name.Contains("els_miniso") || var_name.Contains("els_reliso") || var_name.Contains("mus_miniso")) {a=10; b=0;}
+		if(var_name.Contains("sys_mj12")) {a=4000; b=0;}
+		if(var_name.Contains("sys_njets")) {a=22; b=0;}
+		if(var_name.Contains("sys_ht")) {a=8000; b=0;}
 
 		x_max[j] = xmax[j]+a;
 		x_min[j] = xmin[j]+b;
@@ -125,8 +124,8 @@ void check_variable(){
 		h1[j]->SetLineWidth(3);
 		h2[j]->SetLineColor(kBlue);
 
-		l_[j]->AddEntry(h1[j],"NanoAODv5");
-		l_[j]->AddEntry(h2[j],"NanoAODv6");
+		l_[j]->AddEntry(h1[j],"2016_NanoAODv6");
+		l_[j]->AddEntry(h2[j],"2017_NanoAODv6");
 
 		set_legend_style(l_[j]);
 
