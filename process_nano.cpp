@@ -1093,7 +1093,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
     float w_isr_ = 1.;
     float isr_norm_ = 0;
     if((inputfile.Contains("TTJets_") && inputfile.Contains("madgraphMLM")) || inputfile.Contains("TTJets_TuneCUETP8M2T4")) isr_norm_ =1.101;
-    if(year==2016)
+    if(year==2016){
       if(inputfile.Contains("SMS-T1tbs_RPV_mGluino1000")) isr_norm_ = 1.27982;
       else if(inputfile.Contains("SMS-T1tbs_RPV_mGluino1100")) isr_norm_ = 1.28991;
       else if(inputfile.Contains("SMS-T1tbs_RPV_mGluino1200")) isr_norm_ = 1.29881;
@@ -1107,7 +1107,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
       else if(inputfile.Contains("SMS-T1tbs_RPV_mGluino2000")) isr_norm_ = 1.34401;
       else if(inputfile.Contains("SMS-T1tbs_RPV_mGluino2100")) isr_norm_ = 1.34697;
       else if(inputfile.Contains("SMS-T1tbs_RPV_mGluino2200")) isr_norm_ = 1.35132;
-
+    }
     if(year>=2017 && inputfile.Contains("SMS-T1tbs_RPV")) isr_norm_ = 1.;
 
     float isr_wgt_     = -999.;

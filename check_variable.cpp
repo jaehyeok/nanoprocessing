@@ -32,11 +32,11 @@ void check_variable(){
 	TString sample_name_ = "2018_SMS-T1tbs_RPV_mGluino1600_TuneCP2";
 	TString outputdir = "plots/2018/mGluino/";// */
 
-	/*TString sample_name_16 = "2016_TTJets_TuneCUETP8M2T4";
+	TString sample_name_16 = "2016_TTJets_TuneCUETP8M2T4";
 	TString sample_name_ = "2018_TTJets_TuneCP5";
 	TString outputdir = "plots/2018/TTJets/";// */
 
-	TString sample_name_16 = "JetHTRun2016D_rpvfitnbge0";
+	/*TString sample_name_16 = "JetHTRun2016D_rpvfitnbge0";
 	TString sample_name_ = "JetHTRun2018D_rpvfitnbge0";
 	TString outputdir = "plots/2018/JetHTRun/";// */
 
