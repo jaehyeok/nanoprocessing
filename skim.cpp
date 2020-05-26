@@ -139,8 +139,8 @@ int main(int argc, char **argv)
   //vector<TString> files = globVector(Form("%s/*_DYJets*.root", inputdir.Data())); 
   //vector<TString> files = globVector(Form("%s/*_TT*.root", inputdir.Data())); 
   //vector<TString> files = globVector(Form("%s/*_W*.root", inputdir.Data())); 
-  //vector<TString> files = globVector(Form("%s/*_ST*.root", inputdir.Data())); 
-  vector<TString> files = globVector(Form("%s/*_SMS*.root", inputdir.Data())); 
+  vector<TString> files = globVector(Form("%s/*_ZZ*.root", inputdir.Data())); 
+  //vector<TString> files = globVector(Form("%s/*_SMS*.root", inputdir.Data())); 
   //vector<TString> files = globVector(Form("%s/*JetHTRun*.root", inputdir.Data())); 
 
 	cout << "skimming " << files.size() << " files" << endl;

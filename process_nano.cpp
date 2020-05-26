@@ -164,6 +164,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   Float_t     fixedGridRhoFastjetAll = 0; 
   // weights
   Float_t     btagWeight_CSVV2 = 1;
+  Float_t     btagWeight_DeepCSVB = 1;
   Float_t     genWeight        = 1;
   //LHE HT incomming
   Float_t     LHE_HTIncoming = 0;
@@ -250,6 +251,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   // weights 
   if(!isData)
     tree->SetBranchAddress("btagWeight_CSVV2",    &btagWeight_CSVV2);
+    tree->SetBranchAddress("btagWeight_DeepCSVB",    &btagWeight_DeepCSVB);
   // MC 
   if(!isData)
   {
@@ -359,13 +361,14 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   float weight      =1;
   float w_btag_csv  =1;
   float w_btag_dcsv =1;
+  float w_btag_dcsv_NANO =1;
   float w_pu        =1;
   float w_lumi      =1;
   float w_toppt     =1;
   float w_lep       =1;
-  float w_isr       =0;
-  float isr_wgt     =0;
-  float isr_norm    =0;
+  float w_isr       =1;
+  float isr_wgt     =1;
+  float isr_norm    =1;
   int nisr          =0;
   bool stitch_ht    =true;
 
@@ -503,6 +506,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   babyTree_->Branch("weight",            &weight);
   babyTree_->Branch("w_btag_csv",    	 &w_btag_csv);
   babyTree_->Branch("w_btag_dcsv",   	 &w_btag_dcsv);
+  babyTree_->Branch("w_btag_dcsv_NANO",	 &w_btag_dcsv_NANO);
   babyTree_->Branch("w_lumi",            &w_lumi);
   babyTree_->Branch("w_pu",              &w_pu);
   babyTree_->Branch("w_lep",             &w_lep);
@@ -629,6 +633,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
     w_lumi        =    1;
     w_btag_csv    =    1;
     w_btag_dcsv   =    1;
+    w_btag_dcsv_NANO   =    1;
     w_pu          =    1;
     // leptons 
     nleps      =   0;           
@@ -1090,49 +1095,41 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
       if(matched_==false) nisr_++;//--> not matched with final state.
     }
 
-    float w_isr_ = 1.;
-    float isr_norm_ = 0;
-    if((inputfile.Contains("TTJets_") && inputfile.Contains("madgraphMLM")) || inputfile.Contains("TTJets_TuneCUETP8M2T4")) isr_norm_ =1.101;
     if(year==2016){
-      if(inputfile.Contains("SMS-T1tbs_RPV_mGluino1000")) isr_norm_ = 1.27982;
-      else if(inputfile.Contains("SMS-T1tbs_RPV_mGluino1100")) isr_norm_ = 1.28991;
-      else if(inputfile.Contains("SMS-T1tbs_RPV_mGluino1200")) isr_norm_ = 1.29881;
-      else if(inputfile.Contains("SMS-T1tbs_RPV_mGluino1300")) isr_norm_ = 1.30728;
-      else if(inputfile.Contains("SMS-T1tbs_RPV_mGluino1400")) isr_norm_ = 1.31325;
-      else if(inputfile.Contains("SMS-T1tbs_RPV_mGluino1500")) isr_norm_ = 1.31898;
-      else if(inputfile.Contains("SMS-T1tbs_RPV_mGluino1600")) isr_norm_ = 1.32481;
-      else if(inputfile.Contains("SMS-T1tbs_RPV_mGluino1700")) isr_norm_ = 1.32986;
-      else if(inputfile.Contains("SMS-T1tbs_RPV_mGluino1800")) isr_norm_ = 1.33543;
-      else if(inputfile.Contains("SMS-T1tbs_RPV_mGluino1900")) isr_norm_ = 1.33801;
-      else if(inputfile.Contains("SMS-T1tbs_RPV_mGluino2000")) isr_norm_ = 1.34401;
-      else if(inputfile.Contains("SMS-T1tbs_RPV_mGluino2100")) isr_norm_ = 1.34697;
-      else if(inputfile.Contains("SMS-T1tbs_RPV_mGluino2200")) isr_norm_ = 1.35132;
-    }
-    if(year>=2017 && inputfile.Contains("SMS-T1tbs_RPV")) isr_norm_ = 1.;
+      if((inputfile.Contains("TTJets_"))) isr_norm =1.101;
+      if(inputfile.Contains("SMS-T1tbs_RPV_mGluino1000")) isr_norm = 1.27982;
+      else if(inputfile.Contains("SMS-T1tbs_RPV_mGluino1100")) isr_norm = 1.28991;
+      else if(inputfile.Contains("SMS-T1tbs_RPV_mGluino1200")) isr_norm = 1.29881;
+      else if(inputfile.Contains("SMS-T1tbs_RPV_mGluino1300")) isr_norm = 1.30728;
+      else if(inputfile.Contains("SMS-T1tbs_RPV_mGluino1400")) isr_norm = 1.31325;
+      else if(inputfile.Contains("SMS-T1tbs_RPV_mGluino1500")) isr_norm = 1.31898;
+      else if(inputfile.Contains("SMS-T1tbs_RPV_mGluino1600")) isr_norm = 1.32481;
+      else if(inputfile.Contains("SMS-T1tbs_RPV_mGluino1700")) isr_norm = 1.32986;
+      else if(inputfile.Contains("SMS-T1tbs_RPV_mGluino1800")) isr_norm = 1.33543;
+      else if(inputfile.Contains("SMS-T1tbs_RPV_mGluino1900")) isr_norm = 1.33801;
+      else if(inputfile.Contains("SMS-T1tbs_RPV_mGluino2000")) isr_norm = 1.34401;
+      else if(inputfile.Contains("SMS-T1tbs_RPV_mGluino2100")) isr_norm = 1.34697;
+      else if(inputfile.Contains("SMS-T1tbs_RPV_mGluino2200")) isr_norm = 1.35132;
 
-    float isr_wgt_     = -999.;
-    if(year==2016){
-      if(nisr_==0)       isr_wgt_ = 1.; 
-      else if(nisr_==1)  isr_wgt_ = 0.920; 
-      else if(nisr_==2)  isr_wgt_ = 0.821; 
-      else if(nisr_==3)  isr_wgt_ = 0.715; 
-      else if(nisr_==4)  isr_wgt_ = 0.662; 
-      else if(nisr_==5)  isr_wgt_ = 0.561; 
-      else if(nisr_>=6)  isr_wgt_ = 0.511; 
+      if(nisr_==0)       isr_wgt = 1.; 
+      else if(nisr_==1)  isr_wgt = 0.920; 
+      else if(nisr_==2)  isr_wgt = 0.821; 
+      else if(nisr_==3)  isr_wgt = 0.715; 
+      else if(nisr_==4)  isr_wgt = 0.662; 
+      else if(nisr_==5)  isr_wgt = 0.561; 
+      else if(nisr_>=6)  isr_wgt = 0.511; 
     }
 
-    if(year>=2017) isr_wgt_ = 1.;
-
-    w_isr_ = isr_wgt_*isr_norm_;
-    w_isr = w_isr_;
+    w_isr = isr_wgt*isr_norm;
     if(year==2016){
       sys_isr.push_back(w_isr+((1-w_isr)/2));
       sys_isr.push_back(w_isr-((1-w_isr)/2));
     }
-    if(year>=2017) sys_isr.push_back(0);
+    if(year>=2017){
+      sys_isr.push_back(+0);
+      sys_isr.push_back(-0);
+    }
     nisr = nisr_;
-    isr_wgt = isr_wgt_;
-    isr_norm = isr_norm_;
   }
 
     // 
@@ -1141,6 +1138,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
     if(!isData)
     {
       w_btag_csv = btagWeight_CSVV2;
+      w_btag_dcsv_NANO = btagWeight_DeepCSVB;
       w_lumi     = xsec*genWeight/sumWeights;//getXsec(samplename)*genWeight/sumWeights; // cross section in fb
       w_pu       = getPUweight(samplename, year, ntrupv_mean, 0); // syst=-1 0 1 (down nominal up)
     }
@@ -1148,6 +1146,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
     if(isData) 
     {
       w_btag_csv  = 1;
+      w_btag_dcsv_NANO = 1;
       w_btag_dcsv = 1;
       w_lumi      = 1;
       w_pu        = 1;
