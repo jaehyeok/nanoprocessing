@@ -361,7 +361,6 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   float weight      =1;
   float w_btag_csv  =1;
   float w_btag_dcsv =1;
-  float w_btag_dcsv_NANO =1;
   float w_pu        =1;
   float w_lumi      =1;
   float w_toppt     =1;
@@ -506,7 +505,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   babyTree_->Branch("weight",            &weight);
   babyTree_->Branch("w_btag_csv",    	 &w_btag_csv);
   babyTree_->Branch("w_btag_dcsv",   	 &w_btag_dcsv);
-  babyTree_->Branch("w_btag_dcsv_NANO",	 &w_btag_dcsv_NANO);
+  babyTree_->Branch("w_btag_norm",   	 &w_btag_norm);
   babyTree_->Branch("w_lumi",            &w_lumi);
   babyTree_->Branch("w_pu",              &w_pu);
   babyTree_->Branch("w_lep",             &w_lep);
@@ -633,7 +632,6 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
     w_lumi        =    1;
     w_btag_csv    =    1;
     w_btag_dcsv   =    1;
-    w_btag_dcsv_NANO   =    1;
     w_pu          =    1;
     // leptons 
     nleps      =   0;           
@@ -1138,7 +1136,6 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
     if(!isData)
     {
       w_btag_csv = btagWeight_CSVV2;
-      w_btag_dcsv_NANO = btagWeight_DeepCSVB;
       w_lumi     = xsec*genWeight/sumWeights;//getXsec(samplename)*genWeight/sumWeights; // cross section in fb
       w_pu       = getPUweight(samplename, year, ntrupv_mean, 0); // syst=-1 0 1 (down nominal up)
     }
@@ -1146,7 +1143,6 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
     if(isData) 
     {
       w_btag_csv  = 1;
-      w_btag_dcsv_NANO = 1;
       w_btag_dcsv = 1;
       w_lumi      = 1;
       w_pu        = 1;
