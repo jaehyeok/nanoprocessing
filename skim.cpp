@@ -108,47 +108,44 @@ int main(int argc, char **argv)
 //int main()
 {
   TString inputdir, outputdir, skim; 
-  
-  if(argc<3)
+	int file_selector=-1; 
+
+  if(argc<4)
   {
     cout << " Please provide proper arguments" << endl;
     cout << "" << endl;
-    cout << "   ./process.exe [input dir] [skim] " << endl; 
+    cout << "   ./process.exe [input dir] [skim] [file selector]" << endl; 
     cout << "" << endl;
     cout << " where skim = rpvfit, trig, rpvfitnbge0, ht1000" << endl;
+    cout << "       file selector = 0,1,2,...,9" << endl;
     return 0;
   }
   else 
   {
-    inputdir     = argv[1];
-    skim         = argv[2];
+    inputdir      = argv[1];
+    skim          = argv[2];
+    file_selector = atoi(argv[3]);
    
     outputdir = inputdir;
     outputdir.ReplaceAll("processed", Form("skim_%s", skim.Data()));
-    cout << " input   dir  : " << inputdir << endl;
-    cout << " output  dir  : " << outputdir << endl;
-    cout << " skim         : " << skim << endl;
+    cout << " input   dir  		: " << inputdir << endl;
+    cout << " output  dir  		: " << outputdir << endl;
+    cout << " skim        	  : " << skim << endl;
+    cout << " file_selector   : " << file_selector << endl;
   }
 
   // make skim directory
   gSystem->mkdir(outputdir.Data());
 
   // get list of files in a directory
-  //vector<TString> files = globVector(Form("%s/*.root", inputdir.Data())); 
-  //vector<TString> files = globVector(Form("%s/*_QCD*.root", inputdir.Data())); 
-  //vector<TString> files = globVector(Form("%s/*_DYJets*.root", inputdir.Data())); 
-  //vector<TString> files = globVector(Form("%s/*_TT*.root", inputdir.Data())); 
-  //vector<TString> files = globVector(Form("%s/*_W*.root", inputdir.Data())); 
-  vector<TString> files = globVector(Form("%s/*_ZZ*.root", inputdir.Data())); 
-  //vector<TString> files = globVector(Form("%s/*_SMS*.root", inputdir.Data())); 
-  //vector<TString> files = globVector(Form("%s/*JetHTRun*.root", inputdir.Data())); 
+  vector<TString> files = globVector(Form("%s/*.root", inputdir.Data())); 
 
 	cout << "skimming " << files.size() << " files" << endl;
 	
   for(int i=0; i<files.size(); i++)
   {
-    //if(skim!="rpvfit" && skim!="trig") continue; 
-
+		if(file_selector!=-1 && i%10!=file_selector) continue;
+		// 
     cout << "skimming: " << files.at(i) << endl; 
     skimonefile(files.at(i), outputdir, skim); 
   }
