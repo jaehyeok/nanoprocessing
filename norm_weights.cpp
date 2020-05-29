@@ -136,13 +136,15 @@ void norm_onefile(TString inputfile, TString outputdir)
 int main(int argc, char **argv)
 //int main()
 {
-  TString inputdir, outputdir, tag; 
+  TString inputdir, outputdir, tag, prenormdir; 
   
   if(argc<3)
   {
     cout << " Please provide proper arguments" << endl;
     cout << "" << endl;
-    cout << "   ./process.exe [input dir] [tag] " << endl; 
+    cout << "   ./process.exe [input dir] [tag] [output dir] [pre-norm dir] " << endl; 
+    cout << "" << endl;
+    cout << "   [output dir] [pre-norm dir] are optional" << endl;
     cout << "" << endl;
     return 0;
   }
@@ -167,15 +169,25 @@ int main(int argc, char **argv)
     cout << " output  dir  : " << outputdir << endl;
     cout << " tag          : " << tag << endl;
   }
+  else if(argc==5) 
+  {
+    inputdir     = argv[1];
+    tag          = argv[2];
+    outputdir    = argv[3];
+    prenormdir   = argv[4];
+   
+    cout << " input   dir  : " << inputdir 		<< endl;
+    cout << " output  dir  : " << outputdir 	<< endl;
+    cout << " tag          : " << tag 				<< endl;
+    cout << " prenorm dir  : " << prenormdir 	<< endl;
+  }
 
   // make output directory
   gSystem->mkdir(outputdir.Data());
 
-  // get list of files in a directory
-  vector<TString> files = globVector(Form("%s/*%s*.root", inputdir.Data(), tag.Data())); 
-
-	cout << "processing " << files.size() << " files" << endl;
-
+	//
+	// Get mean of weights
+	//
 	// need to get the mean of each weight including syst branches
 	// w_btag_dcsv, sys_bctag, sys_ucsgtag
 	// w_pu, sys_pu
@@ -183,8 +195,10 @@ int main(int argc, char **argv)
 	// w_lep, sys_lep
 	// weight/w_lumi 
 
+  vector<TString> prenorm_files = globVector(Form("%s/*%s*.root", prenormdir.Data(), tag.Data())); 
   TChain ch_mean("tree");	
-  for(int i=0; i<files.size(); i++) ch_mean.Add(files.at(i));
+  for(int i=0; i<prenorm_files.size(); i++) ch_mean.Add(prenorm_files.at(i));
+	cout << "weights calculated using " << prenorm_files.size() << " files" << endl;
 	
 	TH1D  *h_w_btag_dcsv = new TH1D("h_w_btag_dcsv","h_w_btag_dcsv",100,-5,5);
  	ch_mean.Draw("w_btag_dcsv>>h_w_btag_dcsv","","geoff");
@@ -195,8 +209,16 @@ int main(int argc, char **argv)
  	ch_mean.Draw("w_isr>>h_w_isr","","geoff");
 	w_isr_mean = h_w_isr->GetMean();
   cout << "w_isr mean = " << w_isr_mean << endl;
+ 
+	// 
+	// process 
+	// 
 
-  // 
+	// get list of files in a directory
+  vector<TString> files = globVector(Form("%s/*%s*.root", inputdir.Data(), tag.Data())); 
+	cout << "processing " << files.size() << " files" << endl;
+
+  // process files one by one 
 	for(int i=0; i<files.size(); i++)
   {
     cout << "processing: " << files.at(i) << endl; 
