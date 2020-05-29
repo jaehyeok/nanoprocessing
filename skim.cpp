@@ -144,7 +144,7 @@ int main(int argc, char **argv)
 	
   for(int i=0; i<files.size(); i++)
   {
-		if(file_selector!=-1 && i%5!=file_selector) continue;
+		if(file_selector!=-1 && i%10!=file_selector) continue;
 		// 
     cout << "skimming: " << files.at(i) << endl; 
     skimonefile(files.at(i), outputdir, skim); 
