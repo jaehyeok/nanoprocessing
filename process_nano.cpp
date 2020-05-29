@@ -361,7 +361,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   float weight      =1;
   float w_btag_csv  =1;
   float w_btag_dcsv =1;
-  float w_btag_dcsv_norm =1;
+  //float w_btag_dcsv_norm =1;
   float w_pu        =1;
   float w_lumi      =1;
   float w_toppt     =1;
@@ -506,7 +506,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   babyTree_->Branch("weight",            &weight);
   babyTree_->Branch("w_btag_csv",    	 &w_btag_csv);
   babyTree_->Branch("w_btag_dcsv",   	 &w_btag_dcsv);
-  babyTree_->Branch("w_btag_dcsv_norm",  &w_btag_dcsv_norm);
+  //babyTree_->Branch("w_btag_dcsv_norm",  &w_btag_dcsv_norm);
   babyTree_->Branch("w_lumi",            &w_lumi);
   babyTree_->Branch("w_pu",              &w_pu);
   babyTree_->Branch("w_lep",             &w_lep);
@@ -633,7 +633,6 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
     w_lumi        =    1;
     w_btag_csv    =    1;
     w_btag_dcsv   =    1;
-    w_btag_dcsv_norm   =    1;
     w_pu          =    1;
     // leptons 
     nleps      =   0;           
@@ -1141,7 +1140,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
       w_lumi     = xsec*genWeight/sumWeights;//getXsec(samplename)*genWeight/sumWeights; // cross section in fb
       w_pu       = getPUweight(samplename, year, ntrupv_mean, 0); // syst=-1 0 1 (down nominal up)
     }
-    if(year==2017){
+    /*if(year==2017){
       if(inputfile.Contains("TTJets_Tune")) w_btag_dcsv_norm = 0.987348;
       else if(inputfile.Contains("TTJets_HT-600to800")) w_btag_dcsv_norm = 0.865674;
       else if(inputfile.Contains("TTJets_HT-800to1200")) w_btag_dcsv_norm = 0.822273;
@@ -1154,7 +1153,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
       else if(inputfile.Contains("TTJets_HT-800to1200")) w_btag_dcsv_norm = 0.804911;
       else if(inputfile.Contains("TTJets_HT-1200to2500")) w_btag_dcsv_norm = 0.748671;
       else if(inputfile.Contains("TTJets_HT-2500toInf")) w_btag_dcsv_norm = 0.688799;
-    }
+    }*/
 
     if(isData) 
     {
@@ -1163,7 +1162,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
       w_lumi      = 1;
       w_pu        = 1;
     }
-    if ((inputfile.Contains("SMS-T1tbs_RPV"))) weight = w_btag_dcsv * w_btag_dcsv_norm * w_lumi * w_pu * w_isr;
+    if ((inputfile.Contains("SMS-T1tbs_RPV")) || inputfile.Contains("TTJets_Tune")) weight = w_btag_dcsv * w_lumi * w_pu * w_isr;
     else {
       weight = w_btag_dcsv * w_lumi * w_pu;
       w_isr = 1;
