@@ -57,78 +57,76 @@ vector<float> vec_w_isr;
 void save_weights(TString inputfile) 
 {
 	//
-	TChain ch("tree");
-	ch.Add(inputfile);
+  TChain ch("tree");
+  ch.Add(inputfile);
   float w_btag_dcsv_ =1;
   float w_isr_ =1;
   ch.SetBranchAddress("w_btag_dcsv",   	 &w_btag_dcsv_);
   ch.SetBranchAddress("w_isr",   	 &w_isr_);
-	for(Long64_t entry = 0; entry < ch.GetEntries(); ++entry)
-	{
-		ch.GetEntry(entry); 
-	  vec_w_btag_dcsv.push_back(w_btag_dcsv_);
-	  vec_w_isr.push_back(w_isr_);
-	}
+  for(Long64_t entry = 0; entry < ch.GetEntries(); ++entry)
+  {
+    ch.GetEntry(entry); 
+    vec_w_btag_dcsv.push_back(w_btag_dcsv_);
+    vec_w_isr.push_back(w_isr_);
+  }
 }
 
 void copy_onefile(TString inputfile) 
 {
-	TChain ch("tree");
-	ch.Add(inputfile);
+  TChain ch("tree");
+  ch.Add(inputfile);
 	
-	TObjArray *tokens = inputfile.Tokenize("/"); 
-	TString outputfile = (dynamic_cast<TObjString*>(tokens->At(tokens->GetEntries()-1)))->GetString();
-	outputfile.ReplaceAll(".root", "_norm.root");
+  TObjArray *tokens = inputfile.Tokenize("/"); 
+  TString outputfile = (dynamic_cast<TObjString*>(tokens->At(tokens->GetEntries()-1)))->GetString();
+  outputfile.ReplaceAll(".root", "_norm.root");
 
-	//
-	TFile *newfile= new TFile(outputfile,"recreate");
-	// remove branch
-	ch.SetBranchStatus("w_btag_dcsv", 0);
-	ch.SetBranchStatus("w_isr", 0);
-	TTree *ctree = ch.CopyTree(""); 
-	newfile->cd();
-	if(ctree) ctree->Write();
-	newfile->Close();
+  //
+  TFile *newfile= new TFile(outputfile,"recreate");
+  // remove branch
+  ch.SetBranchStatus("w_btag_dcsv", 0);
+  ch.SetBranchStatus("w_isr", 0);
+  TTree *ctree = ch.CopyTree(""); 
+  newfile->cd();
+  if(ctree) ctree->Write();
+  newfile->Close();
 }
 
 void norm_onefile(TString inputfile, TString outputdir) 
 {	
-	TObjArray *tokens = inputfile.Tokenize("/"); 
-	TString outputfile = (dynamic_cast<TObjString*>(tokens->At(tokens->GetEntries()-1)))->GetString();
-	outputfile.ReplaceAll(".root", "_norm.root");
+  TObjArray *tokens = inputfile.Tokenize("/"); 
+  TString outputfile = (dynamic_cast<TObjString*>(tokens->At(tokens->GetEntries()-1)))->GetString();
+  outputfile.ReplaceAll(".root", "_norm.root");
 	
-	TFile *file_new = new TFile(outputfile,"update");
-	file_new->cd();
+  TFile *file_new = new TFile(outputfile,"update");
+  file_new->cd();
   TTree *tree_new = (TTree*)file_new->Get("tree");
 
-	float w_btag_dcsv=1.; 
-	TBranch *b_w_btag_dcsv = tree_new->Branch("w_btag_dcsv", &w_btag_dcsv);
-	float w_isr=1.; 
-	TBranch *b_w_isr = tree_new->Branch("w_isr", &w_isr);
+  float w_btag_dcsv=1.; 
+  TBranch *b_w_btag_dcsv = tree_new->Branch("w_btag_dcsv", &w_btag_dcsv);
+  float w_isr=1.; 
+  TBranch *b_w_isr = tree_new->Branch("w_isr", &w_isr);
 
-
-
-	for(Long64_t entry = 0; entry < tree_new->GetEntries(); ++entry)
+  for(Long64_t entry = 0; entry < tree_new->GetEntries(); ++entry)
   {	
-		tree_new->GetEntry(entry); 
-	  w_btag_dcsv=vec_w_btag_dcsv.at(entry)/w_btag_dcsv_mean; 
-	  w_isr=vec_w_isr.at(entry)/w_isr_mean; 
+    tree_new->GetEntry(entry); 
+    w_btag_dcsv=vec_w_btag_dcsv.at(entry)/w_btag_dcsv_mean; 
+    w_isr=vec_w_isr.at(entry)/w_isr_mean; 
     
-		b_w_btag_dcsv->Fill(); 
-		b_w_isr->Fill(); 
-	}
-	
-	//
-	vec_w_btag_dcsv.clear(); 
-	vec_w_isr.clear(); 
+    b_w_btag_dcsv->Fill(); 
+    b_w_isr->Fill(); 
+  }
 
-	//
-	file_new->cd();
-	tree_new->Write();
-	file_new->Close();
+  //
+  vec_w_btag_dcsv.clear(); 
+  vec_w_isr.clear(); 
 
-	cout << "copying " << outputfile << " to " << outputdir << endl; 
-	gSystem->Exec(Form("mv %s %s", outputfile.Data(), outputdir.Data()));
+  //
+  file_new->cd();
+  tree_new->Write();
+  file_new->Close();
+
+  cout << "copying " << outputfile << " to " << outputdir << endl; 
+  gSystem->Exec(Form("mv %s %s", outputfile.Data(), outputdir.Data()));
 }
 
 
@@ -174,37 +172,36 @@ int main(int argc, char **argv)
   // get list of files in a directory
   vector<TString> files = globVector(Form("%s/*%s*.root", inputdir.Data(), tag.Data())); 
 
-	cout << "processing " << files.size() << " files" << endl;
+  cout << "processing " << files.size() << " files" << endl;
 
-	// need to get the mean of each weight including syst branches
-	// w_btag_dcsv, sys_bctag, sys_ucsgtag
-	// w_pu, sys_pu
-	// w_isr, sys_isr
-	// w_lep, sys_lep
-	// weight/w_lumi 
+  // need to get the mean of each weight including syst branches
+  // w_btag_dcsv, sys_bctag, sys_ucsgtag
+  // w_pu, sys_pu
+  // w_isr, sys_isr
+  // w_lep, sys_lep
+  // weight/w_lumi 
 
   TChain ch_mean("tree");	
   for(int i=0; i<files.size(); i++) ch_mean.Add(files.at(i));
 	
-	TH1D  *h_w_btag_dcsv = new TH1D("h_w_btag_dcsv","h_w_btag_dcsv",100,-5,5);
- 	ch_mean.Draw("w_btag_dcsv>>h_w_btag_dcsv","","geoff");
-	w_btag_dcsv_mean = h_w_btag_dcsv->GetMean();
+  TH1D  *h_w_btag_dcsv = new TH1D("h_w_btag_dcsv","h_w_btag_dcsv",100,-5,5);
+  ch_mean.Draw("w_btag_dcsv>>h_w_btag_dcsv","","geoff");
+  w_btag_dcsv_mean = h_w_btag_dcsv->GetMean();
   cout << "w_btag_dcsv mean = " << w_btag_dcsv_mean << endl;
 	
-	TH1D  *h_w_isr = new TH1D("h_w_isr","h_w_isr",100,-5,5);
- 	ch_mean.Draw("w_isr>>h_w_isr","","geoff");
-	w_isr_mean = h_w_isr->GetMean();
+  TH1D  *h_w_isr = new TH1D("h_w_isr","h_w_isr",100,-5,5);
+  ch_mean.Draw("w_isr>>h_w_isr","","geoff");
+  w_isr_mean = h_w_isr->GetMean();
   cout << "w_isr mean = " << w_isr_mean << endl;
 
   // 
-	for(int i=0; i<files.size(); i++)
+  for(int i=0; i<files.size(); i++)
   {
     cout << "processing: " << files.at(i) << endl; 
     save_weights(files.at(i)); 
     copy_onefile(files.at(i)); 
     norm_onefile(files.at(i), outputdir); 
   }
-
   return 0;
 }
 # endif
