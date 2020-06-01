@@ -1,0 +1,9 @@
+executable              = run_norm.sh
+arguments               =  /xrootd_user/yjeong/xrootd/nanoprocessing/2018/merged_rpvfitnbge0/ SMS-T1tbs_RPV_mGluino1900_TuneCP2 /xrootd_user/yjeong/xrootd/nanoprocessing/2018/merged_norm/ /xrootd_user/yjeong/xrootd/nanoprocessing/2018/processed/
+transfer_input_files    = norm_weights.exe normlist_SMS-T1tbs_RPV_mGluino1900_TuneCP2_2018.txt
+log                     = log/norm_SMS-T1tbs_RPV_mGluino1900_TuneCP2.$(Cluster).$(Process).log
+output                  = log/norm_SMS-T1tbs_RPV_mGluino1900_TuneCP2_output.$(Cluster).$(Process).out
+error                   = log/norm_SMS-T1tbs_RPV_mGluino1900_TuneCP2_errors.$(Cluster).$(Process).err
+#should_transfer_files   = Yes
+#when_to_transfer_output = ON_EXIT
+queue

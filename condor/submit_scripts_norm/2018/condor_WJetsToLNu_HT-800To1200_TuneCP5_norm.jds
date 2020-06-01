@@ -1,0 +1,9 @@
+executable              = run_norm.sh
+arguments               =  /xrootd_user/yjeong/xrootd/nanoprocessing/2018/merged_rpvfitnbge0/ WJetsToLNu_HT-800To1200_TuneCP5 /xrootd_user/yjeong/xrootd/nanoprocessing/2018/merged_norm/ /xrootd_user/yjeong/xrootd/nanoprocessing/2018/processed/
+transfer_input_files    = norm_weights.exe normlist_WJetsToLNu_HT-800To1200_TuneCP5_2018.txt
+log                     = log/norm_WJetsToLNu_HT-800To1200_TuneCP5.$(Cluster).$(Process).log
+output                  = log/norm_WJetsToLNu_HT-800To1200_TuneCP5_output.$(Cluster).$(Process).out
+error                   = log/norm_WJetsToLNu_HT-800To1200_TuneCP5_errors.$(Cluster).$(Process).err
+#should_transfer_files   = Yes
+#when_to_transfer_output = ON_EXIT
+queue

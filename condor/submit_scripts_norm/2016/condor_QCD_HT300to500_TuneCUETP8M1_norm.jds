@@ -1,0 +1,9 @@
+executable              = run_norm.sh
+arguments               =  /xrootd_user/yjeong/xrootd/nanoprocessing/2016/merged_rpvfitnbge0/ QCD_HT300to500_TuneCUETP8M1 /xrootd_user/yjeong/xrootd/nanoprocessing/2016/merged_norm/ /xrootd_user/yjeong/xrootd/nanoprocessing/2016/processed/
+transfer_input_files    = norm_weights.exe normlist_QCD_HT300to500_TuneCUETP8M1_2016.txt
+log                     = log/norm_QCD_HT300to500_TuneCUETP8M1.$(Cluster).$(Process).log
+output                  = log/norm_QCD_HT300to500_TuneCUETP8M1_output.$(Cluster).$(Process).out
+error                   = log/norm_QCD_HT300to500_TuneCUETP8M1_errors.$(Cluster).$(Process).err
+#should_transfer_files   = Yes
+#when_to_transfer_output = ON_EXIT
+queue
