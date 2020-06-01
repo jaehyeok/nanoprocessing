@@ -35,12 +35,12 @@ for files in tag_list:
   tag  = filename.rsplit('_', 1)[0]
 
   # generate two file lists
-  flist_prenorm = open("/cms/ldap_home/yjeong/flist/"+year+"/flist_prenorm_"+tag+".txt", "w")
+  flist_prenorm = open("/cms/ldap_home/yjeong/flist/norm/"+year+"/flist_prenorm_"+tag+".txt", "w")
   for files in os.listdir(prenormdir):
     #if(tag+"_" in files):
     if(tag in files):
       flist_prenorm.write(prenormdir+"/"+files+"\n")
-  flist_tonorm  = open("/cms/ldap_home/yjeong/flist/"+year+"/flist_tonorm_"+tag+".txt", "w")
+  flist_tonorm  = open("/cms/ldap_home/yjeong/flist/norm/"+year+"/flist_tonorm_"+tag+".txt", "w")
   for files in os.listdir(inputdir):
     if(tag in files):
       flist_tonorm.write(inputdir+"/"+files+"\n")
