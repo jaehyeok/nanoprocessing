@@ -1140,20 +1140,6 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
       w_lumi     = xsec*genWeight/sumWeights;//getXsec(samplename)*genWeight/sumWeights; // cross section in fb
       w_pu       = getPUweight(samplename, year, ntrupv_mean, 0); // syst=-1 0 1 (down nominal up)
     }
-    /*if(year==2017){
-      if(inputfile.Contains("TTJets_Tune")) w_btag_dcsv_norm = 0.987348;
-      else if(inputfile.Contains("TTJets_HT-600to800")) w_btag_dcsv_norm = 0.865674;
-      else if(inputfile.Contains("TTJets_HT-800to1200")) w_btag_dcsv_norm = 0.822273;
-      else if(inputfile.Contains("TTJets_HT-1200to2500")) w_btag_dcsv_norm = 0.763205;
-      else if(inputfile.Contains("TTJets_HT-2500toInf")) w_btag_dcsv_norm = 0.693483;
-    }
-    if(year==2018){
-      if(inputfile.Contains("TTJets_Tune")) w_btag_dcsv_norm = 0.984968;
-      else if(inputfile.Contains("TTJets_HT-600to800")) w_btag_dcsv_norm = 0.84963;
-      else if(inputfile.Contains("TTJets_HT-800to1200")) w_btag_dcsv_norm = 0.804911;
-      else if(inputfile.Contains("TTJets_HT-1200to2500")) w_btag_dcsv_norm = 0.748671;
-      else if(inputfile.Contains("TTJets_HT-2500toInf")) w_btag_dcsv_norm = 0.688799;
-    }*/
 
     if(isData) 
     {
