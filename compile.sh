@@ -14,9 +14,9 @@ g++ skim.cpp  `root-config --cflags --glibs` -o skim.exe
 g++ norm_weights.cpp  `root-config --cflags --glibs` -o norm_weights.exe
 
 # copy executables to home directory so that they can be picked up by condor
-cp process_nano.exe /cms/ldap_home/yjeong
-cp skim.exe         /cms/ldap_home/yjeong
-cp norm_weights.exe /cms/ldap_home/yjeong
+cp process_nano.exe $USER
+cp skim.exe         $USER
+cp norm_weights.exe $USER
 
 mkdir -p condor/submit_scripts/2016/log/
 mkdir -p condor/submit_scripts/2017/log/
