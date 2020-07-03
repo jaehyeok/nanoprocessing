@@ -2,23 +2,26 @@
 import sys
 import os
 import os.path
+import getpass
 
-#  ./norm_weights.exe /xrootd_user/yjeong/xrootd/nanoprocessing/2016/merged_rpvfitnbge0/ SMS-T1tbs_RPV_mGluino1600 /xrootd_user/jaehyeok/babies/2016v6/norm_weights /xrootd_user/yjeong/xrootd/nanoprocessing/2016/processed
+username = getpass.getuser()
+
+#  ./norm_weights.exe /xrootd_user/"+username+"/xrootd/nanoprocessing/2016/merged_rpvfitnbge0/ SMS-T1tbs_RPV_mGluino1600 /xrootd_user/jaehyeok/babies/2016v6/norm_weights /xrootd_user/"+username+"/xrootd/nanoprocessing/2016/processed
 
 year=sys.argv[1]
 
-inputdir     = "/xrootd_user/yjeong/xrootd/nanoprocessing/2016/merged_rpvfitnbge0/"
-outdir       = "/xrootd_user/yjeong/xrootd/nanoprocessing/2016/merged_norm/"
-prenormdir   = "/xrootd_user/yjeong/xrootd/nanoprocessing/2016/processed/"
+inputdir     = "/xrootd_user/"+username+"/xrootd/nanoprocessing/2016/merged_rpvfitnbge0/"
+outdir       = "/xrootd_user/"+username+"/xrootd/nanoprocessing/2016/merged_norm/"
+prenormdir   = "/xrootd_user/"+username+"/xrootd/nanoprocessing/2016/processed/"
 
 if year == "2017":
-  inputdir     = "/xrootd_user/yjeong/xrootd/nanoprocessing/2017/merged_rpvfitnbge0/"
-  outdir       = "/xrootd_user/yjeong/xrootd/nanoprocessing/2017/merged_norm/"
-  prenormdir   = "/xrootd_user/yjeong/xrootd/nanoprocessing/2017/processed/"
+  inputdir     = "/xrootd_user/"+username+"/xrootd/nanoprocessing/2017/merged_rpvfitnbge0/"
+  outdir       = "/xrootd_user/"+username+"/xrootd/nanoprocessing/2017/merged_norm/"
+  prenormdir   = "/xrootd_user/"+username+"/xrootd/nanoprocessing/2017/processed/"
 if year == "2018":
-  inputdir     = "/xrootd_user/yjeong/xrootd/nanoprocessing/2018/merged_rpvfitnbge0/"
-  outdir       = "/xrootd_user/yjeong/xrootd/nanoprocessing/2018/merged_norm/"
-  prenormdir   = "/xrootd_user/yjeong/xrootd/nanoprocessing/2018/processed/"
+  inputdir     = "/xrootd_user/"+username+"/xrootd/nanoprocessing/2018/merged_rpvfitnbge0/"
+  outdir       = "/xrootd_user/"+username+"/xrootd/nanoprocessing/2018/merged_norm/"
+  prenormdir   = "/xrootd_user/"+username+"/xrootd/nanoprocessing/2018/processed/"
 
 # list of tags (=processes)
 f_list = os.listdir(inputdir)
@@ -35,12 +38,12 @@ for files in tag_list:
   tag  = filename.rsplit('_', 1)[0]
 
   # generate two file lists
-  flist_prenorm = open("/cms/ldap_home/yjeong/flist/norm/"+year+"/flist_prenorm_"+tag+".txt", "w")
+  flist_prenorm = open("/cms/ldap_home/"+username+"/flist/norm/"+year+"/flist_prenorm_"+tag+".txt", "w")
   for files in os.listdir(prenormdir):
     #if(tag+"_" in files):
     if(tag in files):
       flist_prenorm.write(prenormdir+"/"+files+"\n")
-  flist_tonorm  = open("/cms/ldap_home/yjeong/flist/norm/"+year+"/flist_tonorm_"+tag+".txt", "w")
+  flist_tonorm  = open("/cms/ldap_home/"+username+"/flist/norm/"+year+"/flist_tonorm_"+tag+".txt", "w")
   for files in os.listdir(inputdir):
     if(tag in files):
       flist_tonorm.write(inputdir+"/"+files+"\n")
