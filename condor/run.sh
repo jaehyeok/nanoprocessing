@@ -14,8 +14,8 @@ cmsenv
 cd -
 
 #
-echo "cp -r /cms/ldap_home/yjeong/processing/data ."
-cp -r /cms/ldap_home/yjeong/processing/data .
+echo "cp -r $HOME/processing/data ."
+cp -r $HOME/processing/data .
 
 echo ""
 
