@@ -4,17 +4,19 @@ import os
 import os.path
 import glob
 import ROOT
+import getpass
 from ROOT import TChain, TSelector, TTree, TH1F, TCanvas, TPad, TStyle, TString
 ROOT.gROOT.SetBatch(True)
 year=sys.argv[1]
+username = getpass.getuser()
 
-outputdir="/xrootd_user/yjeong/xrootd/nanoprocessing/2016/processed/"
+outputdir="/xrootd_user/"+username+"/xrootd/nanoprocessing/2016/processed/"
 if year == "2017":
-	outputdir="/xrootd_user/yjeong/xrootd/nanoprocessing/2017/processed/"
+	outputdir="/xrootd_user/"+username+"/xrootd/nanoprocessing/2017/processed/"
 if year == "2018":
-	outputdir="/xrootd_user/yjeong/xrootd/nanoprocessing/2018/processed/"
+	outputdir="/xrootd_user/"+username+"/xrootd/nanoprocessing/2018/processed/"
 
-flistdir="/cms/ldap_home/yjeong/flist/"+year
+flistdir="/cms/ldap_home/"+username+"/flist/"+year
 flists = os.listdir(flistdir)
 
 '''
@@ -49,7 +51,7 @@ print('-------------------------------------------------------------------------
 
 # generate list of files that have been processed
 splits = outputdir.split("/")
-list_output_file = open("/cms/ldap_home/yjeong/flist/flist_outputdir_"+splits[4]+"_"+splits[5]+".txt", "w")
+list_output_file = open("/cms/ldap_home/"+username+"/flist/flist_outputdir_"+splits[4]+"_"+splits[5]+".txt", "w")
 
 lines = os.listdir(outputdir)
 for line in lines:
