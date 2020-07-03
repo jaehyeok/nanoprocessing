@@ -1145,7 +1145,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
 	  int momid = abs(gen_pdgId.at(gen_PartIdxMother.at(imc)));
 	  int momstat = gen_statusFlags.at(gen_PartIdxMother.at(imc));
 
-	  if((momstat>>7)&1 && (momid==5 || momid==4)) continue;//gluon splitting contigion -> not hard process
+	  if(momstat>>0 && (momstat>>7)&1 && (momid==5 || momid==4)) continue;//gluon splitting contigion -> not hard process
 	  if(momid==21 && (gen_pdgId.at(imc)==5 || gen_pdgId.at(imc)==4)) fromGSb = true;//gluon split to b quark
 	}
       }
