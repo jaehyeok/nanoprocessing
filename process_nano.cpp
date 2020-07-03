@@ -388,7 +388,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   std::vector<bool> trig;
   bool stitch;
   bool pass=true;
-  bool fromGS;
+  bool fromGSb=false;
   bool matched;
   /*
   //MC   
@@ -569,7 +569,8 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   babyTree_->Branch("gen_status",        &gen_status);
   babyTree_->Branch("gen_statusFlags",   &gen_statusFlags);
   // filters
-  babyTree_->Branch("pass",              &pass);    
+  babyTree_->Branch("pass",              &pass);
+  babyTree_->Branch("fromGSb",           &fromGSb);
   //
   babyTree_->Branch("sys_mj12",          &sys_mj12);    
   babyTree_->Branch("sys_lep",           &sys_lep);    
@@ -688,6 +689,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
     gen_statusFlags.clear();
     //    
     pass=true;
+    fromGSb=false;
     //
     sys_mj12.clear();
     sys_ht.clear();
@@ -1095,7 +1097,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
       if(matched_==false) nisr_++;//--> not matched with final state.
     }
 
-    if(year==2016){
+    /*if(year==2016){
       if((inputfile.Contains("TTJets_"))) isr_norm =1.101;
       if(inputfile.Contains("SMS-T1tbs_RPV_mGluino1000")) isr_norm = 1.27982;
       else if(inputfile.Contains("SMS-T1tbs_RPV_mGluino1100")) isr_norm = 1.28991;
@@ -1118,7 +1120,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
       else if(nisr_==4)  isr_wgt = 0.662; 
       else if(nisr_==5)  isr_wgt = 0.561; 
       else if(nisr_>=6)  isr_wgt = 0.511; 
-    }
+    }*/
 
     w_isr = isr_wgt*isr_norm;
     if(year==2016){
@@ -1131,6 +1133,24 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
     }
     nisr = nisr_;
   }
+
+    if(!isData){
+      for(size_t ijet(0); ijet<jets_pt.size();ijet++){
+	if(jets_pt.at(ijet)<30) continue;
+	if(abs(jets_eta.at(ijet))>2.4) continue;
+	if(jets_id.at(ijet)==0) continue;
+	if(jets_islep.at(ijet)==1) continue;
+
+	for(size_t imc(0); imc<gen_pt.size(); imc++){
+	  if((gen_PartIdxMother.at(imc))==-1) continue;
+	  int momid = abs(gen_pdgId.at(gen_PartIdxMother.at(imc)));
+	  int momstat = gen_statusFlags.at(gen_PartIdxMother.at(imc));
+
+	  if(momstat>>0 && (momstat>>7)&1 && (momid==5 || momid==4)) continue;//gluon splitting contigion -> not hard process
+	  if(momid==21 && (gen_pdgId.at(imc)==5 || gen_pdgId.at(imc)==4)) fromGSb = true;//gluon split to b quark
+	}
+      }
+    }
 
     // 
     // weights 
