@@ -89,7 +89,8 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   // ------------------------------------------------------------------
   // setup calibration + reader
   // string csvfile = "data/DeepCSV_2016LegacySF_V1.csv"; //for loose cuts only 
-  string csvfile = "data/DeepCSV_2016LegacySF_V1_TuneCP5.csv"; 
+  // string csvfile = "data/DeepCSV_2016LegacySF_V1_TuneCP5.csv"; 
+  string csvfile = "data/DeepCSV_2016LegacySF_V1.csv"; //for loose cuts only 
   if(year==2017) csvfile = "data/DeepCSV_94XSF_V4_B_F.csv";
   if(year==2018) csvfile = "data/DeepCSV_102XSF_V1.csv";
   cout << " btag sf file: " << csvfile << endl;  
@@ -97,6 +98,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   BTagCalibrationReader calibreader(BTagEntry::OP_RESHAPING,  // operating point
       "central",                                              // central sys type
       {"up_hf", "down_hf", "up_lf", "down_lf"});                                // other sys types
+  cout<< "HEH" <<endl;
   calibreader.load(calib, BTagEntry::FLAV_B,     "iterativefit");
   calibreader.load(calib, BTagEntry::FLAV_C,     "iterativefit");
   calibreader.load(calib, BTagEntry::FLAV_UDSG,  "iterativefit"); 
@@ -1369,7 +1371,7 @@ int main(int argc, char **argv)
     if(useCondor) files.at(ifile).ReplaceAll("/xrootd","root://cms-xrdr.private.lo:2094//xrd");
   }
 
-
+  cout<<process<<endl;
   float sumWeights = 1;
   int nfiles = files.size();
   int filenumber = 0;
