@@ -84,11 +84,14 @@ std::vector<TString> getFileListFromFile(const TString flist)
   vector<TString> files;  
   fstream fin(flist.Data());
   string line;
+  cout<<flist<<endl;
+  cout<<fin.is_open()<<endl;
   if(fin.is_open()) {
     while(fin.good()){
       getline(fin, line);
       if(line.find("#")!=string::npos ) continue;
-      if(line!="") files.push_back(line); 
+      if(line!="") files.push_back(line);
+      cout<<line<<endl; 
     }
   }
   fin.close();
