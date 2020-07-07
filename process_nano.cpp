@@ -1147,8 +1147,10 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
 	for(size_t imc(0); imc<gen_pt.size(); imc++){
 	  if((gen_PartIdxMother.at(imc))==-1) continue;
 	  int momid = abs(gen_pdgId.at(gen_PartIdxMother.at(imc)));
+	  int momstat = gen_statusFlags.at(gen_PartIdxMother.at(imc));
+	  int genId = abs(gen_pdgId.at(imc));
 
-	  if(nisr>0 && gen_PartIdxMother.at(imc)==0 && momid==21 && (gen_pdgId.at(imc)==5 || gen_pdgId.at(imc)==4)) fromGS = true;//gluon split to b quark (or c quark)
+	  if(nisr>0 && gen_PartIdxMother.at(imc)==0 && momid==21 && (genId==5 || genId==4)) fromGS = true;//gluon split to b quark
 	}
       }
     }
