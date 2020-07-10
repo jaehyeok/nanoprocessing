@@ -98,9 +98,9 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   BTagCalibrationReader calibreader(BTagEntry::OP_RESHAPING,  // operating point
       "central",                                              // central sys type
       {"up_hf", "down_hf", "up_lf", "down_lf"});                                // other sys types
-  calibreader.load(calib, BTagEntry::FLAV_B,     "comb");
-  calibreader.load(calib, BTagEntry::FLAV_C,     "incl");
-  calibreader.load(calib, BTagEntry::FLAV_UDSG,  "incl"); 
+  calibreader.load(calib, BTagEntry::FLAV_B,     "iterativefit");
+  calibreader.load(calib, BTagEntry::FLAV_C,     "iterativefit");
+  calibreader.load(calib, BTagEntry::FLAV_UDSG,  "iterativefit"); 
 
 
 	// Lepton SF files
