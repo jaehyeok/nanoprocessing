@@ -389,7 +389,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   std::vector<bool> trig;
   bool stitch;
   bool pass=true;
-  bool fromGSb=false;
+  bool fromGS=false;
   bool matched;
   /*
   //MC   
@@ -571,7 +571,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   babyTree_->Branch("gen_statusFlags",   &gen_statusFlags);
   // filters
   babyTree_->Branch("pass",              &pass);
-  babyTree_->Branch("fromGSb",           &fromGSb);
+  babyTree_->Branch("fromGS",           &fromGS);
   //
   babyTree_->Branch("sys_mj12",          &sys_mj12);    
   babyTree_->Branch("sys_lep",           &sys_lep);    
@@ -690,7 +690,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
     gen_statusFlags.clear();
     //    
     pass=true;
-    fromGSb=false;
+    fromGS=false;
     //
     sys_mj12.clear();
     sys_ht.clear();
@@ -1112,8 +1112,9 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
       else if(inputfile.Contains("SMS-T1tbs_RPV_mGluino1900")) isr_norm = 1.33801;
       else if(inputfile.Contains("SMS-T1tbs_RPV_mGluino2000")) isr_norm = 1.34401;
       else if(inputfile.Contains("SMS-T1tbs_RPV_mGluino2100")) isr_norm = 1.34697;
-      else if(inputfile.Contains("SMS-T1tbs_RPV_mGluino2200")) isr_norm = 1.35132;
+      else if(inputfile.Contains("SMS-T1tbs_RPV_mGluino2200")) isr_norm = 1.35132;*/
 
+    if(year==2016){
       if(nisr_==0)       isr_wgt = 1.; 
       else if(nisr_==1)  isr_wgt = 0.920; 
       else if(nisr_==2)  isr_wgt = 0.821; 
@@ -1121,7 +1122,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
       else if(nisr_==4)  isr_wgt = 0.662; 
       else if(nisr_==5)  isr_wgt = 0.561; 
       else if(nisr_>=6)  isr_wgt = 0.511; 
-    }*/
+    }
 
     w_isr = isr_wgt*isr_norm;
     if(year==2016){
@@ -1146,9 +1147,9 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
 	  if((gen_PartIdxMother.at(imc))==-1) continue;
 	  int momid = abs(gen_pdgId.at(gen_PartIdxMother.at(imc)));
 	  int momstat = gen_statusFlags.at(gen_PartIdxMother.at(imc));
+	  int genId = abs(gen_pdgId.at(imc));
 
-	  if(momstat>>0 && (momstat>>7)&1 && (momid==5 || momid==4)) continue;//gluon splitting contigion -> not hard process
-	  if(momid==21 && (gen_pdgId.at(imc)==5 || gen_pdgId.at(imc)==4)) fromGSb = true;//gluon split to b quark
+	  if(nisr>0 && gen_PartIdxMother.at(imc)==0 && momid==21 && (genId==5 || genId==4)) fromGS = true;//gluon split to b quark
 	}
       }
     }

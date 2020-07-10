@@ -97,8 +97,8 @@ DYJetsToLL_M-50_HT-800to1200_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8/NANOAOD
 
 ### SingleMuon
 
-/xrootd/store/data/Run2018A/SingleMuon/NANOAOD/Nano25Oct2019-v1	
-/xrootd/store/data/Run2018B/SingleMuon/NANOAOD/Nano25Oct2019-v1	
-/xrootd/store/data/Run2018C/SingleMuon/NANOAOD/Nano25Oct2019-v1	
-/xrootd/store/data/Run2018D/SingleMuon/NANOAOD/Nano25Oct2019-v1	
-/xrootd/store/data/Run2018D/SingleMuon/NANOAOD/Nano25Oct2019_ver2-v1	
+#/xrootd/store/data/Run2018A/SingleMuon/NANOAOD/Nano25Oct2019-v1	
+#/xrootd/store/data/Run2018B/SingleMuon/NANOAOD/Nano25Oct2019-v1	
+#/xrootd/store/data/Run2018C/SingleMuon/NANOAOD/Nano25Oct2019-v1	
+#/xrootd/store/data/Run2018D/SingleMuon/NANOAOD/Nano25Oct2019-v1	
+#/xrootd/store/data/Run2018D/SingleMuon/NANOAOD/Nano25Oct2019_ver2-v1	
