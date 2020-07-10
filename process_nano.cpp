@@ -1138,22 +1138,15 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   }
 
     if(!isData){
-      for(size_t ijet(0); ijet<jets_pt.size();ijet++){
-	if(jets_pt.at(ijet)<30) continue;
-	if(abs(jets_eta.at(ijet))>2.4) continue;
-	if(jets_id.at(ijet)==0) continue;
-	if(jets_islep.at(ijet)==1) continue;
-
-	for(size_t imc(0); imc<gen_pt.size(); imc++){
+      for(size_t imc(0); imc<gen_pt.size(); imc++){
 	  if((gen_PartIdxMother.at(imc))==-1) continue;
 	  int momid = abs(gen_pdgId.at(gen_PartIdxMother.at(imc)));
 	  int momstat = gen_statusFlags.at(gen_PartIdxMother.at(imc));
 	  int genId = abs(gen_pdgId.at(imc));
-
-	  if(nisr>0 && gen_PartIdxMother.at(imc)==0 && momid==21 && (genId==5 || genId==4)) fromGS = true;//gluon split to b quark
-	}
+	  if(gen_PartIdxMother.at(imc)==0 && (momstat>>7)&1 && (momid==5 || momid==4)) continue;// momid 4 and 5 is come from hard process(pp collision)
+	    if(momid==21 && (genId==4 || genId==5))  fromGS = true;//gluon split to b quark
       }
-    }
+    }      
 
     // 
     // weights 
