@@ -888,6 +888,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
 	    sys_bctag_down *= getBtagWeight(calibreader, Jet_pt[iJ], Jet_eta[iJ], Jet_hadronFlavour[iJ], Jet_btagDeepB[iJ], "down_hf");
 	    sys_udsgtag_up *= getBtagWeight(calibreader, Jet_pt[iJ], Jet_eta[iJ], Jet_hadronFlavour[iJ], Jet_btagDeepB[iJ], "up_hf");
 	    sys_udsgtag_down *= getBtagWeight(calibreader, Jet_pt[iJ], Jet_eta[iJ], Jet_hadronFlavour[iJ], Jet_btagDeepB[iJ], "down_hf");
+
 	  }
       }
       // jec syst up 
