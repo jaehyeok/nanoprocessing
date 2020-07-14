@@ -19,19 +19,34 @@ float getBtagWeight(BTagCalibrationReader calibreader, float jet_pt, float jet_e
 {
   //
   float btag_weight = 1;
+  float SF_b, SF_c, SF_l;
+  float eff_b, eff_c, eff_l;
+  float P_data, P_mc;
 
   // absolute eta
   float jet_abseta = jet_eta;
   if(jet_eta<0) jet_abseta = -1*jet_eta;
+  
+  SF_b = calibreader.eval_auto_bounds(syst, BTagEntry::FLAV_B, jet_abseta, jet_pt, csv);
+  SF_c = calibreader.eval_auto_bounds(syst, BTagEntry::FLAV_C, jet_abseta, jet_pt, csv);
+  SF_l = calibreader.eval_auto_bounds(syst, BTagEntry::FLAV_UDSG, jet_abseta, jet_pt, csv);
+
+  // ** FIXME : add effeciency ** //
 
   if (abs(jet_hflavor) == 5 ){    //HF		  
-    btag_weight = calibreader.eval_auto_bounds(syst, BTagEntry::FLAV_B, jet_abseta, jet_pt, csv);		  
+    P_data      = SF_b*eff_b*(1-SF_c*eff_c)*(1-SF_l*eff_l)
+    P_mc        = eff_b*(1-eff_c)*(1-eff_l)
+    btag_weight = P_data/P_mc;
   }
   else if( abs(jet_hflavor) == 4 ){  //C
-    btag_weight = calibreader.eval_auto_bounds(syst, BTagEntry::FLAV_C, jet_abseta, jet_pt, csv);
+    P_data      = SF_c*eff_c*(1-SF_b*eff_b)*(1-SF_l*eff_l)
+    P_mc        = eff_c*(1-eff_b)*(1-eff_l)
+    btag_weight = P_data/P_mc;
   }
   else { //LF
-    btag_weight = calibreader.eval_auto_bounds(syst, BTagEntry::FLAV_UDSG, jet_abseta, jet_pt, csv);
+    P_data      = SF_l*eff_l*(1-SF_c*eff_c)*(1-SF_b*eff_b)
+    P_mc        = eff_l*(1-eff_c)*(1-eff_b)
+    btag_weight = P_data/P_mc;
   }
 
   if(btag_weight==0) return 1; 
