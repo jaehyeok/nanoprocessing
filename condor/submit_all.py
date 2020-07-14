@@ -8,7 +8,7 @@ username = getpass.getuser()
 year=sys.argv[1]
 
 outputdir="root://cms-xrdr.private.lo:2094//xrd/store/user/"+username+"/nanoprocessing/2016/processed/"
-#outputdir="root://cms-xrdr.private.lo:2094//xrd/store/user/"+username+"/nanoprocessing/2016/processed_test/"
+#outputdir="root://cms-xrdr.private.lo:2094//xrd/store/user/"+username+"/nanoprocessing/2016/processed_0710/"
 #samplelist="samples/samples2016.txt"
 #inputmctag="RunIISummer16NanoAODv4"
 samplelist="samples/samples2016_v6.txt"
