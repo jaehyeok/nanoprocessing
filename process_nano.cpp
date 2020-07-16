@@ -571,7 +571,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   babyTree_->Branch("gen_statusFlags",   &gen_statusFlags);
   // filters
   babyTree_->Branch("pass",              &pass);
-  babyTree_->Branch("fromGS",           &fromGS);
+  babyTree_->Branch("fromGS",            &fromGS);
   //
   babyTree_->Branch("sys_mj12",          &sys_mj12);    
   babyTree_->Branch("sys_lep",           &sys_lep);    
@@ -1138,15 +1138,20 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   }
 
     if(!isData){
-      for(size_t imc(0); imc<gen_pt.size(); imc++){
-	  if(gen_PartIdxMother.at(imc)==-1) continue;//exclude accelerated particle
-	  int momid = abs(gen_pdgId.at(gen_PartIdxMother.at(imc)));
-	  int momstat = gen_status.at(gen_PartIdxMother.at(imc));
-	  int genId = abs(gen_pdgId.at(imc));
-	  
-	  if(gen_PartIdxMother.at(imc)==0 && ((momstat>=21 && momstat<=29) && (momid==4 || momid==5))) continue; // momid 4 and 5 is come from hard process(pp collision or from decay)
-	  if(momid==21 && (genId==5 || genId==4)) fromGS = true;//gluon split to b quark
-       }
+      //for(size_t imc(0); imc<gen_pt.size(); imc++){
+      for(int imc(0); imc<ngen; imc++){
+        if(gen_PartIdxMother.at(imc)==-1) continue;//exclude accelerated particle
+	int momid = abs(gen_pdgId.at(gen_PartIdxMother.at(imc)));
+	int momstat = gen_status.at(gen_PartIdxMother.at(imc));
+	//int genstat = gen_status.at(imc);
+	int genId = abs(gen_pdgId.at(imc));
+
+	if(gen_PartIdxMother.at(imc)!=0 && (momstat<=21 || momstat>=29) && momid!=4 && momid!=5){ // momid 4 and 5 is come from hard process(pp collision or from decay)
+	  if(momid==21 && (genId==5 || genId==4)){
+	    fromGS = true;//gluon split to b quark
+	  }
+	}
+      }
     }
 
     // 
