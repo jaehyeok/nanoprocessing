@@ -95,12 +95,20 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   if(year==2018) csvfile = "data/DeepCSV_102XSF_V1.csv";
   cout << " btag sf file: " << csvfile << endl;  
   BTagCalibration calib("DeepCSV", csvfile);
+  /*
   BTagCalibrationReader calibreader(BTagEntry::OP_RESHAPING,  // operating point
       "central",                                              // central sys type
       {"up_hf", "down_hf", "up_lf", "down_lf"});                                // other sys types
   calibreader.load(calib, BTagEntry::FLAV_B,     "iterativefit");
   calibreader.load(calib, BTagEntry::FLAV_C,     "iterativefit");
   calibreader.load(calib, BTagEntry::FLAV_UDSG,  "iterativefit"); 
+  // */
+  BTagCalibrationReader calibreader(BTagEntry::OP_MEDIUM,  // operating point
+      "central",                                              // central sys type
+      {"up", "down"});                                // other sys types
+  calibreader.load(calib, BTagEntry::FLAV_B,     "comb");
+  calibreader.load(calib, BTagEntry::FLAV_C,     "comb");
+  calibreader.load(calib, BTagEntry::FLAV_UDSG,  "incl"); 
 
 
 	// Lepton SF files
@@ -599,7 +607,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   //  (2) Bin Entry is the sum over energies of PF candidates in a given bin  
   // 
   TH2F *h2 = new TH2F("h2","h2", 115, -5.0, 5.0, 72, -1*TMath::Pi(), TMath::Pi());
-
+  TFile *f_btef = new TFile("btagEfficiency_signal_m1600.root","READ");//FIXME
   // 
   // Loop over entries
   // 
@@ -883,11 +891,11 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
         if(Jet_btagDeepB[iJ]>csv_cut) nbm++; 
         if(!isData) 
 	  {
-	    w_btag_dcsv *= getBtagWeight(calibreader, Jet_pt[iJ], Jet_eta[iJ], Jet_hadronFlavour[iJ], Jet_btagDeepB[iJ]);
-	    sys_bctag_up *= getBtagWeight(calibreader, Jet_pt[iJ], Jet_eta[iJ], Jet_hadronFlavour[iJ], Jet_btagDeepB[iJ], "up_hf");
-	    sys_bctag_down *= getBtagWeight(calibreader, Jet_pt[iJ], Jet_eta[iJ], Jet_hadronFlavour[iJ], Jet_btagDeepB[iJ], "down_hf");
-	    sys_udsgtag_up *= getBtagWeight(calibreader, Jet_pt[iJ], Jet_eta[iJ], Jet_hadronFlavour[iJ], Jet_btagDeepB[iJ], "up_hf");
-	    sys_udsgtag_down *= getBtagWeight(calibreader, Jet_pt[iJ], Jet_eta[iJ], Jet_hadronFlavour[iJ], Jet_btagDeepB[iJ], "down_hf");
+	    w_btag_dcsv *= getBtagWeight(f_btef,calibreader, Jet_pt[iJ], Jet_eta[iJ], Jet_hadronFlavour[iJ], Jet_btagDeepB[iJ], csv_cut);
+	    sys_bctag_up *= getBtagWeight(f_btef,calibreader, Jet_pt[iJ], Jet_eta[iJ], Jet_hadronFlavour[iJ], Jet_btagDeepB[iJ], csv_cut, "up_hf");
+	    sys_bctag_down *= getBtagWeight(f_btef,calibreader, Jet_pt[iJ], Jet_eta[iJ], Jet_hadronFlavour[iJ], Jet_btagDeepB[iJ], csv_cut, "down_hf");
+	    sys_udsgtag_up *= getBtagWeight(f_btef,calibreader, Jet_pt[iJ], Jet_eta[iJ], Jet_hadronFlavour[iJ], Jet_btagDeepB[iJ], csv_cut, "up_lf");
+	    sys_udsgtag_down *= getBtagWeight(f_btef,calibreader, Jet_pt[iJ], Jet_eta[iJ], Jet_hadronFlavour[iJ], Jet_btagDeepB[iJ], csv_cut, "down_lf");
 
 	  }
       }
