@@ -579,7 +579,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   babyTree_->Branch("gen_statusFlags",   &gen_statusFlags);
   // filters
   babyTree_->Branch("pass",              &pass);
-  babyTree_->Branch("fromGS",           &fromGS);
+  babyTree_->Branch("fromGS",            &fromGS);
   //
   babyTree_->Branch("sys_mj12",          &sys_mj12);    
   babyTree_->Branch("sys_lep",           &sys_lep);    
@@ -607,7 +607,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   //  (2) Bin Entry is the sum over energies of PF candidates in a given bin  
   // 
   TH2F *h2 = new TH2F("h2","h2", 115, -5.0, 5.0, 72, -1*TMath::Pi(), TMath::Pi());
-  TFile *f_btef = new TFile("btagEfficiency_signal_m1600.root","READ");//FIXME
+  //TFile *f_btef = new TFile("btagEfficiency_signal_m1600.root","READ");//FIXME
   // 
   // Loop over entries
   // 
@@ -889,7 +889,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
         njets++;
         ht += Jet_pt[iJ];
         if(Jet_btagDeepB[iJ]>csv_cut) nbm++; 
-        if(!isData) 
+        /*if(!isData) 
 	  {
 	    w_btag_dcsv *= getBtagWeight(f_btef,calibreader, Jet_pt[iJ], Jet_eta[iJ], Jet_hadronFlavour[iJ], Jet_btagDeepB[iJ], csv_cut);
 	    sys_bctag_up *= getBtagWeight(f_btef,calibreader, Jet_pt[iJ], Jet_eta[iJ], Jet_hadronFlavour[iJ], Jet_btagDeepB[iJ], csv_cut, "up_hf");
@@ -897,7 +897,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
 	    sys_udsgtag_up *= getBtagWeight(f_btef,calibreader, Jet_pt[iJ], Jet_eta[iJ], Jet_hadronFlavour[iJ], Jet_btagDeepB[iJ], csv_cut, "up_lf");
 	    sys_udsgtag_down *= getBtagWeight(f_btef,calibreader, Jet_pt[iJ], Jet_eta[iJ], Jet_hadronFlavour[iJ], Jet_btagDeepB[iJ], csv_cut, "down_lf");
 
-	  }
+	  }*/
       }
       // jec syst up 
       if(sys_jets_pt_up.at(iJ)>30)
@@ -1146,19 +1146,16 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   }
 
     if(!isData){
-      for(size_t ijet(0); ijet<jets_pt.size();ijet++){
-	if(jets_pt.at(ijet)<30) continue;
-	if(abs(jets_eta.at(ijet))>2.4) continue;
-	if(jets_id.at(ijet)==0) continue;
-	if(jets_islep.at(ijet)==1) continue;
+      for(int imc(0); imc<ngen; imc++){
+        if(gen_PartIdxMother.at(imc)==-1) continue;//exclude incoming particle
+	int momid = abs(gen_pdgId.at(gen_PartIdxMother.at(imc)));
+	int momstat = gen_status.at(gen_PartIdxMother.at(imc));
+	int genId = abs(gen_pdgId.at(imc));
 
-	for(size_t imc(0); imc<gen_pt.size(); imc++){
-	  if((gen_PartIdxMother.at(imc))==-1) continue;
-	  int momid = abs(gen_pdgId.at(gen_PartIdxMother.at(imc)));
-	  int momstat = gen_statusFlags.at(gen_PartIdxMother.at(imc));
-	  int genId = abs(gen_pdgId.at(imc));
-
-	  if(nisr>0 && gen_PartIdxMother.at(imc)==0 && momid==21 && (genId==5 || genId==4)) fromGS = true;//gluon split to b quark
+	if(gen_PartIdxMother.at(imc)!=0 && (momstat<=21 || momstat>=29) && momid!=4 && momid!=5){ // momid 4 and 5 is come from hard process(pp collision or from decay)
+	  if(momid==21 && (genId==5 || genId==4)){
+	    fromGS = true;//gluon split to b quark
+	  }
 	}
       }
     }
