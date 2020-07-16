@@ -26,8 +26,30 @@ def process_name_list(process):
 		ret.append("WWZ_")
 		ret.append("ZZZ_")
 		ret.append("WWW_")
-	elif(process=="test"):
+	elif(process=="signal_m1000"):
+		ret.append("mGluino1000")
+	elif(process=="signal_m1100"):
+		ret.append("mGluino1100")
+	elif(process=="signal_m1200"):
+		ret.append("mGluino1200")
+	elif(process=="signal_m1300"):
+		ret.append("mGluino1300")
+	elif(process=="signal_m1400"):
+		ret.append("mGluino1400")
+	elif(process=="signal_m1500"):
+		ret.append("mGluino1500")
+	elif(process=="signal_m1600"):
+		ret.append("mGluino1600")
+	elif(process=="signal_m1700"):
+		ret.append("mGluino1700")
+	elif(process=="signal_m1800"):
+		ret.append("mGluino1800")
+	elif(process=="signal_m1900"):
+		ret.append("mGluino1900")
+	elif(process=="signal_m2000"):
 		ret.append("mGluino2000")
+	elif(process=="signal_m2100"):
+		ret.append("mGluino2100")
 	else:
 		print "Invaild Process Name! \n Usable Process Names : qcd, ttbar, wjets, other, and test"
 	return ret
@@ -54,13 +76,20 @@ def gen_btagEff(out_file_path, docuts, process):
 
 	dcsv_med = ("medium", 0.6324)
 
-	eta_cuts = [0., 0.8, 1.6, 2.4]
-	pt_cuts = [20., 30., 50., 70., 100., 1.e4]
+	eta_cuts_comb = [-2.4, 2.4]
+	eta_cuts_incl = [0., 2.4]
+	pt_cuts_comb = [20., 30., 50., 70., 100., 140., 200., 300., 600., 1000.,]
+	pt_cuts_incl = [20., 1000.]
+	pt_cuts_comb_central = [20., 1000.]
 	flavor_cuts = [-0.5, 3.5, 4.5, 5.5]
 
-	numerator = ROOT.TH3D("btagEfficiency_"+dcsv_med[0], "btagEfficiency_"+dcsv_med[0], len(eta_cuts)-1, array.array('d', eta_cuts), len(pt_cuts)-1, array.array('d', pt_cuts), len(flavor_cuts)-1, array.array('d', flavor_cuts))
+	numerator_comb = ROOT.TH3D("btagEfficiency_"+dcsv_med[0]+"_comb", "btagEfficiency_"+dcsv_med[0]+"_comb", len(eta_cuts_comb)-1, array.array('d', eta_cuts_comb), len(pt_cuts_comb)-1, array.array('d', pt_cuts_comb), len(flavor_cuts)-1, array.array('d', flavor_cuts))
+	numerator_comb_central = ROOT.TH3D("btagEfficiency_"+dcsv_med[0]+"_comb_central", "btagEfficiency_"+dcsv_med[0]+"_comb_central", len(eta_cuts_comb)-1, array.array('d', eta_cuts_comb), len(pt_cuts_comb_central)-1, array.array('d', pt_cuts_comb_central), len(flavor_cuts)-1, array.array('d', flavor_cuts))
+	numerator_incl = ROOT.TH3D("btagEfficiency_"+dcsv_med[0]+"_incl", "btagEfficiency_"+dcsv_med[0]+"_incl", len(eta_cuts_incl)-1, array.array('d', eta_cuts_incl), len(pt_cuts_incl)-1, array.array('d', pt_cuts_incl), len(flavor_cuts)-1, array.array('d', flavor_cuts))
 
-	denominator = numerator.Clone("btagEfficiency_denominator")
+	denominator_comb = numerator_comb.Clone("btagEfficiency_denominator_comb")
+	denominator_comb_central = numerator_comb_central.Clone("btagEfficiency_denominator_comb_central")
+	denominator_incl = numerator_incl.Clone("btagEfficiency_denominator_incl")
 
 	entry = 0
 	num_entries = c.GetEntries()
@@ -82,15 +111,35 @@ def gen_btagEff(out_file_path, docuts, process):
 			pt     = c.jets_pt[ijet]
 			eta    = abs(c.jets_eta[ijet])
 			dcsv   = c.jets_dcsvb[ijet]
+			denominator_comb.Fill(eta,pt,flavor)
+			denominator_comb_central.Fill(eta,pt,flavor)
+			denominator_incl.Fill(eta,pt,flavor)
 
-			denominator.Fill(eta,pt,flavor)
 			if (dcsv > dcsv_med[1]):
-				numerator.Fill(eta,pt,flavor)
-
-	eff = numerator.Clone("Efficiency")
-	eff = ROOT.TH3D.Divide(numerator, denominator)
+				numerator_comb.Fill(eta,pt,flavor)
+				numerator_comb_central.Fill(eta,pt,flavor)
+				numerator_incl.Fill(eta,pt,flavor)
+	print '\n'
+	print denominator_incl.GetBinContent(1,1,3)
+	print denominator_comb_central.GetBinContent(1,1,3)
+	tot =0
+	for i in range(1,len(eta_cuts_comb)):
+		for j in range(1,len(pt_cuts_comb)):
+			tot = tot + denominator_comb.GetBinContent(i,j,3)
+	print tot
+	eff_comb = numerator_comb.Clone("Efficiency_comb")
+	eff_comb_central = numerator_comb_central.Clone("Efficiency_comb_central")
+	eff_incl = numerator_incl.Clone("Efficiency_incl")
+	eff_comb = ROOT.TH3D.Divide(numerator_comb, denominator_comb)
+	eff_comb_central = ROOT.TH3D.Divide(numerator_comb_central, denominator_comb_central)
+	eff_incl = ROOT.TH3D.Divide(numerator_incl, denominator_incl)
 	out_file = ROOT.TFile(out_file_path.replace(".root","_"+process+".root"), "recreate");
-	numerator.Write()
+#	eff_comb.Write()
+#	eff_comb_central.Write()
+#	eff_incl.Write()
+	numerator_comb.Write()
+	numerator_comb_central.Write()
+	numerator_incl.Write()
 	doc = ROOT.TNamed("Documentation : this file contains a parametrization in (eta,pt,flavor) for deep CSVv2 b-tagger","");
 	doc.Write()
 	out_file.Close()

@@ -6,6 +6,10 @@
 // babymaker: https://github.com/richstu/babymaker/blob/master/bmaker/src/jet_met_tools.cc#L336-L399
 
 #include "utilities.h"
+#include "TROOT.h"
+#include "TH3D.h"
+#include "TFile.h"
+#include "TLorentzVector.h"
 
 // fastjet
 #include <fastjet/PseudoJet.hh>
@@ -15,40 +19,92 @@
 #include "BTagCalibrationStandalone.h"
 //#include "BTagCalibrationStandalone.cpp"
 
-float getBtagWeight(BTagCalibrationReader calibreader, float jet_pt, float jet_eta, float jet_hflavor, float csv, const char* syst="central")
+float getBtagWeight(TFile *f, BTagCalibrationReader calibreader, float jet_pt, float jet_eta, float jet_hflavor, float csv, float csv_cut, const char* syst="central")
 {
   //
   float btag_weight = 1;
-  float SF_b, SF_c, SF_l;
-  float eff_b, eff_c, eff_l;
-  float P_data, P_mc;
+  float eff(0), SF(0);
+  float P_data(0), P_mc(0);
 
+  TH3D *btag_eff;
+  
   // absolute eta
   float jet_abseta = jet_eta;
   if(jet_eta<0) jet_abseta = -1*jet_eta;
   
-  SF_b = calibreader.eval_auto_bounds(syst, BTagEntry::FLAV_B, jet_abseta, jet_pt, csv);
-  SF_c = calibreader.eval_auto_bounds(syst, BTagEntry::FLAV_C, jet_abseta, jet_pt, csv);
-  SF_l = calibreader.eval_auto_bounds(syst, BTagEntry::FLAV_UDSG, jet_abseta, jet_pt, csv);
+/*
+  SF_b = 1;
+  SF_l = 1;
+  SF_c = 1; */
 
   // ** FIXME : add effeciency ** //
 
-  if (abs(jet_hflavor) == 5 ){    //HF		  
-    P_data      = SF_b*eff_b*(1-SF_c*eff_c)*(1-SF_l*eff_l)
-    P_mc        = eff_b*(1-eff_c)*(1-eff_l)
-    btag_weight = P_data/P_mc;
+  int binx, biny, binz;
+
+  if (abs(jet_hflavor) == 5 ){    //HF		 
+    if(syst=="up_hf"||syst=="down_hf"){
+      btag_eff = (TH3D*)f->Get("btagEfficiency_medium_comb");
+      if(syst=="up_hf") syst="up";
+      if(syst=="down_hf") syst="down";
+    }
+    else{
+      syst="central";
+      btag_eff = (TH3D*)f->Get("btagEfficiency_medium_comb_central");
+    }
+    SF = calibreader.eval_auto_bounds(syst, BTagEntry::FLAV_B, jet_abseta, jet_pt, csv);
+    binx = btag_eff->GetXaxis()->FindBin(jet_eta);
+    biny = btag_eff->GetYaxis()->FindBin(jet_pt);
+    binz = btag_eff->GetZaxis()->FindBin(jet_hflavor);
+
+    eff         = btag_eff->GetBinContent(binx,biny,binz);
   }
   else if( abs(jet_hflavor) == 4 ){  //C
-    P_data      = SF_c*eff_c*(1-SF_b*eff_b)*(1-SF_l*eff_l)
-    P_mc        = eff_c*(1-eff_b)*(1-eff_l)
-    btag_weight = P_data/P_mc;
+    if(syst=="up_hf"||syst=="down_hf"){
+      btag_eff = (TH3D*)f->Get("btagEfficiency_medium_comb");
+      if(syst=="up_hf") syst="up";
+      if(syst=="down_hf") syst="down";
+    }
+    else{
+      syst="central";
+      btag_eff = (TH3D*)f->Get("btagEfficiency_medium_comb_central");
+    }
+    
+    SF = calibreader.eval_auto_bounds(syst, BTagEntry::FLAV_C, jet_abseta, jet_pt, csv);
+    binx = btag_eff->GetXaxis()->FindBin(jet_eta);
+    biny = btag_eff->GetYaxis()->FindBin(jet_pt);
+    binz = btag_eff->GetZaxis()->FindBin(jet_hflavor);
+
+    eff         = btag_eff->GetBinContent(binx,biny,binz);
   }
   else { //LF
-    P_data      = SF_l*eff_l*(1-SF_c*eff_c)*(1-SF_b*eff_b)
-    P_mc        = eff_l*(1-eff_c)*(1-eff_b)
-    btag_weight = P_data/P_mc;
-  }
+    if(syst=="up_lf"||syst=="down_lf"){
+      if(syst=="up_lf") syst="up";
+      if(syst=="down_lf") syst="down";
+    }
+    else{
+      syst="central";
+    }
 
+    SF = calibreader.eval_auto_bounds(syst, BTagEntry::FLAV_UDSG, jet_abseta, jet_pt, csv);
+    btag_eff = (TH3D*)f->Get("btagEfficiency_medium_incl");
+    binx = btag_eff->GetXaxis()->FindBin(jet_abseta);
+    biny = btag_eff->GetYaxis()->FindBin(jet_pt);
+    binz = btag_eff->GetZaxis()->FindBin(jet_hflavor);
+
+    eff         = btag_eff->GetBinContent(binx,biny,binz);
+  }
+//  cout<<SF<<endl;
+  if(csv>csv_cut){
+    P_data      = SF*eff;
+    P_mc        = eff;
+  }
+  else{
+    P_data      = 1-SF*eff;
+    P_mc        = 1-eff;
+  }
+  btag_weight = P_data/P_mc;
+//  cout<<binx<<","<<biny<<","<<binz<<endl;
+//  cout<<eff<<endl;
   if(btag_weight==0) return 1; 
   else return btag_weight; 
 }
