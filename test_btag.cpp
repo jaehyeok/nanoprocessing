@@ -72,8 +72,8 @@ int main(){
 
 			Int_t rand_rand = gRandom->Integer(100);
 
-			if(rand_flav<5 && rand_rand&100==0) csv = 0.699;
-			else if(rand_flav==5 && rand_rand%3==0) csv = 0.622;
+			if(rand_flav<5 && rand_rand&100==101) csv = 0.699;
+			else if(rand_flav==5 && rand_rand==101) csv = 0.622;
 			else if(rand_flav<5) csv = 0.611;
 			else csv = 0.698;
 

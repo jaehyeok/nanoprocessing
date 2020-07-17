@@ -40,6 +40,7 @@ float getBtagWeight(TFile *f, BTagCalibrationReader calibreader, float jet_pt, f
   // ** FIXME : add effeciency ** //
 
   //cout<<jet_hflavor<<endl;
+  //cout<<syst<<endl;
 
   int binx, biny, binz;
   if (abs(jet_hflavor) == 5 ){    //HF		 
@@ -94,6 +95,7 @@ float getBtagWeight(TFile *f, BTagCalibrationReader calibreader, float jet_pt, f
 
     eff         = btag_eff->GetBinContent(binx,biny,binz);
   }
+//  cout<<syst<<endl;
 //  cout<<SF<<endl;
   if(csv>csv_cut){
     P_data      = SF*eff;
