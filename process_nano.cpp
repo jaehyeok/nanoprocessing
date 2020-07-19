@@ -1152,7 +1152,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
 	int momstat = gen_status.at(gen_PartIdxMother.at(imc));
 	int genId = abs(gen_pdgId.at(imc));
 
-	if(gen_PartIdxMother.at(imc)!=0 && (momstat<=21 || momstat>=29) && momid!=4 && momid!=5){ // momid 4 and 5 is come from hard process(pp collision or from decay)
+	if(gen_PartIdxMother.at(imc)!=0 && (momstat<=21 || momstat>=29) && momid!=4 && momid!=5){ // momid 4 and 5 is come from hard process
 	  if(momid==21 && (genId==5 || genId==4)){
 	    fromGS = true;//gluon split to b quark
 	  }
