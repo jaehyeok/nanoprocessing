@@ -66,6 +66,17 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
 
   //
   int year    = 0;
+  char First_ = '/'; 
+  Int_t idxLast  = inputfile.Index("_13TeV");
+  Int_t idxRemov = inputfile.Index("RunII");
+  TString temp_ = inputfile.Copy();
+  TString tag   = temp_.Remove(idxLast);
+  tag           = tag.Remove(0,idxRemov);
+  Int_t idxFirst = tag.First(First_);
+  tag           = tag.Remove(0,idxFirst+1);
+  
+  cout<< "TAG             : " <<tag<< endl;
+
   if(inputfile.Contains("RunIISummer16")) year = 2016;
   else if(inputfile.Contains("RunIIFall17")) year = 2017;
   else if(inputfile.Contains("RunIIAutumn18")) year = 2018;
@@ -90,6 +101,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   // setup calibration + reader
   // string csvfile = "data/DeepCSV_2016LegacySF_V1.csv"; //for loose cuts only 
   // string csvfile = "data/DeepCSV_2016LegacySF_V1_TuneCP5.csv"; 
+  TFile *f_btef = new TFile("btagEfficiency_"+tag+".root","READ");//FIXME
   string csvfile = "data/DeepCSV_2016LegacySF_V1.csv"; //for loose cuts only 
   if(year==2017) csvfile = "data/DeepCSV_94XSF_V4_B_F.csv";
   if(year==2018) csvfile = "data/DeepCSV_102XSF_V1.csv";
@@ -607,7 +619,6 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   //  (2) Bin Entry is the sum over energies of PF candidates in a given bin  
   // 
   TH2F *h2 = new TH2F("h2","h2", 115, -5.0, 5.0, 72, -1*TMath::Pi(), TMath::Pi());
-  //TFile *f_btef = new TFile("btagEfficiency_signal_m1600.root","READ");//FIXME
   // 
   // Loop over entries
   // 
@@ -889,16 +900,16 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
         njets++;
         ht += Jet_pt[iJ];
         if(Jet_btagDeepB[iJ]>csv_cut) nbm++; 
-        /*if(!isData) 
+        if(!isData) 
 	  {
 	    w_btag_dcsv *= getBtagWeight(f_btef,calibreader, Jet_pt[iJ], Jet_eta[iJ], Jet_hadronFlavour[iJ], Jet_btagDeepB[iJ], csv_cut);
 	    sys_bctag_up *= getBtagWeight(f_btef,calibreader, Jet_pt[iJ], Jet_eta[iJ], Jet_hadronFlavour[iJ], Jet_btagDeepB[iJ], csv_cut, "up_hf");
 	    sys_bctag_down *= getBtagWeight(f_btef,calibreader, Jet_pt[iJ], Jet_eta[iJ], Jet_hadronFlavour[iJ], Jet_btagDeepB[iJ], csv_cut, "down_hf");
 	    sys_udsgtag_up *= getBtagWeight(f_btef,calibreader, Jet_pt[iJ], Jet_eta[iJ], Jet_hadronFlavour[iJ], Jet_btagDeepB[iJ], csv_cut, "up_lf");
 	    sys_udsgtag_down *= getBtagWeight(f_btef,calibreader, Jet_pt[iJ], Jet_eta[iJ], Jet_hadronFlavour[iJ], Jet_btagDeepB[iJ], csv_cut, "down_lf");
-
-	  }*/
+	  }
       }
+      //      cout<<w_btag_dcsv<<endl;
       // jec syst up 
       if(sys_jets_pt_up.at(iJ)>30)
       {

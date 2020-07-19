@@ -39,8 +39,10 @@ float getBtagWeight(TFile *f, BTagCalibrationReader calibreader, float jet_pt, f
 
   // ** FIXME : add effeciency ** //
 
-  int binx, biny, binz;
+  //cout<<jet_hflavor<<endl;
+  //cout<<syst<<endl;
 
+  int binx, biny, binz;
   if (abs(jet_hflavor) == 5 ){    //HF		 
     if(syst=="up_hf"||syst=="down_hf"){
       btag_eff = (TH3D*)f->Get("btagEfficiency_medium_comb");
@@ -93,6 +95,7 @@ float getBtagWeight(TFile *f, BTagCalibrationReader calibreader, float jet_pt, f
 
     eff         = btag_eff->GetBinContent(binx,biny,binz);
   }
+//  cout<<syst<<endl;
 //  cout<<SF<<endl;
   if(csv>csv_cut){
     P_data      = SF*eff;

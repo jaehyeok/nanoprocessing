@@ -5,6 +5,16 @@ import ROOT
 import array
 import sys 
 
+def get_sample_tag_list(year):
+	f = open("condor/samples/samples"+year+"_v6.txt",'r')
+	lines = f.readlines()
+	ret = []
+	for line in lines :
+		tag = line.split("_13TeV")[0]
+		if tag.startswith('#'): continue
+		ret.append(tag)
+	return ret
+
 def process_name_list(process):
 	ret = []
 	if(process=="ttbar"):
@@ -68,11 +78,9 @@ def printProgress(iteration, total, prefix = '', suffix ='', decimals = 1, barLe
 def gen_btagEff(out_file_path, docuts, process):
 	print process
 	ROOT.TH1.SetDefaultSumw2()
-	l_procname = process_name_list(process)
 
 	c = ROOT.TChain("tree","tree")
-	for procname in l_procname:
-		c.Add("/xrootd_user/yjeong/xrootd/nanoprocessing/2016/processed_200708/*"+procname+"*.root")
+	c.Add("/xrootd_user/yjeong/xrootd/nanoprocessing/2016/processed_200708/*"+process+"*.root")
 
 	dcsv_med = ("medium", 0.6324)
 
@@ -98,19 +106,20 @@ def gen_btagEff(out_file_path, docuts, process):
 		if entry % (num_entries/10000) == 0 :
 			printProgress(entry, num_entries, 'Progress:', 'Complete', 2, 50)
 		entry = entry + 1 
-		if ( process == "qcd" or process == "ttbar") :
-			if not (c.stitch_ht and getattr(c,"pass")): continue
-		elif not (getattr(c,"pass")) : continue
+		if(getattr(c,"pass")) : continue
 		if docuts : 
 			if not (c.nleps == 1 and c.ht > 1200 and c.mj12 > 500 and c.njets >= 4 ) : 
 				continue
 		for ijet in xrange(len(c.jets_dcsvb)):
-			if (c.jets_islep[ijet]) : continue
 			flavor = abs(c.jets_hflavor[ijet]) 
 			if (flavor == 21) : flavor = 0
 			pt     = c.jets_pt[ijet]
 			eta    = abs(c.jets_eta[ijet])
 			dcsv   = c.jets_dcsvb[ijet]
+			if (c.jets_islep[ijet]) : continue
+			if (pt<30) : continue
+			if (eta>2.4) : continue
+			if (not c.jets_id[ijet]) : continue
 			denominator_comb.Fill(eta,pt,flavor)
 			denominator_comb_central.Fill(eta,pt,flavor)
 			denominator_incl.Fill(eta,pt,flavor)
@@ -148,13 +157,10 @@ if __name__ == "__main__":
 	parser = argparse.ArgumentParser(description = "Computes b-tagging efficiency as a fucntion of pT, eta, and flavor", formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 	parser.add_argument("-o", "--out_file", metavar="OUT_FILE", default="btagEfficiency.root", help="Save efficiencies to %(metavar)s")
 	parser.add_argument("-c", "--docuts", action="store_true", help="Use all available events, applying only basic filters")
-	parser.add_argument("-p", "--process", action="store", default="test",help="Select the process which we want to produce")
+	parser.add_argument("-y", "--year", action="store", default="2016",help="Select the year that you want to make trigger efficiency")
 	args = parser.parse_args()
 
-	gen_btagEff(args.out_file, args.docuts, args.process)
-
-
-
-
-
+	list_tags = get_sample_tag_list(args.year)
+	for process in list_tags:
+		gen_btagEff(args.out_file, args.docuts, process)
 

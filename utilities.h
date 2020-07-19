@@ -2,6 +2,8 @@
 #include <fstream>
 #include "TString.h" 
 #include "TMath.h" 
+#include "TH2F.h"
+#include "TFile.h"
 
 using namespace std;
 
