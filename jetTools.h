@@ -98,13 +98,14 @@ float getBtagWeight(TFile *f, BTagCalibrationReader calibreader, float jet_pt, f
 //  cout<<syst<<endl;
 //  cout<<SF<<endl;
   if(csv>csv_cut){
-    P_data      = SF*eff;
-    P_mc        = eff;
+    P_data      = SF;
+    P_mc        = 1;
   }
   else{
     P_data      = 1-SF*eff;
     P_mc        = 1-eff;
   }
+ 
   btag_weight = P_data/P_mc;
 //  cout<<binx<<","<<biny<<","<<binz<<endl;
 //  cout<<eff<<endl;
