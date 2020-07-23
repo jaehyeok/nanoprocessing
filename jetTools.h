@@ -8,6 +8,7 @@
 #include "utilities.h"
 #include "TROOT.h"
 #include "TH3D.h"
+#include "TMath.h"
 #include "TFile.h"
 #include "TLorentzVector.h"
 
@@ -28,6 +29,7 @@ float getBtagWeight(TFile *f, BTagCalibrationReader calibreader, float jet_pt, f
 
   TH3D *btag_eff;
   
+
   // absolute eta
   float jet_abseta = jet_eta;
   if(jet_eta<0) jet_abseta = -1*jet_eta;
@@ -42,6 +44,7 @@ float getBtagWeight(TFile *f, BTagCalibrationReader calibreader, float jet_pt, f
   //cout<<jet_hflavor<<endl;
   //cout<<syst<<endl;
 
+  float hist_max(0), pt(0);
   int binx, biny, binz;
   if (abs(jet_hflavor) == 5 ){    //HF		 
     if(syst=="up_hf"||syst=="down_hf"){
@@ -53,9 +56,12 @@ float getBtagWeight(TFile *f, BTagCalibrationReader calibreader, float jet_pt, f
       syst="central";
       btag_eff = (TH3D*)f->Get("btagEfficiency_medium_comb_central");
     }
+    hist_max = 1000 - 0.001;
+    pt = TMath::Min((float)jet_pt,hist_max);  
+
     SF = calibreader.eval_auto_bounds(syst, BTagEntry::FLAV_B, jet_abseta, jet_pt, csv);
-    binx = btag_eff->GetXaxis()->FindBin(jet_eta);
-    biny = btag_eff->GetYaxis()->FindBin(jet_pt);
+    binx = btag_eff->GetXaxis()->FindBin(jet_abseta);
+    biny = btag_eff->GetYaxis()->FindBin(pt);
     binz = btag_eff->GetZaxis()->FindBin(jet_hflavor);
 
     eff         = btag_eff->GetBinContent(binx,biny,binz);
@@ -71,9 +77,13 @@ float getBtagWeight(TFile *f, BTagCalibrationReader calibreader, float jet_pt, f
       btag_eff = (TH3D*)f->Get("btagEfficiency_medium_comb_central");
     }
     
+    hist_max = 1000 - 0.001;
+    pt = TMath::Min((float)jet_pt,hist_max);  
+
+
     SF = calibreader.eval_auto_bounds(syst, BTagEntry::FLAV_C, jet_abseta, jet_pt, csv);
-    binx = btag_eff->GetXaxis()->FindBin(jet_eta);
-    biny = btag_eff->GetYaxis()->FindBin(jet_pt);
+    binx = btag_eff->GetXaxis()->FindBin(jet_abseta);
+    biny = btag_eff->GetYaxis()->FindBin(pt);
     binz = btag_eff->GetZaxis()->FindBin(jet_hflavor);
 
     eff         = btag_eff->GetBinContent(binx,biny,binz);
@@ -87,10 +97,13 @@ float getBtagWeight(TFile *f, BTagCalibrationReader calibreader, float jet_pt, f
       syst="central";
     }
 
+    hist_max = 1000 - 0.001;
+    pt = TMath::Min((float)jet_pt,hist_max);  
+
     SF = calibreader.eval_auto_bounds(syst, BTagEntry::FLAV_UDSG, jet_abseta, jet_pt, csv);
     btag_eff = (TH3D*)f->Get("btagEfficiency_medium_incl");
     binx = btag_eff->GetXaxis()->FindBin(jet_abseta);
-    biny = btag_eff->GetYaxis()->FindBin(jet_pt);
+    biny = btag_eff->GetYaxis()->FindBin(pt);
     binz = btag_eff->GetZaxis()->FindBin(jet_hflavor);
 
     eff         = btag_eff->GetBinContent(binx,biny,binz);
@@ -107,6 +120,7 @@ float getBtagWeight(TFile *f, BTagCalibrationReader calibreader, float jet_pt, f
   }
  
   btag_weight = P_data/P_mc;
+//  cout<<hist_max<<endl;
 //  cout<<binx<<","<<biny<<","<<binz<<endl;
 //  cout<<eff<<endl;
   if(btag_weight==0) return 1; 
