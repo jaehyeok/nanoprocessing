@@ -26,15 +26,12 @@ void set_legend_style(TLegend *l1){
 
 void check_variable(){
 
-	TString inputdir = "/cms/scratch/yjeong/check_process/";
+	TString inputdir = "/xrootd_user/yjeong/xrootd/nanoprocessing/2016/merged_norm/";
+	TString inputdir_2 = "/xrootd_user/yjeong/xrootd/nanoprocessing/2016/merged_norm_0610/";
 
-	/*TString sample_name_16 = "2016_SMS-T1tbs_RPV_mGluino1600_TuneCUETP8M1";
-	TString sample_name_ = "2018_SMS-T1tbs_RPV_mGluino1600_TuneCP2";
-	TString outputdir = "plots/2018/mGluino/";// */
-
-	TString sample_name_16 = "2016_TTJets_TuneCUETP8M2T4";
-	TString sample_name_ = "2018_TTJets_TuneCP5";
-	TString outputdir = "plots/2018/TTJets/";// */
+	TString sample_name_16 = "QCD_HT700to1000_TuneCUETP8M1_39_norm";
+	TString sample_name_ = "QCD_HT700to1000_TuneCUETP8M1_26_norm";
+	TString outputdir = "plots/";// */
 
 	/*TString sample_name_16 = "JetHTRun2016D_rpvfitnbge0";
 	TString sample_name_ = "JetHTRun2018D_rpvfitnbge0";
@@ -47,7 +44,7 @@ void check_variable(){
 
 	tfile_1 = new TFile(inputdir+sample_name_16+".root");
 	mytree_1 = (TTree*)tfile_1->Get("tree");
-	tfile_2 = new TFile(inputdir+sample_name_+".root");
+	tfile_2 = new TFile(inputdir_2+sample_name_+".root");
 	mytree_2 = (TTree*)tfile_2->Get("tree");
 
 	TObjArray *blist;
@@ -135,8 +132,8 @@ void check_variable(){
 		h1[j]->SetLineWidth(3);
 		h2[j]->SetLineColor(kBlue);
 
-		l_[j]->AddEntry(h1[j],"2016_NanoAODv6");
-		l_[j]->AddEntry(h2[j],"2018_NanoAODv6");
+		l_[j]->AddEntry(h1[j],"0721_QCD_NanoAODv6");
+		l_[j]->AddEntry(h2[j],"0610_QCD_NanoAODv6");
 
 		set_legend_style(l_[j]);
 

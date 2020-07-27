@@ -221,7 +221,7 @@ int main(int argc, char **argv)
 	// weight/w_lumi 
 
   //vector<TString> prenorm_files = globVector(Form("%s/*%s*.root", prenormdir.Data(), tag.Data())); 
-  vector<TString> prenorm_files = getFileListFromFile(Form("flist/%d/flist_prenorm_%s.txt", year, tag.Data()));
+  vector<TString> prenorm_files = getFileListFromFile(Form("flist/norm/%d/flist_prenorm_%s.txt", year, tag.Data()));
   TChain ch_mean("tree");	
   for(int i=0; i<prenorm_files.size(); i++)
   {
@@ -259,7 +259,7 @@ int main(int argc, char **argv)
 
 	// get list of files in a directory
   //vector<TString> files = globVector(Form("%s/*%s*.root", inputdir.Data(), tag.Data())); 
-  vector<TString> tonorm_files = getFileListFromFile(Form("flist/%d/flist_tonorm_%s.txt", year, tag.Data()));
+  vector<TString> tonorm_files = getFileListFromFile(Form("flist/norm/%d/flist_tonorm_%s.txt", year, tag.Data()));
 	cout << "processing " << tonorm_files.size() << " files" << endl;
 
   // process files one by one 

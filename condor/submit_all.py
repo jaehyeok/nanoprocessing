@@ -10,22 +10,23 @@ username = getpass.getuser()
 year=sys.argv[1]
 
 outputdir="root://cms-xrdr.private.lo:2094//xrd/store/user/"+username+"/nanoprocessing/2016/processed/"
+#outputdir="root://cms-xrdr.private.lo:2094//xrd/store/user/"+username+"/nanoprocessing/2016/processed_0725/"
 #outputdir="root://cms-xrdr.private.lo:2094//xrd/store/user/"+username+"/nanoprocessing/2016/processed_0710/"
 #samplelist="samples/samples2016.txt"
 #inputmctag="RunIISummer16NanoAODv4"
-samplelist="samples/samples2016_v6.txt"
-inputmctag="RunIISummer16NanoAODv6"
+samplelist="samples/samples2016_v7.txt"
+inputmctag="RunIISummer16NanoAODv7"
 
 if year == "2017":
 	outputdir="root://cms-xrdr.private.lo:2094//xrd/store/user/"+username+"/nanoprocessing/2017/processed/"
 	#outputdir="/xrootd_user/"+username+"/xrootd/nanoprocessing/2017"
-	samplelist="samples/samples2017_v6.txt"
-	inputmctag="RunIIFall17NanoAODv6"
+	samplelist="samples/samples2017_v7.txt"
+	inputmctag="RunIIFall17NanoAODv7"
 if year == "2018":
 	outputdir="root://cms-xrdr.private.lo:2094//xrd/store/user/"+username+"/nanoprocessing/2018/processed/"
 	#outputdir="/xrootd_user/"+username+"/xrootd/nanoprocessing/2018"
-	samplelist="samples/samples2018_v6.txt"
-	inputmctag="RunIIAutumn18NanoAODv6"
+	samplelist="samples/samples2018_v7.txt"
+	inputmctag="RunIIAutumn18NanoAODv7"
 
 # print out inputs
 print "------------------------------------------------------------------------------------------------------------"
