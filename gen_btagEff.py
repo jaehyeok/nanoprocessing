@@ -75,12 +75,12 @@ def printProgress(iteration, total, prefix = '', suffix ='', decimals = 1, barLe
 	sys.stdout.flush()
 
 
-def gen_btagEff(out_file_path, docuts, process):
+def gen_btagEff(out_file_path, docuts, process, year):
 	print process
 	ROOT.TH1.SetDefaultSumw2()
 
 	c = ROOT.TChain("tree","tree")
-	c.Add("/xrootd_user/yjeong/xrootd/nanoprocessing/2016/processed_200708/*"+process+"*.root")
+	c.Add("/xrootd_user/yjeong/xrootd/nanoprocessing/"+year+"/processed/*"+process+"*.root")
 
 	dcsv_med = ("medium", 0.6324)
 
@@ -107,13 +107,14 @@ def gen_btagEff(out_file_path, docuts, process):
 			printProgress(entry, num_entries, 'Progress:', 'Complete', 2, 50)
 		entry = entry + 1 
 		if(getattr(c,"pass")) : continue
-		if docuts : 
-			if not (c.nleps == 1 and c.ht > 1200 and c.mj12 > 500 and c.njets >= 4 ) : 
-				continue
+		#if docuts : 
+		#	if not (c.nleps == 1 and c.ht > 1200 and c.mj12 > 500 and c.njets >= 4 ) : 
+		#		continue
 		for ijet in xrange(len(c.jets_dcsvb)):
 			flavor = abs(c.jets_hflavor[ijet]) 
 			if (flavor == 21) : flavor = 0
 			pt     = c.jets_pt[ijet]
+			pt     = min(pt,999.99)
 			eta    = abs(c.jets_eta[ijet])
 			dcsv   = c.jets_dcsvb[ijet]
 			if (c.jets_islep[ijet]) : continue
@@ -142,7 +143,7 @@ def gen_btagEff(out_file_path, docuts, process):
 	eff_comb = ROOT.TH3D.Divide(numerator_comb, denominator_comb)
 	eff_comb_central = ROOT.TH3D.Divide(numerator_comb_central, denominator_comb_central)
 	eff_incl = ROOT.TH3D.Divide(numerator_incl, denominator_incl)
-	out_file = ROOT.TFile(out_file_path.replace(".root","_"+process+".root"), "recreate");
+	out_file = ROOT.TFile(out_file_path.replace(".root","_"+process+"_"+str(year)+".root"), "recreate");
 #	eff_comb.Write()
 #	eff_comb_central.Write()
 #	eff_incl.Write()
@@ -160,7 +161,11 @@ if __name__ == "__main__":
 	parser.add_argument("-y", "--year", action="store", default="2016",help="Select the year that you want to make trigger efficiency")
 	args = parser.parse_args()
 
+	print args.docuts
 	list_tags = get_sample_tag_list(args.year)
-	for process in list_tags:
-		gen_btagEff(args.out_file, args.docuts, process)
+	if args.docuts : 
+		gen_btagEff(args.out_file, args.docuts, "WJetsToQQ_HT-600ToInf_TuneCUETP8M1", args.year)
+	else :
+		for process in list_tags:
+			gen_btagEff(args.out_file, args.docuts, process, args.year)
 
