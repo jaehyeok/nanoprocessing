@@ -101,7 +101,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   // setup calibration + reader
   // string csvfile = "data/DeepCSV_2016LegacySF_V1.csv"; //for loose cuts only 
   // string csvfile = "data/DeepCSV_2016LegacySF_V1_TuneCP5.csv"; 
-  TFile *f_btef = new TFile("btagEfficiency/btagEfficiency_"+tag+".root","READ");//FIXME
+  TFile *f_btef = new TFile("btagEfficiency/btagEfficiency_"+tag+"_"+Form("%d",year)+".root","READ");//FIXME
   string csvfile = "data/DeepCSV_2016LegacySF_V1.csv"; //for loose cuts only 
   if(year==2017) csvfile = "data/DeepCSV_94XSF_V4_B_F.csv";
   if(year==2018) csvfile = "data/DeepCSV_102XSF_V1.csv";
@@ -1286,8 +1286,8 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   cout << "... transferring output file" << endl;
   cout << Form("... xrdcp %s %s", outputfile.Data(), outputdir.Data()) << endl;  
   gSystem->Exec(Form("xrdcp %s %s", outputfile.Data(), outputdir.Data()));  
-  cout << Form("rm %s", outputfile.Data()) << endl;  
-  gSystem->Exec(Form("rm %s", outputfile.Data()));  
+  //cout << Form("rm %s", outputfile.Data()) << endl;  
+  //gSystem->Exec(Form("rm %s", outputfile.Data()));  
 }
 
 
