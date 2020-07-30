@@ -112,9 +112,9 @@ ZZ_TuneCUETP8M1_13TeV-pythia8/NANOAODSIM/PUMoriond17_Nano02Apr2020_102X_mcRun2_a
 
 ##JetHT
 
-#/xrootd/store/data/Run2016C/JetHT/NANOAOD/02Apr2020-v1/
-#/xrootd/store/data/Run2016D/JetHT/NANOAOD/02Apr2020-v1/
-#/xrootd/store/data/Run2016E/JetHT/NANOAOD/02Apr2020-v1/
-#/xrootd/store/data/Run2016F/JetHT/NANOAOD/02Apr2020-v1/
-#/xrootd/store/data/Run2016G/JetHT/NANOAOD/02Apr2020-v1/
-#/xrootd/store/data/Run2016H/JetHT/NANOAOD/02Apr2020-v1/
+/xrootd/store/data/Run2016C/JetHT/NANOAOD/02Apr2020-v1/
+/xrootd/store/data/Run2016D/JetHT/NANOAOD/02Apr2020-v1/
+/xrootd/store/data/Run2016E/JetHT/NANOAOD/02Apr2020-v1/
+/xrootd/store/data/Run2016F/JetHT/NANOAOD/02Apr2020-v1/
+/xrootd/store/data/Run2016G/JetHT/NANOAOD/02Apr2020-v1/
+/xrootd/store/data/Run2016H/JetHT/NANOAOD/02Apr2020-v1/
