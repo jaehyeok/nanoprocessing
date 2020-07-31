@@ -126,9 +126,11 @@ int main(int argc, char **argv)
     inputdir      = argv[1];
     skim          = argv[2];
     file_selector = atoi(argv[3]);
-   
+
     outputdir = inputdir;
     outputdir.ReplaceAll("processed", Form("skim_%s", skim.Data()));
+    gSystem->mkdir(outputdir);
+
     cout << " input   dir  		: " << inputdir << endl;
     cout << " output  dir  		: " << outputdir << endl;
     cout << " skim        	  : " << skim << endl;
