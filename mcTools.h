@@ -71,7 +71,7 @@ float getXsec(TString process)
   if(process.Contains("WWW_4F_Tune"))  xsec = 0.2086;
   if(process.Contains("WWZ_Tune") && process.Contains("WWZ_4F_Tune"))  xsec = 0.1651; 
   if(process.Contains("WZZ_Tune"))  xsec = 0.05565; 
-  if(process.Contains("ZZZ_Tune"))  xsec = 0.01398; 
+  if(process.Contains("ZZZ_Tune") && process.Contains("ZZZ_4f_Tune"))  xsec = 0.01398; 
  
   // ttV: need inclusive samples
   //if(process.Contains("TTZJets_Tune4C_13TeV-madgraph-tauola"))    xsec = 0.7598;

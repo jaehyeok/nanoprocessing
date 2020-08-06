@@ -129,7 +129,6 @@ int main(int argc, char **argv)
 
     outputdir = inputdir;
     outputdir.ReplaceAll("processed", Form("skim_%s", skim.Data()));
-    gSystem->mkdir(outputdir);
 
     cout << " input   dir  		: " << inputdir << endl;
     cout << " output  dir  		: " << outputdir << endl;
@@ -141,8 +140,9 @@ int main(int argc, char **argv)
   gSystem->mkdir(outputdir.Data());
 
   // get list of files in a directory
-  vector<TString> files = globVector(Form("%s/*.root", inputdir.Data())); 
+  //vector<TString> files = globVector(Form("%s/*.root", inputdir.Data())); 
   //vector<TString> files = globVector(Form("%s/*JetHTRun*.root", inputdir.Data())); 
+  vector<TString> files = globVector(Form("%s/*ZZZ_4f*.root", inputdir.Data())); 
 
 	cout << "skimming " << files.size() << " files" << endl;
 	
