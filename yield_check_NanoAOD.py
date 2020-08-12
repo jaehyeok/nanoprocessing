@@ -7,13 +7,16 @@ from ROOT import TChain, TSelector, TTree, TH1F, TCanvas, TPad, TStyle, TString,
 ROOT.gROOT.SetBatch(True)
 year = sys.argv[1]
 
-inputdir_1="/xrootd_user/yjeong/xrootd/nanoprocessing/"+year+"/processed/"
-inputdir_2="/xrootd_user/yjeong/xrootd/nanoprocessing/"+year+"/v6/processed/"
+inputdir_1="/xrootd_user/yjeong/xrootd/nanoprocessing/"+year+"/v6/processed/"
+inputdir_2="/xrootd_user/yjeong/xrootd/nanoprocessing/"+year+"/processed/"
+outputdir="plots/yield/"
+#os.mkdir(outputdir)
 
 flistdir = "/cms/ldap_home/yjeong/flist/"+year
 flists = os.listdir(flistdir)
 h1_mj = ROOT.TH1D("h1_mj","",10,0,3000)
 h2_mj = ROOT.TH1D("h2_mj","",10,0,3000)
+#c = TCanvas("c","canvas",800,800)
 
 print('-------------------------------------------NanoAODv6 vs NanoAODv7---------------------------------------------')
 print('%46s %3s %15s %15s %15s' %(year, "tag", "v6_yield", "v7_yield", "ratio"))
@@ -35,7 +38,8 @@ for i, mcname in enumerate(flists):
 		ratio = 0
 	else:
 		ratio = v6_yield/v7_yield
+	#c.SaveAs(outputdir+tag+".png")
 	print('%50s %15.2f %15.2f %15.2f' %(tag, v6_yield, v7_yield, ratio))
+	#print('%50s %15.2f %15.2f %15.2f' %("v6", mc1.xsec, mc1.genWeight, mc1.sumWeight))
+	#print('%50s %15.2f %15.2f %15.2f' %("v7", mc2.xsec, mc2.genWeight, mc2.sumWeight))
 print('--------------------------------------------------------------------------------------------------------------')
-
-

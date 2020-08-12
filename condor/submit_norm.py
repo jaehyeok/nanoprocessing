@@ -10,9 +10,9 @@ username = getpass.getuser()
 
 year=sys.argv[1] ##2016, 2017, 2018
 
-inputdir     = "/xrootd_user/"+username+"/xrootd/nanoprocessing/"+year+"/v6/merged_rpvfitnbge0/"
-outdir       = "/xrootd_user/"+username+"/xrootd/nanoprocessing/"+year+"/v6/merged_norm/"
-prenormdir   = "/xrootd_user/"+username+"/xrootd/nanoprocessing/"+year+"/v6/processed/"
+inputdir     = "/xrootd_user/"+username+"/xrootd/nanoprocessing/"+year+"/merged_rpvfitnbge0/"
+outdir       = "/xrootd_user/"+username+"/xrootd/nanoprocessing/"+year+"/merged_norm/"
+prenormdir   = "/xrootd_user/"+username+"/xrootd/nanoprocessing/"+year+"/processed/"
 
 # list of tags (=processes)
 f_list = os.listdir(inputdir)
