@@ -88,7 +88,6 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   if(inputfile.Contains("JetHT") || samplename.Contains("JetHT"))            isData = true;
   if(inputfile.Contains("SingleMuon") || samplename.Contains("SingleMuon"))  isData = true;
   cout << " is data?: " << isData << endl;
-  
   // size of fat jets
   float Rparam = 1.2;
   
@@ -102,7 +101,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   // string csvfile = "data/DeepCSV_2016LegacySF_V1.csv"; //for loose cuts only 
   // string csvfile = "data/DeepCSV_2016LegacySF_V1_TuneCP5.csv"; 
   TFile *f_btef;
-  if(!isData && !inputfile.Contains("StealthSHH_2t4b_mStop")){
+  if(!isData && !inputfile.Contains("StealthSHH_2t4b_mStop")){//FIXME
     f_btef = new TFile("btagEfficiency/btagEfficiency_"+tag+".root","READ");//FIXME
   }
   string csvfile = "data/DeepCSV_2016LegacySF_V1.csv"; //for loose cuts only 
@@ -903,7 +902,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
         njets++;
         ht += Jet_pt[iJ];
         if(Jet_btagDeepB[iJ]>csv_cut) nbm++; 
-        if(!isData) 
+        if(!isData && !inputfile.Contains("StealthSHH_2t4b_mStop")) //FIXME
 	  {
 	    w_btag_dcsv *= getBtagWeight(f_btef,calibreader, Jet_pt[iJ], Jet_eta[iJ], Jet_hadronFlavour[iJ], Jet_btagDeepB[iJ], csv_cut);
 	    sys_bctag_up *= getBtagWeight(f_btef,calibreader, Jet_pt[iJ], Jet_eta[iJ], Jet_hadronFlavour[iJ], Jet_btagDeepB[iJ], csv_cut, "up_hf");

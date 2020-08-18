@@ -32,8 +32,8 @@ for i, mcname in enumerate(flists):
 	mc2.Add(inputdir_2+"*_fatjetbaby_"+tag+"*.root")
 	mc1.GetEntry()
 	mc2.GetEntry()
-	mc1.Draw("event>>h1","","goff")
-	mc2.Draw("event>>h2","","goff")
+	mc1.Draw("event>>h1","w_lumi","goff")
+	mc2.Draw("event>>h2","w_lumi","goff")
 	v6_yield = h1.Integral()
 	v7_yield = h2.Integral()
 	if v6_yield==0 or v7_yield==0:
