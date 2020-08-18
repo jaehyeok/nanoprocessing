@@ -102,7 +102,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   // string csvfile = "data/DeepCSV_2016LegacySF_V1.csv"; //for loose cuts only 
   // string csvfile = "data/DeepCSV_2016LegacySF_V1_TuneCP5.csv"; 
   TFile *f_btef;
-  if(!isData){
+  if(!isData && !inputfile.Contains("StealthSHH_2t4b_mStop")){
     f_btef = new TFile("btagEfficiency/btagEfficiency_"+tag+".root","READ");//FIXME
   }
   string csvfile = "data/DeepCSV_2016LegacySF_V1.csv"; //for loose cuts only 

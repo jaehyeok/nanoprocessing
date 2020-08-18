@@ -102,29 +102,30 @@ float getXsec(TString process)
   if(process.Contains("mGluino2100"))                  xsec = 0.598E-03;
   if(process.Contains("mGluino2200"))                  xsec = 0.356E-03;
 
-  if(process.Contains("StealthSHH_2t4b_mStop-1000_mSo-100_Tune")) xsec = 1;
-  if(process.Contains("StealthSHH_2t4b_mStop-1050_mSo-100_Tune")) xsec = 1;
-  if(process.Contains("StealthSHH_2t4b_mStop-1100_mSo-100_Tune")) xsec = 1;
-  if(process.Contains("StealthSHH_2t4b_mStop-1150_mSo-100_Tune")) xsec = 1;
-  if(process.Contains("StealthSHH_2t4b_mStop-1200_mSo-100_Tune")) xsec = 1;
-  if(process.Contains("StealthSHH_2t4b_mStop-1250_mSo-100_Tune")) xsec = 1;
-  if(process.Contains("StealthSHH_2t4b_mStop-1300_mSo-100_Tune")) xsec = 1;
-  if(process.Contains("StealthSHH_2t4b_mStop-1350_mSo-100_Tune")) xsec = 1;
-  if(process.Contains("StealthSHH_2t4b_mStop-1400_mSo-100_Tune")) xsec = 1;
-  if(process.Contains("StealthSHH_2t4b_mStop-300_mSo-100_Tune")) xsec = 1;
-  if(process.Contains("StealthSHH_2t4b_mStop-350_mSo-100_Tune")) xsec = 1;
-  if(process.Contains("StealthSHH_2t4b_mStop-400_mSo-100_Tune")) xsec = 1;
-  if(process.Contains("StealthSHH_2t4b_mStop-450_mSo-100_Tune")) xsec = 1;
-  if(process.Contains("StealthSHH_2t4b_mStop-500_mSo-100_Tune")) xsec = 1;
-  if(process.Contains("StealthSHH_2t4b_mStop-550_mSo-100_Tune")) xsec = 1;
-  if(process.Contains("StealthSHH_2t4b_mStop-600_mSo-100_Tune")) xsec = 1;
-  if(process.Contains("StealthSHH_2t4b_mStop-650_mSo-100_Tune")) xsec = 1;
-  if(process.Contains("StealthSHH_2t4b_mStop-700_mSo-100_Tune")) xsec = 1;
-  if(process.Contains("StealthSHH_2t4b_mStop-750_mSo-100_Tune")) xsec = 1;
-  if(process.Contains("StealthSHH_2t4b_mStop-800_mSo-100_Tune")) xsec = 1;
-  if(process.Contains("StealthSHH_2t4b_mStop-850_mSo-100_Tune")) xsec = 1;
-  if(process.Contains("StealthSHH_2t4b_mStop-900_mSo-100_Tune")) xsec = 1;
-  if(process.Contains("StealthSHH_2t4b_mStop-950_mSo-100_Tune")) xsec = 1;
+  // StealthSHH_mStop
+  if(process.Contains("StealthSHH_2t4b_mStop-300_mSo-100_Tune")) xsec = 0.1E+02;
+  if(process.Contains("StealthSHH_2t4b_mStop-350_mSo-100_Tune")) xsec = 0.443E+01;
+  if(process.Contains("StealthSHH_2t4b_mStop-400_mSo-100_Tune")) xsec = 0.215E+01;
+  if(process.Contains("StealthSHH_2t4b_mStop-450_mSo-100_Tune")) xsec = 0.111E+01;
+  if(process.Contains("StealthSHH_2t4b_mStop-500_mSo-100_Tune")) xsec = 0.609E+00;
+  if(process.Contains("StealthSHH_2t4b_mStop-550_mSo-100_Tune")) xsec = 0.347E+01;
+  if(process.Contains("StealthSHH_2t4b_mStop-600_mSo-100_Tune")) xsec = 0.205E+01;
+  if(process.Contains("StealthSHH_2t4b_mStop-650_mSo-100_Tune")) xsec = 0.125E+01;
+  if(process.Contains("StealthSHH_2t4b_mStop-700_mSo-100_Tune")) xsec = 0.783E-01;
+  if(process.Contains("StealthSHH_2t4b_mStop-750_mSo-100_Tune")) xsec = 0.5E-01;
+  if(process.Contains("StealthSHH_2t4b_mStop-800_mSo-100_Tune")) xsec = 0.326E-01;
+  if(process.Contains("StealthSHH_2t4b_mStop-850_mSo-100_Tune")) xsec = 0.216E-01;
+  if(process.Contains("StealthSHH_2t4b_mStop-900_mSo-100_Tune")) xsec = 0.145E-01;
+  if(process.Contains("StealthSHH_2t4b_mStop-950_mSo-100_Tune")) xsec = 0.991E-02;
+  if(process.Contains("StealthSHH_2t4b_mStop-1000_mSo-100_Tune")) xsec = 0.683E-02;
+  if(process.Contains("StealthSHH_2t4b_mStop-1050_mSo-100_Tune")) xsec = 0.476E-02;
+  if(process.Contains("StealthSHH_2t4b_mStop-1100_mSo-100_Tune")) xsec = 0.335E-02;
+  if(process.Contains("StealthSHH_2t4b_mStop-1150_mSo-100_Tune")) xsec = 0.238E-02;
+  if(process.Contains("StealthSHH_2t4b_mStop-1200_mSo-100_Tune")) xsec = 0.17E-02;
+  if(process.Contains("StealthSHH_2t4b_mStop-1250_mSo-100_Tune")) xsec = 0.122E-02;
+  if(process.Contains("StealthSHH_2t4b_mStop-1300_mSo-100_Tune")) xsec = 0.887E-03;
+  if(process.Contains("StealthSHH_2t4b_mStop-1350_mSo-100_Tune")) xsec = 0.646E-03;
+  if(process.Contains("StealthSHH_2t4b_mStop-1400_mSo-100_Tune")) xsec = 0.473E-03;
 
   cout << "cross section for " << process << " =  " <<  xsec*1000 <<  " fb" << endl; 
   
