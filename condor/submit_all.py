@@ -18,7 +18,7 @@ if year == "2017":
 	inputmctag="RunIIFall17NanoAODv7"
 
 if year == "2018":
-	inputmctag="RunIIAutumn18NanoAODv6"
+	inputmctag="RunIIAutumn18NanoAODv7"
 
 # print out inputs
 print "------------------------------------------------------------------------------------------------------------"
