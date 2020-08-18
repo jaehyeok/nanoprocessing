@@ -9,8 +9,8 @@ import glob
 username = getpass.getuser()
 year=sys.argv[1]
 
-outputdir="root://cms-xrdr.private.lo:2094//xrd/store/user/"+username+"/nanoprocessing/"+year+"/processed/"
-samplelist="samples/samples"+year+"_v7.txt"
+outputdir="root://cms-xrdr.private.lo:2094//xrd/store/user/"+username+"/nanoprocessing/"+year+"/v6/processed/"
+samplelist="samples/samples"+year+"_v6.txt"
 
 inputmctag="RunIISummer16NanoAODv7"
 
@@ -18,7 +18,7 @@ if year == "2017":
 	inputmctag="RunIIFall17NanoAODv7"
 
 if year == "2018":
-	inputmctag="RunIIAutumn18NanoAODv7"
+	inputmctag="RunIIAutumn18NanoAODv6"
 
 # print out inputs
 print "------------------------------------------------------------------------------------------------------------"

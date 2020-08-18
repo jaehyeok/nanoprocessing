@@ -26,15 +26,15 @@ void set_legend_style(TLegend *l1){
 
 void check_variable(){
 
-	TString inputdir = "/xrootd_user/yjeong/xrootd/nanoprocessing/2016/merged_norm/";
-	TString inputdir_2 = "/xrootd_user/yjeong/xrootd/nanoprocessing/2016/merged_norm_0610/";
+	TString inputdir_1 = "/xrootd_user/yjeong/xrootd/nanoprocessing/2018/v6/NanoAODv6_data/FD9D237D-8113-064A-A01A-A2AE95CB0832_fatjetbaby_";
+	TString inputdir_2 = "/xrootd_user/yjeong/xrootd/nanoprocessing/2018/processed/FE5C4D25-C348-FD46-ABB1-CAACEB07BE28_fatjetbaby_";
 
-	TString sample_name_16 = "QCD_HT700to1000_TuneCUETP8M1_39_norm";
-	TString sample_name_ = "QCD_HT700to1000_TuneCUETP8M1_26_norm";
+	TString sample_name_1 = "JetHTRun2018D";
+	TString sample_name_2 = "JetHTRun2018D";
 	TString outputdir = "plots/";// */
 
-	/*TString sample_name_16 = "JetHTRun2016D_rpvfitnbge0";
-	TString sample_name_ = "JetHTRun2018D_rpvfitnbge0";
+	/*TString sample_name_1 = "JetHTRun2016D_rpvfitnbge0";
+	TString sample_name_2 = "JetHTRun2018D_rpvfitnbge0";
 	TString outputdir = "plots/2018/JetHTRun/";// */
 
 	TTree *mytree_1;
@@ -42,9 +42,9 @@ void check_variable(){
 	TFile *tfile_1;
 	TFile *tfile_2;
 
-	tfile_1 = new TFile(inputdir+sample_name_16+".root");
-	mytree_1 = (TTree*)tfile_1->Get("tree");
-	tfile_2 = new TFile(inputdir_2+sample_name_+".root");
+	tfile_1 = new TFile(inputdir_1+sample_name_1+".root");
+	mytree_1 = (TTree*)tfile_1->Get("Evemts");
+	tfile_2 = new TFile(inputdir_2+sample_name_2+".root");
 	mytree_2 = (TTree*)tfile_2->Get("tree");
 
 	TObjArray *blist;
@@ -53,9 +53,9 @@ void check_variable(){
 	blist->Print();
 	cout<< blist->GetEntries() <<endl;
 	cout<< typeid(blist->GetEntries()).name() <<endl;
-	cout<<"16NanoAOD entries: "<<mytree_1->GetEntries()<<endl;
-	cout<<"18NanoAOD entries: "<<mytree_2->GetEntries()<<endl;
-	const int nBranch = 85;
+	cout<<sample_name_1+" entries: "<<mytree_1->GetEntries()<<endl;
+	cout<<sample_name_2+" entries: "<<mytree_2->GetEntries()<<endl;
+	const int nBranch = 3;
 
 	TH1F *h1[nBranch];
 	TH1F *h2[nBranch];
@@ -114,9 +114,9 @@ void check_variable(){
 		plotpad_[j]->Draw();
 		ratiopad_[j]->Draw();
 
-		h1[j] = new TH1F(Form("h1_%d",j),sample_name_,bin,x_min[j],x_max[j]);
+		h1[j] = new TH1F(Form("h1_%d",j),sample_name_1,bin,x_min[j],x_max[j]);
 		mytree_1->Project(Form("h1_%d",j),blist->At(j)->GetName());
-		h2[j] = new TH1F(Form("h2_%d",j),sample_name_,bin,x_min[j],x_max[j]);
+		h2[j] = new TH1F(Form("h2_%d",j),sample_name_2,bin,x_min[j],x_max[j]);
 		mytree_2->Project(Form("h2_%d",j),blist->At(j)->GetName());
 		plotpad_[j]->cd();
 
@@ -131,9 +131,10 @@ void check_variable(){
 		h1[j]->SetLineStyle(7);
 		h1[j]->SetLineWidth(3);
 		h2[j]->SetLineColor(kBlue);
+		h2[j]->SetLineWidth(2);
 
-		l_[j]->AddEntry(h1[j],"0721_QCD_NanoAODv6");
-		l_[j]->AddEntry(h2[j],"0610_QCD_NanoAODv6");
+		l_[j]->AddEntry(h1[j],sample_name_1+"Nanov6");
+		l_[j]->AddEntry(h2[j],sample_name_2+"baby_v7");
 
 		set_legend_style(l_[j]);
 
@@ -149,6 +150,6 @@ void check_variable(){
 		heff[j]->Divide(h2[j],h1[j]);
 		heff[j]->Draw("e");
 		if(!var_name.Contains("els_spr15_sigid"))
-			c_[j]->SaveAs(outputdir+sample_name_+"_"+blist->At(j)->GetName()+".png");
+			c_[j]->SaveAs(outputdir+sample_name_1+"_"+blist->At(j)->GetName()+".png");
 	}
 }
