@@ -29,9 +29,9 @@ for i, mcname in enumerate(flists):
 	mc2.Add(inputdir_2+"*_fatjetbaby_"+tag+"*.root")
 	mc1.GetEntry()
 	mc2.GetEntry()
-	mc1.Draw("xsec>>h1","w_lumi","goff")
+	mc1.Draw("xsec>>h1","","goff")
 	mc2.Draw("event>>h2","w_lumi","goff")
-	v7_xsec = h1.Integral()
+	v7_xsec = h1.GetMean()
 	v7_yield = h2.Integral()
 	if v7_xsec==0 or v7_yield==0:
 		ratio = 0

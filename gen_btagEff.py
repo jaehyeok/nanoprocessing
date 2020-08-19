@@ -12,7 +12,7 @@ def get_sample_tag_list(year):
 	for line in lines :
 		tag = line.split("_13TeV")[0]
 		if tag.startswith('#'): continue
-		if not 'StealthSHH_mStop' in tag : continue
+		#if not 'StealthSHH_mStop' in tag : continue
 		ret.append(tag)
 	return ret
 
