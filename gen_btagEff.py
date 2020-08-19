@@ -6,7 +6,7 @@ import array
 import sys 
 
 def get_sample_tag_list(year):
-	f = open("condor/samples/samples"+year+"_v6.txt",'r')
+	f = open("condor/samples/samples"+year+"_v7.txt",'r')
 	lines = f.readlines()
 	ret = []
 	for line in lines :

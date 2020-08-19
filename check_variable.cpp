@@ -26,11 +26,11 @@ void set_legend_style(TLegend *l1){
 
 void check_variable(){
 
-	TString inputdir_1 = "/xrootd_user/yjeong/xrootd/nanoprocessing/2018/v6/NanoAODv6_data/FD9D237D-8113-064A-A01A-A2AE95CB0832_fatjetbaby_";
-	TString inputdir_2 = "/xrootd_user/yjeong/xrootd/nanoprocessing/2018/processed/FE5C4D25-C348-FD46-ABB1-CAACEB07BE28_fatjetbaby_";
+	TString inputdir_1 = "/cms/scratch/yjeong/";
+	TString inputdir_2 = "/cms/scratch/yjeong/";
 
-	TString sample_name_1 = "JetHTRun2018D";
-	TString sample_name_2 = "JetHTRun2018D";
+	TString sample_name_1 = "Run2018Dv6";
+	TString sample_name_2 = "Run2018Dv7";
 	TString outputdir = "plots/";// */
 
 	/*TString sample_name_1 = "JetHTRun2016D_rpvfitnbge0";
@@ -43,7 +43,7 @@ void check_variable(){
 	TFile *tfile_2;
 
 	tfile_1 = new TFile(inputdir_1+sample_name_1+".root");
-	mytree_1 = (TTree*)tfile_1->Get("Evemts");
+	mytree_1 = (TTree*)tfile_1->Get("tree");
 	tfile_2 = new TFile(inputdir_2+sample_name_2+".root");
 	mytree_2 = (TTree*)tfile_2->Get("tree");
 
@@ -133,8 +133,8 @@ void check_variable(){
 		h2[j]->SetLineColor(kBlue);
 		h2[j]->SetLineWidth(2);
 
-		l_[j]->AddEntry(h1[j],sample_name_1+"Nanov6");
-		l_[j]->AddEntry(h2[j],sample_name_2+"baby_v7");
+		l_[j]->AddEntry(h1[j],sample_name_1);
+		l_[j]->AddEntry(h2[j],sample_name_2);
 
 		set_legend_style(l_[j]);
 
