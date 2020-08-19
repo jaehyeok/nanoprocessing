@@ -29,13 +29,13 @@ for i, mcname in enumerate(flists):
 	mc2.Add(inputdir_2+"*_fatjetbaby_"+tag+"*.root")
 	mc1.GetEntry()
 	mc2.GetEntry()
-	#mc1.Draw("event>>h1","w_lumi","goff")
+	mc1.Draw("xsec>>h1","w_lumi","goff")
 	mc2.Draw("event>>h2","w_lumi","goff")
-	v7_xsec = mc1.xsec
+	v7_xsec = h1.Integral()
 	v7_yield = h2.Integral()
 	if v7_xsec==0 or v7_yield==0:
 		ratio = 0
 	else:
-		ratio = v7_sec/v7_yield
-	print('%50s %15.2f %15.2f %15.8f' %(tag, v7_xsec, v7_yield, ratio))
+		ratio = v7_xsec/v7_yield
+	print('%50s %15.2f %15.2f %15.2f' %(tag, v7_xsec, v7_yield, ratio))
 print('--------------------------------------------------------------------------------------------------------------')
