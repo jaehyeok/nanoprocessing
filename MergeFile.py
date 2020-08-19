@@ -2,20 +2,13 @@ import os
 import sys
 import ROOT
 from ROOT import TChain, TSelector, TTree, TH1F, TCanvas, TPad, TStyle, TString
-year=sys.argv[1]
+year=sys.argv[1]#2016, 2017, 2018
 
 simple_PATH = "/xrootd_user/yjeong/xrootd/nanoprocessing/"
 
-inputdir = simple_PATH+"2016/skim_rpvfitnbge0/"
-outputdir = simple_PATH+"2016/merged_rpvfitnbge0/"
-
-if year == "2017":
-	inputdir = simple_PATH+"2017/skim_rpvfitnbge0/"
-	outputdir = simple_PATH+"2017/merged_rpvfitnbge0/"
-
-if year == "2018":
-	inputdir = simple_PATH+"2018/skim_rpvfitnbge0/"
-	outputdir = simple_PATH+"2018/merged_rpvfitnbge0/"
+inputdir = simple_PATH+year+"/skim_rpvfitnbge0/"
+outputdir = simple_PATH+year+"/merged_rpvfitnbge0/"
+#os.mkdir(outputdir)
 
 flistdir = "/cms/ldap_home/yjeong/flist/"+year
 flists = os.listdir(flistdir)

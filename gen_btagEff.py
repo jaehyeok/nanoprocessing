@@ -6,12 +6,13 @@ import array
 import sys 
 
 def get_sample_tag_list(year):
-	f = open("condor/samples/samples"+year+"_v6.txt",'r')
+	f = open("condor/samples/samples"+year+"_v7.txt",'r')
 	lines = f.readlines()
 	ret = []
 	for line in lines :
 		tag = line.split("_13TeV")[0]
 		if tag.startswith('#'): continue
+		if not 'StealthSHH_mStop' in tag : continue
 		ret.append(tag)
 	return ret
 
@@ -159,6 +160,8 @@ if __name__ == "__main__":
 	parser.add_argument("-o", "--out_file", metavar="OUT_FILE", default="btagEfficiency.root", help="Save efficiencies to %(metavar)s")
 	parser.add_argument("-c", "--docuts", action="store_true", help="Use all available events, applying only basic filters")
 	parser.add_argument("-y", "--year", action="store", default="2016",help="Select the year that you want to make trigger efficiency")
+#	parser.add_argument("-p", "--process", action="store", default="*StealthSHH_2t4b_mStop*",help="make process")
+
 	args = parser.parse_args()
 
 	print args.docuts
@@ -168,4 +171,3 @@ if __name__ == "__main__":
 	else :
 		for process in list_tags:
 			gen_btagEff(args.out_file, args.docuts, process, args.year)
-

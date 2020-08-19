@@ -46,6 +46,6 @@ condor_submit condor_WWZ_TuneCP5_norm.jds
 condor_submit condor_WW_TuneCP5_norm.jds
 condor_submit condor_WZZ_TuneCP5_norm.jds
 condor_submit condor_WZ_TuneCP5_norm.jds
+condor_submit condor_ZZZ_4f_TuneCP5_norm.jds
 condor_submit condor_ZZZ_TuneCP5_norm.jds
 condor_submit condor_ZZ_TuneCP5_norm.jds
-
