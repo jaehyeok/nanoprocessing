@@ -6,13 +6,15 @@ import array
 import sys 
 
 def get_sample_tag_list(year):
-	f = open("condor/samples/samples"+year+"_v7.txt",'r')
+	#f = open("condor/samples/samples"+year+"_v7.txt",'r')
+	f = open("condor/samples/samples"+year+"_v6.txt",'r')
 	lines = f.readlines()
 	ret = []
 	for line in lines :
 		tag = line.split("_13TeV")[0]
 		if tag.startswith('#'): continue
-		#if not 'StealthSHH_mStop' in tag : continue
+		#if not 'ST_t-channel_top_4f_inclusiveDecays' in tag : continue
+		#if not 'QCD_HT700to1000' in tag : continue
 		ret.append(tag)
 	return ret
 
@@ -81,7 +83,8 @@ def gen_btagEff(out_file_path, docuts, process, year):
 	ROOT.TH1.SetDefaultSumw2()
 
 	c = ROOT.TChain("tree","tree")
-	c.Add("/xrootd_user/yjeong/xrootd/nanoprocessing/"+year+"/processed/*"+process+"*.root")
+	#c.Add("/xrootd_user/yjeong/xrootd/nanoprocessing/"+year+"/processed/*"+process+"*.root")
+	c.Add("/xrootd_user/yjeong/xrootd/nanoprocessing/"+year+"/v6/processed/*"+process+"*.root")
 
 	dcsv_med = ("medium", 0.6324)
 

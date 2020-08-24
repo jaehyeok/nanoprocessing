@@ -101,7 +101,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   // string csvfile = "data/DeepCSV_2016LegacySF_V1.csv"; //for loose cuts only 
   // string csvfile = "data/DeepCSV_2016LegacySF_V1_TuneCP5.csv"; 
   TFile *f_btef;
-  if(!isData && !inputfile.Contains("TTWJetsToQQ") && !inputfile.Contains("ST_t-channel_top_4f_inclusiveDecays") && !inputfile.Contains("QCD_HT700to1000_TuneCP5") && !inputfile.Contains("mGluino1000_TuneCP2")){//FIXME
+  if(!isData){//FIXME
     if(year==2016)f_btef = new TFile("btagEfficiency/btagEfficiency_"+tag+"_2016.root","READ");//FIXME
     if(year==2017)f_btef = new TFile("btagEfficiency/btagEfficiency_"+tag+"_2017.root","READ");//FIXME
     if(year==2018)f_btef = new TFile("btagEfficiency/btagEfficiency_"+tag+"_2018.root","READ");//FIXME
@@ -904,7 +904,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
         njets++;
         ht += Jet_pt[iJ];
         if(Jet_btagDeepB[iJ]>csv_cut) nbm++; 
-        if(!isData && !inputfile.Contains("TTWJetsToQQ") && !inputfile.Contains("ST_t-channel_top_4f_inclusiveDecays") && !inputfile.Contains("QCD_HT700to1000_TuneCP5") && !inputfile.Contains("mGluino1000_TuneCP2")) //FIXME
+        if(!isData) //FIXME
 	  {
 	    w_btag_dcsv *= getBtagWeight(f_btef,calibreader, Jet_pt[iJ], Jet_eta[iJ], Jet_hadronFlavour[iJ], Jet_btagDeepB[iJ], csv_cut);
 	    sys_bctag_up *= getBtagWeight(f_btef,calibreader, Jet_pt[iJ], Jet_eta[iJ], Jet_hadronFlavour[iJ], Jet_btagDeepB[iJ], csv_cut, "up_hf");
