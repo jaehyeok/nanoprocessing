@@ -5,6 +5,8 @@ import ROOT
 import array
 import sys 
 
+dcsv_med_WP = {"2016":6324, "2017":0.4941, "2018":0.4184}
+
 def get_sample_tag_list(year):
 	#f = open("condor/samples/samples"+year+"_v7.txt",'r')
 	f = open("condor/samples/samples"+year+"_v6.txt",'r')
@@ -86,7 +88,7 @@ def gen_btagEff(out_file_path, docuts, process, year):
 	#c.Add("/xrootd_user/yjeong/xrootd/nanoprocessing/"+year+"/processed/*"+process+"*.root")
 	c.Add("/xrootd_user/yjeong/xrootd/nanoprocessing/"+year+"/v6/processed/*"+process+"*.root")
 
-	dcsv_med = ("medium", 0.6324)
+	dcsv_med = ("medium", dcsv_med_WP[year])
 
 	eta_cuts_comb = [-2.4, 2.4]
 	eta_cuts_incl = [0., 2.4]
