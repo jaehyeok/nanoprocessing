@@ -31,7 +31,8 @@ void check_variable(){
 
 	TString sample_name_1 = "Run2018Dv6";
 	TString sample_name_2 = "Run2018Dv7";
-	TString outputdir = "plots/";// */
+	TString outputdir = "plots/check_variable/";// */
+	gSystem->mkdir(outputdir);
 
 	/*TString sample_name_1 = "JetHTRun2016D_rpvfitnbge0";
 	TString sample_name_2 = "JetHTRun2018D_rpvfitnbge0";
