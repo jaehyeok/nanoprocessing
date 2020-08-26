@@ -108,6 +108,10 @@ float getBtagWeight(TFile *f, BTagCalibrationReader calibreader, float jet_pt, f
 
     eff         = btag_eff->GetBinContent(binx,biny,binz);
   }
+  while(eff==0){
+    biny        = biny-1
+    eff         = btag_eff->GetBinContent(binx,biny,binz);
+  }
 //  cout<<syst<<endl;
 //  cout<<SF<<endl;
   if(csv>csv_cut){
