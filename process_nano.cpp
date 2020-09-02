@@ -194,6 +194,9 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   Float_t     genWeight        = 1;
   //LHE HT incomming
   Float_t     LHE_HTIncoming = 0;
+  Float_t     L1PreFiringWeight_Dn = 0;
+  Float_t     L1PreFiringWeight_Nom = 0;
+  Float_t     L1PreFiringWeight_Up = 0;
   //LHE Scale Weight
   Float_t     LHEScaleWeight[9];
   // MC 
@@ -268,6 +271,9 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   tree->SetBranchAddress("fixedGridRhoFastjetAll",          &fixedGridRhoFastjetAll);
   //LHE HT incoming
   tree->SetBranchAddress("LHE_HTIncoming",  &LHE_HTIncoming);
+  tree->SetBranchAddress("L1PreFiringWeight_Dn",  &L1PreFiringWeight_Dn);
+  tree->SetBranchAddress("L1PreFiringWeight_Nom",  &L1PreFiringWeight_Nom);
+  tree->SetBranchAddress("L1PreFiringWeight_Up",  &L1PreFiringWeight_Up);
   tree->SetBranchAddress("LHEScaleWeight",  &LHEScaleWeight);
   if(!isData)
   {
@@ -409,6 +415,9 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   //float mt;
   //LHE_HTIncoming
   float lhe_ht      =-1;
+  float L1Prefiring_Nom =-1;
+  float L1Prefiring_Dn =-1;
+  float L1Prefiring_Up =-1;
 
   std::vector<bool> trig;
   bool stitch;
@@ -527,6 +536,9 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   babyTree_->Branch("met",               &met);
   babyTree_->Branch("met_phi",           &met_phi);
   babyTree_->Branch("lhe_ht",            &lhe_ht);
+  babyTree_->Branch("L1Prefiring_Nom",   &L1Prefiring_Nom);
+  babyTree_->Branch("L1Prefiring_Dn",    &L1Prefiring_Dn);
+  babyTree_->Branch("L1Prefiring_Up",    &L1Prefiring_Up);
   babyTree_->Branch("stitch_ht",         &stitch_ht);
   // weights 
   babyTree_->Branch("weight",            &weight);
@@ -653,6 +665,9 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
     ntrupv        =   0;
     ntrupv_mean   =   0;
     lhe_ht   =     -1;
+    L1Prefiring_Nom = -1;
+    L1Prefiring_Dn = -1;
+    L1Prefiring_Up = -1;
     // weights 
     weight        =    1;
     w_lep         =    1; 
@@ -748,6 +763,9 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
     ntrupv  = Pileup_nPU;
     ntrupv_mean  = Pileup_nTrueInt;
     lhe_ht = LHE_HTIncoming;
+    L1Prefiring_Nom = L1PreFiringWeight_Nom;
+    L1Prefiring_Dn = L1PreFiringWeight_Dn;
+    L1Prefiring_Up = L1PreFiringWeight_Up;
 
     //
     // get electrons
@@ -904,9 +922,11 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
         njets++;
         ht += Jet_pt[iJ];
         if(Jet_btagDeepB[iJ]>csv_cut) nbm++; 
+    cout<<"13"<<endl;
         if(!isData) //FIXME
 	  {
 	    w_btag_dcsv *= getBtagWeight(f_btef,calibreader, Jet_pt[iJ], Jet_eta[iJ], Jet_hadronFlavour[iJ], Jet_btagDeepB[iJ], csv_cut);
+    cout<<"14"<<endl;
 	    sys_bctag_up *= getBtagWeight(f_btef,calibreader, Jet_pt[iJ], Jet_eta[iJ], Jet_hadronFlavour[iJ], Jet_btagDeepB[iJ], csv_cut, "up_hf");
 	    sys_bctag_down *= getBtagWeight(f_btef,calibreader, Jet_pt[iJ], Jet_eta[iJ], Jet_hadronFlavour[iJ], Jet_btagDeepB[iJ], csv_cut, "down_hf");
 	    sys_udsgtag_up *= getBtagWeight(f_btef,calibreader, Jet_pt[iJ], Jet_eta[iJ], Jet_hadronFlavour[iJ], Jet_btagDeepB[iJ], csv_cut, "up_lf");

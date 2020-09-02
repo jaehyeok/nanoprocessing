@@ -108,9 +108,9 @@ float getXsec(TString process)
   if(process.Contains("StealthSHH_2t4b_mStop-400_mSo-100_Tune")) xsec = 0.215E+01;
   if(process.Contains("StealthSHH_2t4b_mStop-450_mSo-100_Tune")) xsec = 0.111E+01;
   if(process.Contains("StealthSHH_2t4b_mStop-500_mSo-100_Tune")) xsec = 0.609E+00;
-  if(process.Contains("StealthSHH_2t4b_mStop-550_mSo-100_Tune")) xsec = 0.347E+01;
-  if(process.Contains("StealthSHH_2t4b_mStop-600_mSo-100_Tune")) xsec = 0.205E+01;
-  if(process.Contains("StealthSHH_2t4b_mStop-650_mSo-100_Tune")) xsec = 0.125E+01;
+  if(process.Contains("StealthSHH_2t4b_mStop-550_mSo-100_Tune")) xsec = 0.347E+00;
+  if(process.Contains("StealthSHH_2t4b_mStop-600_mSo-100_Tune")) xsec = 0.205E+00;
+  if(process.Contains("StealthSHH_2t4b_mStop-650_mSo-100_Tune")) xsec = 0.125E+00;
   if(process.Contains("StealthSHH_2t4b_mStop-700_mSo-100_Tune")) xsec = 0.783E-01;
   if(process.Contains("StealthSHH_2t4b_mStop-750_mSo-100_Tune")) xsec = 0.5E-01;
   if(process.Contains("StealthSHH_2t4b_mStop-800_mSo-100_Tune")) xsec = 0.326E-01;
