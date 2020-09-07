@@ -108,9 +108,11 @@ float getBtagWeight(TFile *f, BTagCalibrationReader calibreader, float jet_pt, f
 
     eff         = btag_eff->GetBinContent(binx,biny,binz);
   }
+  bool flag_biny = false;
   while(eff==0){
-    if(biny==2){ 
+    if(biny==2 || flag_biny){ 
       biny      = biny+1;
+      flag_biny == true;
     }
     else{
       biny      = biny-1;
