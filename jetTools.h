@@ -85,7 +85,7 @@ float getBtagWeight(TFile *f, BTagCalibrationReader calibreader, float jet_pt, f
     binx = btag_eff->GetXaxis()->FindBin(jet_abseta);
     biny = btag_eff->GetYaxis()->FindBin(pt);
     binz = btag_eff->GetZaxis()->FindBin(jet_hflavor);
-    binz = max(min(binz,3),1)
+    binz = max(min(binz,3),1);
 
     eff         = btag_eff->GetBinContent(binx,biny,binz);
   }
@@ -112,6 +112,7 @@ float getBtagWeight(TFile *f, BTagCalibrationReader calibreader, float jet_pt, f
   bool flag_biny = false;
   while(eff==0){
     if(biny<3 || flag_biny){ 
+	cout<<"warining !!! :  " <<"binx : biny : binz : jet_hflavor--->  "<< binx << " - " << biny << " - " << binz << " - " <<jet_hflavor <<endl;
       biny      = biny+1;
       flag_biny = true;
     }

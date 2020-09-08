@@ -647,10 +647,17 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   //for(int ievt = 0; ievt<1000; ievt++) {
 
     // Counting to see progress
-    if(ievt%100000==0) 
+  if(ievt%100000==0) 
+    //if(ievt%1==0) 
     { 
       cout << " ...... " << ievt << "/" << nentries << " processed (file number = " << filenumber << "/" << nfiles << ")" << endl; 
     }
+
+    /*for(int i = 0; i < jets_pt.size(); i++)
+	cout<< "jets_pt: " << jets_pt[i] << endl;
+
+    for(int i = 0; i < jets_hflavor.size(); i++ )
+	cout<< "jets_hflavor: " << jets_hflavor[i] << endl;*/
 
     // get the entry of event ievt
     tree->GetEntry(ievt);
@@ -922,11 +929,9 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
         njets++;
         ht += Jet_pt[iJ];
         if(Jet_btagDeepB[iJ]>csv_cut) nbm++; 
-    cout<<"13"<<endl;
         if(!isData) //FIXME
 	  {
 	    w_btag_dcsv *= getBtagWeight(f_btef,calibreader, Jet_pt[iJ], Jet_eta[iJ], Jet_hadronFlavour[iJ], Jet_btagDeepB[iJ], csv_cut);
-    cout<<"14"<<endl;
 	    sys_bctag_up *= getBtagWeight(f_btef,calibreader, Jet_pt[iJ], Jet_eta[iJ], Jet_hadronFlavour[iJ], Jet_btagDeepB[iJ], csv_cut, "up_hf");
 	    sys_bctag_down *= getBtagWeight(f_btef,calibreader, Jet_pt[iJ], Jet_eta[iJ], Jet_hadronFlavour[iJ], Jet_btagDeepB[iJ], csv_cut, "down_hf");
 	    sys_udsgtag_up *= getBtagWeight(f_btef,calibreader, Jet_pt[iJ], Jet_eta[iJ], Jet_hadronFlavour[iJ], Jet_btagDeepB[iJ], csv_cut, "up_lf");
