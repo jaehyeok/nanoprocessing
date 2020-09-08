@@ -85,6 +85,7 @@ float getBtagWeight(TFile *f, BTagCalibrationReader calibreader, float jet_pt, f
     binx = btag_eff->GetXaxis()->FindBin(jet_abseta);
     biny = btag_eff->GetYaxis()->FindBin(pt);
     binz = btag_eff->GetZaxis()->FindBin(jet_hflavor);
+    binz = max(min(binz,3),1)
 
     eff         = btag_eff->GetBinContent(binx,biny,binz);
   }
