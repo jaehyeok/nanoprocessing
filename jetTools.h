@@ -110,7 +110,7 @@ float getBtagWeight(TFile *f, BTagCalibrationReader calibreader, float jet_pt, f
   }
   bool flag_biny = false;
   while(eff==0){
-    if(biny==2 || flag_biny){ 
+    if(biny<3 || flag_biny){ 
       biny      = biny+1;
       flag_biny == true;
     }
