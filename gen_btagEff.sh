@@ -3,3 +3,4 @@
 python gen_btagEff.py -y 2016
 python gen_btagEff.py -y 2017
 python gen_btagEff.py -y 2018
+mv btagEfficiency_*.root btagEFficiency

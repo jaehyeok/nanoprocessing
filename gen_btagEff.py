@@ -5,7 +5,7 @@ import ROOT
 import array
 import sys 
 
-dcsv_med_WP = {"2016":6324, "2017":0.4941, "2018":0.4184}
+dcsv_med_WP = {"2016":0.6324, "2017":0.4941, "2018":0.4184}
 
 def get_sample_tag_list(year):
 	f = open("condor/samples/samples"+year+"_v7.txt",'r')
@@ -82,8 +82,9 @@ def gen_btagEff(out_file_path, docuts, process, year):
 	print process
 	ROOT.TH1.SetDefaultSumw2()
 
-	c = ROOT.TChain("tree","tree")
+	c = ROOT.TChain("tree")
 	c.Add("/xrootd_user/yjeong/xrootd/nanoprocessing/"+year+"/processed/*"+process+"*.root")
+	print(c.GetEntries())
 
 	dcsv_med = ("medium", dcsv_med_WP[year])
 
@@ -104,16 +105,12 @@ def gen_btagEff(out_file_path, docuts, process, year):
 
 	entry = 0
 	num_entries = c.GetEntries()
-
 	for event in c : 
 		if entry % (num_entries/10000) == 0 :
 			printProgress(entry, num_entries, 'Progress:', 'Complete', 2, 50)
 		entry = entry + 1 
-		if(getattr(c,"pass")) : continue
-		#if docuts : 
-		#	if not (c.nleps == 1 and c.ht > 1200 and c.mj12 > 500 and c.njets >= 4 ) : 
-		#		continue
-		for ijet in xrange(len(c.jets_dcsvb)):
+		if(not getattr(c,"pass")) : continue
+		for ijet in range(len(c.jets_hflavor)):
 			flavor = abs(c.jets_hflavor[ijet]) 
 			if (flavor == 21) : flavor = 0
 			pt     = c.jets_pt[ijet]
@@ -127,7 +124,6 @@ def gen_btagEff(out_file_path, docuts, process, year):
 			denominator_comb.Fill(eta,pt,flavor)
 			denominator_comb_central.Fill(eta,pt,flavor)
 			denominator_incl.Fill(eta,pt,flavor)
-
 			if (dcsv > dcsv_med[1]):
 				numerator_comb.Fill(eta,pt,flavor)
 				numerator_comb_central.Fill(eta,pt,flavor)
@@ -136,16 +132,21 @@ def gen_btagEff(out_file_path, docuts, process, year):
 	print denominator_incl.GetBinContent(1,1,3)
 	print denominator_comb_central.GetBinContent(1,1,3)
 	tot =0
-	for i in range(1,len(eta_cuts_comb)):
-		for j in range(1,len(pt_cuts_comb)):
-			tot = tot + denominator_comb.GetBinContent(i,j,3)
+	for k in range(1,len(flavor_cuts)):
+		for i in range(1,len(eta_cuts_comb)):
+			for j in range(1,len(pt_cuts_comb)):
+				tot = tot + denominator_comb.GetBinContent(i,j,k)
 	print tot
+	print numerator_comb.GetBinContent(1,4,3)
+	print denominator_comb.GetBinContent(1,4,3)
+	print numerator_incl.GetBinContent(1,1,3)
+	print numerator_comb_central.GetBinContent(1,1,3)
 	eff_comb = numerator_comb.Clone("Efficiency_comb")
 	eff_comb_central = numerator_comb_central.Clone("Efficiency_comb_central")
 	eff_incl = numerator_incl.Clone("Efficiency_incl")
-	eff_comb = ROOT.TH3D.Divide(numerator_comb, denominator_comb)
-	eff_comb_central = ROOT.TH3D.Divide(numerator_comb_central, denominator_comb_central)
-	eff_incl = ROOT.TH3D.Divide(numerator_incl, denominator_incl)
+	ROOT.TH3D.Divide(numerator_comb, denominator_comb)
+	ROOT.TH3D.Divide(numerator_comb_central, denominator_comb_central)
+	ROOT.TH3D.Divide(numerator_incl, denominator_incl)
 	out_file = ROOT.TFile(out_file_path.replace(".root","_"+process+"_"+str(year)+".root"), "recreate");
 #	eff_comb.Write()
 #	eff_comb_central.Write()
@@ -169,7 +170,7 @@ if __name__ == "__main__":
 	print args.docuts
 	list_tags = get_sample_tag_list(args.year)
 	if args.docuts : 
-		gen_btagEff(args.out_file, args.docuts, "WJetsToQQ_HT-600ToInf_TuneCUETP8M1", args.year)
+		gen_btagEff(args.out_file, args.docuts, "WWW_4F_TuneCUETP8M1", args.year)
 	else :
 		for process in list_tags:
 			gen_btagEff(args.out_file, args.docuts, process, args.year)
