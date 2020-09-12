@@ -14,6 +14,7 @@ def get_sample_tag_list(year):
 	for line in lines :
 		tag = line.split("_13TeV")[0]
 		if tag.startswith('#'): continue
+		if tag == '' : continue
 		#if not 'WW_' in tag : continue
 		ret.append(tag)
 	return ret
@@ -83,7 +84,7 @@ def gen_btagEff(out_file_path, docuts, process, year):
 	ROOT.TH1.SetDefaultSumw2()
 
 	c = ROOT.TChain("tree")
-	c.Add("/xrootd_user/yjeong/xrootd/nanoprocessing/"+year+"/processed/*"+process+"*.root")
+	c.Add("/xrootd_user/yjeong/xrootd/nanoprocessing/"+year+"/processed_0819/*"+process+"*.root")
 	print(c.GetEntries())
 
 	dcsv_med = ("medium", dcsv_med_WP[year])
