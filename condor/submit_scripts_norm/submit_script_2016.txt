@@ -71,5 +71,6 @@ condor_submit condor_StealthSHH_2t4b_mStop-700_mSo-100_TuneCUETP8M1_norm.jds
 condor_submit condor_StealthSHH_2t4b_mStop-750_mSo-100_TuneCUETP8M1_norm.jds
 condor_submit condor_StealthSHH_2t4b_mStop-800_mSo-100_TuneCUETP8M1_norm.jds
 condor_submit condor_StealthSHH_2t4b_mStop-850_mSo-100_TuneCUETP8M1_norm.jds
+condor_submit condor_StealthSHH_2t4b_mStop-900_mSo-100_TuneCUEP8M1_norm.jds
 condor_submit condor_StealthSHH_2t4b_mStop-950_mSo-100_TuneCUETP8M1_norm.jds
 
