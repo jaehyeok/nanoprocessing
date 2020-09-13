@@ -119,7 +119,7 @@ def gen_btagEff(out_file_path, docuts, process, year):
 			eta    = abs(c.jets_eta[ijet])
 			dcsv   = c.jets_dcsvb[ijet]
 			if (c.jets_islep[ijet]) : continue
-			if (pt<30) : continue
+			if (pt<30) : break
 			if (eta>2.4) : continue
 			if (not c.jets_id[ijet]) : continue
 			denominator_comb.Fill(eta,pt,flavor)
