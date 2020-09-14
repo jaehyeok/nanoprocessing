@@ -140,8 +140,8 @@ int main(int argc, char **argv)
   gSystem->mkdir(outputdir.Data());
 
   // get list of files in a directory
-  //vector<TString> files = globVector(Form("%s/*.root", inputdir.Data())); 
-  vector<TString> files = globVector(Form("%s/*StealthSHH*.root", inputdir.Data())); 
+  vector<TString> files = globVector(Form("%s/*.root", inputdir.Data())); 
+  //vector<TString> files = globVector(Form("%s/*StealthSHH*.root", inputdir.Data())); 
 
 	cout << "skimming " << files.size() << " files" << endl;
 	

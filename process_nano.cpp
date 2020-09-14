@@ -415,9 +415,9 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   //float mt;
   //LHE_HTIncoming
   float lhe_ht      =-1;
-  float L1Prefiring_Nom =-1;
-  float L1Prefiring_Dn =-1;
-  float L1Prefiring_Up =-1;
+  float L1Prefiring_Nom = -1;
+  float L1Prefiring_Dn = -1;
+  float L1Prefiring_Up = -1;
 
   std::vector<bool> trig;
   bool stitch;
@@ -642,6 +642,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   if(DEBUG) nentries = 1;
   cout<<"The number of entries in thie file is: "<<nentries<<endl;
 
+  cout<< "-- jet_pt : jet_eta : jet_phi : jet_m : Jet_hadronFlavour : Jet_btagCSVV2 : Jet_btagDeepB : Jet_btagDeepC : event --" << endl;
   // main event loop
   for(int ievt = 0; ievt<nentries; ievt++) {
   //for(int ievt = 0; ievt<1000; ievt++) {
@@ -770,9 +771,20 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
     ntrupv  = Pileup_nPU;
     ntrupv_mean  = Pileup_nTrueInt;
     lhe_ht = LHE_HTIncoming;
-    L1Prefiring_Nom = L1PreFiringWeight_Nom;
-    L1Prefiring_Dn = L1PreFiringWeight_Dn;
-    L1Prefiring_Up = L1PreFiringWeight_Up;
+
+    if(year==2017){
+      L1Prefiring_Nom = L1PreFiringWeight_Nom;
+      L1Prefiring_Dn = L1PreFiringWeight_Dn;
+      L1Prefiring_Up = L1PreFiringWeight_Up;
+    }
+
+    if(!isData && year==2017){//exclude problematic events
+      if(inputfile.Contains("QCD_HT300to500") && (event==18175599 || event==210285751 || event==210368167 || event==39074182 || event==39076789 || event==453176473 || event==211199788 || event==307950415 || event==271562420 || event==430612207 )) continue;//846 entries were excluded
+
+      if(inputfile.Contains("QCD_HT700to1000") && (event==522020269 || event==209665526 || event==191631428 || event==541547212 || event==520535617 || event==566676885 || event==77330664 || event==549571587 || event==370687549 || event==64164901 || event==169041749 || event==150278709 )) continue; // 1112 entries were excluded
+
+      if(inputfile.Contains("QCD_HT1000to1500") && (event==192336035 || event==38179046 || event==38180511 || event==84518624 || event==41679647 )) continue;// 447 entries were excluded
+    }
 
     //
     // get electrons
@@ -874,9 +886,13 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
     float sys_udsgtag_down = 1;
     for(int iJ = 0; iJ < nJet; iJ++) 
     {
+      if(abs(Jet_eta[iJ])>6 || iJ > 50){//FIXME
+        cout<< "-- "<< Jet_pt[iJ] << " : " << Jet_eta[iJ] << " : " << Jet_phi[iJ] << " : " << Jet_m[iJ] << " : " << Jet_hadronFlavour[iJ] << " : " << Jet_btagCSVV2[iJ] << " : " << Jet_btagDeepB[iJ] << " : " << Jet_btagDeepC[iJ] << " : " << event << " --" << endl;
+
+      }
+
       jets_pt.push_back(Jet_pt[iJ]); 
       jets_eta.push_back(Jet_eta[iJ]);
-//cout<< Jet_eta[iJ] <<" <--eta, pt--> " << Jet_pt[iJ] << endl;
       jets_phi.push_back(Jet_phi[iJ]); 
       jets_m.push_back(Jet_m[iJ]); 
       jets_hflavor.push_back(Jet_hadronFlavour[iJ]); 
@@ -892,7 +908,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
       jetislep = jetIsLepton(Jet_eta[iJ], Jet_phi[iJ], leps_eta, leps_phi);
       jets_islep.push_back(jetislep);
       
-  
+ 
       //JEC systematics 
       if(0)
       {

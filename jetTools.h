@@ -46,6 +46,7 @@ float getBtagWeight(TFile *f, BTagCalibrationReader calibreader, float jet_pt, f
 
   float hist_max(0), pt(0);
   int binx, biny, binz;
+	if(jet_hflavor==21)cout<<"jet_hflavor : " << jet_hflavor <<endl;
   if (abs(jet_hflavor) == 5 ){    //HF		 
     if(syst=="up_hf"||syst=="down_hf"){
       btag_eff = (TH3D*)f->Get("btagEfficiency_medium_comb");
@@ -111,6 +112,7 @@ float getBtagWeight(TFile *f, BTagCalibrationReader calibreader, float jet_pt, f
   }
   bool flag_biny = false;
   while(eff==0){
+	if(eff == 0) break;
     if(biny<3 || flag_biny){ 
 	cout<<"warining !!! :  " <<"binx : biny : binz : jet_hflavor--->  "<< binx << " - " << biny << " - " << binz << " - " <<jet_hflavor <<endl;
       biny      = biny+1;
