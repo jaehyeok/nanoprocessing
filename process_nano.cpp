@@ -784,6 +784,8 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
       if(inputfile.Contains("QCD_HT700to1000") && (event==522020269 || event==209665526 || event==191631428 || event==541547212 || event==520535617 || event==566676885 || event==77330664 || event==549571587 || event==370687549 || event==64164901 || event==169041749 || event==150278709 )) continue; // 1112 entries were excluded
 
       if(inputfile.Contains("QCD_HT1000to1500") && (event==192336035 || event==38179046 || event==38180511 || event==84518624 || event==41679647 )) continue;// 447 entries were excluded
+      
+      if(inputfile.Contains("WZ_TuneCP5") && (event==3140552 || event==2587523 || event==2587541)) continue;// 447 entries were excluded
     }
 
     //
