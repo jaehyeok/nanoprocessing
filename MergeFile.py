@@ -6,8 +6,10 @@ year=sys.argv[1]#2016, 2017, 2018
 
 simple_PATH = "/xrootd_user/yjeong/xrootd/nanoprocessing/"
 
-inputdir = simple_PATH+year+"/skim_rpvfitnbge0/"
-outputdir = simple_PATH+year+"/merged_rpvfitnbge0/"
+#inputdir = simple_PATH+year+"/skim_rpvfitnbge0/"
+inputdir = simple_PATH+year+"/skim_rpvfitnbge0_njets3nleps2/"
+#outputdir = simple_PATH+year+"/merged_rpvfitnbge0/"
+outputdir = simple_PATH+year+"/merged_rpvfitnbge0_njets3nleps2//"
 os.mkdir(outputdir)
 
 flistdir = "/cms/ldap_home/yjeong/flist/"+year

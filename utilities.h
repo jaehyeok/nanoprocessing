@@ -116,3 +116,12 @@ bool fexists(TString filename) {
 	std::ifstream ifile(filename.Data());
 	return (bool)ifile;
 }
+
+bool ProblematicEvent(TString inputfile, int event)
+{
+	if(inputfile.Contains("QCD_HT300to500") && (event==18175599 || event==210285751 || event==210368167 || event==39074182 || event==39076789 || event==453176473 || event==211199788 || event==307950415 || event==271562420 || event==430612207 )) return false;
+	else if(inputfile.Contains("QCD_HT700to1000") && (event==522020269 || event==209665526 || event==191631428 || event==541547212 || event==520535617 || event==566676885 || event==77330664 || event==549571587 || event==370687549 || event==64164901 || event==169041749 || event==150278709 )) return false;
+	else if(inputfile.Contains("QCD_HT1000to1500") && (event==192336035 || event==38179046 || event==38180511 || event==84518624 || event==41679647 )) return false;
+	else if(inputfile.Contains("WZ_TuneCP5") && (event==3140552 || event==2587523 || event==2587541)) return false;
+	else return true;
+}// */
