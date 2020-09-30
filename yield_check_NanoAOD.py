@@ -7,7 +7,7 @@ from ROOT import TChain, TSelector, TTree, TH1F, TCanvas, TPad, TStyle, TString,
 ROOT.gROOT.SetBatch(True)
 year = sys.argv[1]
 
-inputdir_1="/xrootd_user/yjeong/xrootd/nanoprocessing/"+year+"/v6/processed/"
+inputdir_1="/xrootd_user/yjeong/xrootd/nanoprocessing/"+year+"/processed_0925/"
 inputdir_2="/xrootd_user/yjeong/xrootd/nanoprocessing/"+year+"/processed/"
 outputdir="plots/yield/"
 #os.mkdir(outputdir)
@@ -17,8 +17,8 @@ flists = os.listdir(flistdir)
 h1 = ROOT.TH1D("h1","",10,0,10E+11)
 h2 = ROOT.TH1D("h2","",10,0,10E+11)
 
-print('-------------------------------------------btagv6 vs btagv7---------------------------------------------')
-print('%46s %3s %15s %15s %15s' %(year, "tag", "btagv6_events", "btagv7_events", "ratio"))
+print('-------------------------------------------processed vs processed_0925---------------------------------------------')
+print('%46s %3s %15s %15s %15s' %(year, "tag", "processed", "processed_0925", "ratio"))
 #print('%46s %4s %20s' %(year, "tag", "v7_sys_muf[0]"))
 print('--------------------------------------------------------------------------------------------------------')
 
