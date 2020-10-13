@@ -10,7 +10,7 @@ ROOT.gROOT.SetBatch(True)
 year=sys.argv[1]
 username = getpass.getuser()
 
-outputdir="/xrootd_user/"+username+"/xrootd/nanoprocessing/"+year+"/processed_0925/"
+outputdir="/xrootd_user/"+username+"/xrootd/nanoprocessing/"+year+"/processed_1013_tt/"
 
 flistdir="/cms/ldap_home/"+username+"/flist/"+year
 flists = os.listdir(flistdir)
