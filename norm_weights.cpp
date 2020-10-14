@@ -209,7 +209,25 @@ int main(int argc, char **argv)
     outputdir.ReplaceAll("/xrootd_user","root://cms-xrdr.private.lo:2094//xrd/store/user");
     outputdir.ReplaceAll("/xrootd","");
   }
-	//
+  //
+  // Automatic Detection whether the Tag is inclusive or not inclusive.
+  //
+  vector<TString> tags,tag_all;
+  TString tag_fixed;
+  if(tag.Contains("HT")){
+    cout<<"It's NOT inclusive!"<<endl;
+    tag_all = getFileListFromFile(Form("nanoprocessing/condor/samples/samples%d_v7.txt",year)); //FIXME : You should change this directory to your nanoprocessing directory.
+    for(auto tag_check:tag_all){
+      if(!tag_check.Contains("HT")) continue;
+      if(!tag_check.Contains(tag)) continue;
+      tag_fixed = tag_check.Remove(tag_check.Index("_13TeV"));
+      tag_fixed = tag_fixed.Remove(0,tag_fixed.Index("HT")+2);
+      tags.push_back(tag.Remove(tag.Index("HT")+2)+tag_fixed);
+    }
+  }
+  else tags.push_back(tag);
+  vector<TString> prenorm_files;
+ 	//
 	// Get mean of weights
 	//
 	
@@ -221,7 +239,13 @@ int main(int argc, char **argv)
 	// weight/w_lumi 
 
   //vector<TString> prenorm_files = globVector(Form("%s/*%s*.root", prenormdir.Data(), tag.Data())); 
-  vector<TString> prenorm_files = getFileListFromFile(Form("flist/norm/%d/flist_prenorm_%s.txt", year, tag.Data()));
+  for(auto tag_ : tags){
+    vector<TString> prenorm_files_ = getFileListFromFile(Form("flist/norm/%d/flist_prenorm_%s.txt", year, tag_.Data()));
+    for(auto fname : prenorm_files_){
+      prenorm_files.push_back(fname);  
+      cout<<fname<<endl;
+    }
+  }
   TChain ch_mean("tree");	
   for(int i=0; i<prenorm_files.size(); i++)
   {
