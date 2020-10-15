@@ -216,13 +216,19 @@ int main(int argc, char **argv)
   TString tag_fixed;
   if(tag.Contains("HT")){
     cout<<"It's NOT inclusive!"<<endl;
+
+    string file_path = __FILE__;
+    string dir_path = file_path.substr(0,file_path.rfind("\\"));
+    cout<<file_path<<endl;
     tag_all = getFileListFromFile(Form("nanoprocessing/condor/samples/samples%d_v7.txt",year)); //FIXME : You should change this directory to your nanoprocessing directory.
+
     for(auto tag_check:tag_all){
       if(!tag_check.Contains("HT")) continue;
       if(!tag_check.Contains(tag)) continue;
       tag_fixed = tag_check.Remove(tag_check.Index("_13TeV"));
       tag_fixed = tag_fixed.Remove(0,tag_fixed.Index("HT")+2);
       tags.push_back(tag.Remove(tag.Index("HT")+2)+tag_fixed);
+      cout<<tag<<endl;
     }
   }
   else tags.push_back(tag);
@@ -245,6 +251,7 @@ int main(int argc, char **argv)
       prenorm_files.push_back(fname);  
       cout<<fname<<endl;
     }
+    cout<<tag_<<endl;
   }
   TChain ch_mean("tree");	
   for(int i=0; i<prenorm_files.size(); i++)
@@ -283,7 +290,15 @@ int main(int argc, char **argv)
 
 	// get list of files in a directory
   //vector<TString> files = globVector(Form("%s/*%s*.root", inputdir.Data(), tag.Data())); 
-  vector<TString> tonorm_files = getFileListFromFile(Form("flist/norm/%d/flist_tonorm_%s.txt", year, tag.Data()));
+  vector<TString> tonorm_files;
+  for(auto tag_ : tags){
+    vector<TString> tonorm_files_ = getFileListFromFile(Form("flist/norm/%d/flist_tonorm_%s.txt", year, tag_.Data()));
+    for(auto fname : tonorm_files_){
+      tonorm_files.push_back(fname);  
+      cout<<fname<<endl;
+    }
+  }
+  //vector<TString> tonorm_files = getFileListFromFile(Form("flist/norm/%d/flist_tonorm_%s.txt", year, tag.Data()));
 	cout << "processing " << tonorm_files.size() << " files" << endl;
 
   // process files one by one 
