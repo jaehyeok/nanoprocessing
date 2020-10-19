@@ -164,6 +164,8 @@ if __name__ == "__main__":
 	parser.add_argument("-o", "--out_file", metavar="OUT_FILE", default="btagEfficiency.root", help="Save efficiencies to %(metavar)s")
 	parser.add_argument("-c", "--docuts", action="store_true", help="Use all available events, applying only basic filters")
 	parser.add_argument("-y", "--year", action="store", default="2016",help="Select the year that you want to make trigger efficiency")
+	parser.add_argument("-i", "--in_file", metavar="IN_FILE", action="store", default="STealthSHH_2t4b_mStop",help="Input file if you want, you should use this with --docuts")
+
 #	parser.add_argument("-p", "--process", action="store", default="*StealthSHH_2t4b_mStop*",help="make process")
 
 	args = parser.parse_args()
@@ -171,7 +173,7 @@ if __name__ == "__main__":
 	print args.docuts
 	list_tags = get_sample_tag_list(args.year)
 	if args.docuts : 
-		gen_btagEff(args.out_file, args.docuts, "WWW_4F_TuneCUETP8M1", args.year)
+		gen_btagEff(args.out_file, args.docuts, args.in_file, args.year)
 	else :
 		for process in list_tags:
 			gen_btagEff(args.out_file, args.docuts, process, args.year)
