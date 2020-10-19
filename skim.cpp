@@ -71,8 +71,8 @@ void skimonefile(TString inputfile, TString outputdir, TString skim)
 		skimcut="mj12>500&&njets>=4";
 	}
 	else if(skim=="rpvfitnbge0") {
-		//if(inputfile.Contains("JetHTRun")) skimcut = "ht>1200 && njets>=4 && mj12>500 && nbm<2";
-		if(inputfile.Contains("JetHTRun")) skimcut = "ht>1200 && njets>=3 && mj12>500 && nbm<2 && nleps==2";
+		if(inputfile.Contains("JetHTRun")) skimcut = "ht>1200 && njets>=4 && mj12>500 && nbm<2";
+		//if(inputfile.Contains("JetHTRun")) skimcut = "ht>1200 && njets>=3 && mj12>500 && nbm<2 && nleps==2";
 		else if(inputfile.Contains("TTJets_Tune")) skimcut="(sys_ht[0]>1200 || sys_ht[1]>1200 || ht>1200) && (sys_mj12[0]>500 || sys_mj12[1]>500 || mj12>500) && (sys_njets[0]>=4 || sys_njets[1]>=4 || njets>=4) && stitch_ht==1";
 		//else if(inputfile.Contains("TTJets_Tune")) skimcut="(sys_ht[0]>1200 || sys_ht[1]>1200 || ht>1200) && (sys_mj12[0]>500 || sys_mj12[1]>500 || mj12>500) && (sys_njets[0]>=3 || sys_njets[1]>=3 || njets>=3) && stitch_ht==1 && nleps==2";
 		else skimcut="(sys_ht[0]>1200 || sys_ht[1]>1200 || ht>1200) && (sys_mj12[0]>500 || sys_mj12[1]>500 || mj12>500) && (sys_njets[0]>=4 || sys_njets[1]>=4 || njets>=4)";// */
@@ -131,8 +131,8 @@ int main(int argc, char **argv)
     file_selector = atoi(argv[3]);
 
     outputdir = inputdir;
-    //outputdir.ReplaceAll("processed_0925", Form("skim_%s_0925", skim.Data()));
-    outputdir.ReplaceAll("processed_0925", Form("skim_%s_njets3nleps2", skim.Data()));
+    outputdir.ReplaceAll("processed_1013_tt", Form("skim_%s_1013_tt", skim.Data()));
+    //outputdir.ReplaceAll("processed_0925", Form("skim_%s_njets3nleps2", skim.Data()));
 
     cout << " input   dir  		: " << inputdir << endl;
     cout << " output  dir  		: " << outputdir << endl;
@@ -144,8 +144,8 @@ int main(int argc, char **argv)
   gSystem->mkdir(outputdir.Data());
 
   // get list of files in a directory
-  //vector<TString> files = globVector(Form("%s/*.root", inputdir.Data())); 
-  vector<TString> files = globVector(Form("%s/*JetHTRun2018B*.root", inputdir.Data())); 
+  vector<TString> files = globVector(Form("%s/*.root", inputdir.Data())); 
+  //vector<TString> files = globVector(Form("%s/*JetHTRun2018B*.root", inputdir.Data())); 
 
 	cout << "skimming " << files.size() << " files" << endl;
 	

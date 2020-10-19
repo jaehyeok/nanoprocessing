@@ -220,7 +220,7 @@ int main(int argc, char **argv)
     string file_path = __FILE__;
     string dir_path = file_path.substr(0,file_path.rfind("\\"));
     cout<<file_path<<endl;
-    tag_all = getFileListFromFile(Form("nanoprocessing/condor/samples/samples%d_v7.txt",year)); //FIXME : You should change this directory to your nanoprocessing directory.
+    tag_all = getFileListFromFile(Form("/cms/scratch/yjeong/CMSSW_7_1_0/src/nanoprocessing/condor/samples/samples%d_v7.txt",year)); //FIXME : You should change this directory to your nanoprocessing directory.
 
     for(auto tag_check:tag_all){
       if(!tag_check.Contains("HT")) continue;

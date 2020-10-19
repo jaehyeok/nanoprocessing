@@ -1234,7 +1234,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
       weight = w_btag_dcsv * w_lumi * w_pu;
       w_isr = 1;
     }
-    if((inputfile.Contains("TTJets_")) && lhe_ht>600) stitch_ht = false;
+    if((inputfile.Contains("TTJets_Tune")) && lhe_ht>600) stitch_ht = false;
 
     // filters and triggers 
     //https://twiki.cern.ch/twiki/bin/viewauth/CMS/MissingETOptionalFiltersRun2

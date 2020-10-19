@@ -8,8 +8,8 @@ simple_PATH = "/xrootd_user/yjeong/xrootd/nanoprocessing/"
 
 #inputdir = simple_PATH+year+"/skim_rpvfitnbge0_njets3nleps2/"
 #outputdir = simple_PATH+year+"/merged_rpvfitnbge0_njets3nleps2/"
-inputdir = simple_PATH+year+"/skim_rpvfitnbge0_0925/"
-outputdir = simple_PATH+year+"/merged_rpvfitnbge0_0925/"
+inputdir = simple_PATH+year+"/skim_rpvfitnbge0_1013_tt/"
+outputdir = simple_PATH+year+"/merged_rpvfitnbge0_1013_tt/"
 os.mkdir(outputdir)
 
 flistdir = "/cms/ldap_home/yjeong/flist/"+year
