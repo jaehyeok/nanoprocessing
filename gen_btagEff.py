@@ -84,7 +84,7 @@ def gen_btagEff(out_file_path, docuts, process, year):
 	ROOT.TH1.SetDefaultSumw2()
 
 	c = ROOT.TChain("tree")
-	c.Add("/xrootd_user/yjeong/xrootd/nanoprocessing/"+year+"/processed_0819/*"+process+"*.root")
+	c.Add("/xrootd_user/yjeong/xrootd/nanoprocessing/"+year+"/processed_0925/*"+process+"*.root")
 	print(c.GetEntries())
 
 	dcsv_med = ("medium", dcsv_med_WP[year])

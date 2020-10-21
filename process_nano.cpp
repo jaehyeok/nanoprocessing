@@ -101,11 +101,12 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   // string csvfile = "data/DeepCSV_2016LegacySF_V1.csv"; //for loose cuts only 
   // string csvfile = "data/DeepCSV_2016LegacySF_V1_TuneCP5.csv"; 
   TFile *f_btef;
-  if(!isData){//FIXME
+  if(!isData ){//FIXME
     if(year==2016)f_btef = new TFile("btagEfficiency/btagEfficiency_"+tag+"_2016.root","READ");//FIXME
     if(year==2017)f_btef = new TFile("btagEfficiency/btagEfficiency_"+tag+"_2017.root","READ");//FIXME
     if(year==2018)f_btef = new TFile("btagEfficiency/btagEfficiency_"+tag+"_2018.root","READ");//FIXME
   }
+
   string csvfile = "data/DeepCSV_2016LegacySF_V1.csv"; //for loose cuts only 
   if(year==2017) csvfile = "data/DeepCSV_94XSF_V4_B_F.csv";
   if(year==2018) csvfile = "data/DeepCSV_102XSF_V1.csv";
@@ -415,9 +416,9 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   //float mt;
   //LHE_HTIncoming
   float lhe_ht      =-1;
-  float L1Prefiring_Nom = -1;
-  float L1Prefiring_Dn = -1;
-  float L1Prefiring_Up = -1;
+  float l1pre_nom = -1;
+  float l1pre_dn = -1;
+  float l1pre_up = -1;
 
   std::vector<bool> trig;
   bool stitch;
@@ -536,9 +537,9 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   babyTree_->Branch("met",               &met);
   babyTree_->Branch("met_phi",           &met_phi);
   babyTree_->Branch("lhe_ht",            &lhe_ht);
-  babyTree_->Branch("L1Prefiring_Nom",   &L1Prefiring_Nom);
-  babyTree_->Branch("L1Prefiring_Dn",    &L1Prefiring_Dn);
-  babyTree_->Branch("L1Prefiring_Up",    &L1Prefiring_Up);
+  babyTree_->Branch("l1pre_nom", 	 &l1pre_nom);
+  babyTree_->Branch("l1pre_dn", 	 &l1pre_dn);
+  babyTree_->Branch("l1pre_up",		 &l1pre_up);
   babyTree_->Branch("stitch_ht",         &stitch_ht);
   // weights 
   babyTree_->Branch("weight",            &weight);
@@ -673,9 +674,10 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
     ntrupv        =   0;
     ntrupv_mean   =   0;
     lhe_ht   =     -1;
-    L1Prefiring_Nom = -1;
-    L1Prefiring_Dn = -1;
-    L1Prefiring_Up = -1;
+    stitch_ht = true;
+    l1pre_nom = -1;
+    l1pre_dn = -1;
+    l1pre_up = -1;
     // weights 
     weight        =    1;
     w_lep         =    1; 
@@ -773,9 +775,9 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
     lhe_ht = LHE_HTIncoming;
 
     if(year==2017){
-      L1Prefiring_Nom = L1PreFiringWeight_Nom;
-      L1Prefiring_Dn = L1PreFiringWeight_Dn;
-      L1Prefiring_Up = L1PreFiringWeight_Up;
+      l1pre_nom = L1PreFiringWeight_Nom;
+      l1pre_dn = L1PreFiringWeight_Dn;
+      l1pre_up = L1PreFiringWeight_Up;
     }
 
     bool pnf = true;

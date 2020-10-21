@@ -131,7 +131,7 @@ int main(int argc, char **argv)
     file_selector = atoi(argv[3]);
 
     outputdir = inputdir;
-    outputdir.ReplaceAll("processed_1013_tt", Form("skim_%s_1013_tt", skim.Data()));
+    outputdir.ReplaceAll("processed_0925", Form("skim_%s_0925", skim.Data()));
     //outputdir.ReplaceAll("processed_0925", Form("skim_%s_njets3nleps2", skim.Data()));
 
     cout << " input   dir  		: " << inputdir << endl;
@@ -144,8 +144,8 @@ int main(int argc, char **argv)
   gSystem->mkdir(outputdir.Data());
 
   // get list of files in a directory
-  vector<TString> files = globVector(Form("%s/*.root", inputdir.Data())); 
-  //vector<TString> files = globVector(Form("%s/*JetHTRun2018B*.root", inputdir.Data())); 
+  //vector<TString> files = globVector(Form("%s/*.root", inputdir.Data())); 
+  vector<TString> files = globVector(Form("%s/*TTJets_Tune*.root", inputdir.Data())); 
 
 	cout << "skimming " << files.size() << " files" << endl;
 	
