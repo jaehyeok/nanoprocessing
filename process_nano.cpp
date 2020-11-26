@@ -195,9 +195,9 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   Float_t     genWeight        = 1;
   //LHE HT incomming
   Float_t     LHE_HTIncoming = 0;
-  Float_t     L1PreFiringWeight_Dn = 0;
-  Float_t     L1PreFiringWeight_Nom = 0;
-  Float_t     L1PreFiringWeight_Up = 0;
+  Float_t     L1PreFiringWeight_Dn = 1;
+  Float_t     L1PreFiringWeight_Nom = 1;
+  Float_t     L1PreFiringWeight_Up = 1;
   //LHE Scale Weight
   Float_t     LHEScaleWeight[9];
   // MC 
@@ -271,20 +271,27 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   tree->SetBranchAddress("MET_phi",             &MET_phi);
   tree->SetBranchAddress("fixedGridRhoFastjetAll",          &fixedGridRhoFastjetAll);
   //LHE HT incoming
-  tree->SetBranchAddress("LHE_HTIncoming",  &LHE_HTIncoming);
-  tree->SetBranchAddress("L1PreFiringWeight_Dn",  &L1PreFiringWeight_Dn);
-  tree->SetBranchAddress("L1PreFiringWeight_Nom",  &L1PreFiringWeight_Nom);
-  tree->SetBranchAddress("L1PreFiringWeight_Up",  &L1PreFiringWeight_Up);
-  tree->SetBranchAddress("LHEScaleWeight",  &LHEScaleWeight);
+  //PreFiring weight
+  if(!isData && year==2017){
+    tree->SetBranchAddress("L1PreFiringWeight_Dn",  &L1PreFiringWeight_Dn);
+    tree->SetBranchAddress("L1PreFiringWeight_Nom",  &L1PreFiringWeight_Nom);
+    tree->SetBranchAddress("L1PreFiringWeight_Up",  &L1PreFiringWeight_Up);
+  }
+
+  if(!isData){
+    tree->SetBranchAddress("LHEScaleWeight",  &LHEScaleWeight);
+    tree->SetBranchAddress("LHE_HTIncoming",  &LHE_HTIncoming);
+  }
   if(!isData)
   {
     tree->SetBranchAddress("Pileup_nTrueInt",     &Pileup_nTrueInt);
     tree->SetBranchAddress("Pileup_nPU",          &Pileup_nPU);
   }
   // weights 
-  if(!isData)
+  if(!isData){
     tree->SetBranchAddress("btagWeight_CSVV2",    &btagWeight_CSVV2);
     tree->SetBranchAddress("btagWeight_DeepCSVB",    &btagWeight_DeepCSVB);
+  }
   // MC 
   if(!isData)
   {

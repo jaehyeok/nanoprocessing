@@ -2,7 +2,7 @@
 
 # set env to use an appropriate version of ROOT that comes with CMSSW_7_1_0
 source /cvmfs/cms.cern.ch/cmsset_default.sh
-cd /cvmfs/cms.cern.ch/slc6_amd64_gcc481/cms/cmssw/CMSSW_7_1_0/src
+cd /cvmfs/cms.cern.ch/slc7_amd64_gcc530/cms/cmssw/CMSSW_8_0_0/src
 cmsenv
 cd -
 

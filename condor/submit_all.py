@@ -9,7 +9,7 @@ import glob
 username = getpass.getuser()
 year=sys.argv[1]
 
-outputdir="root://cms-xrdr.private.lo:2094//xrd/store/user/"+username+"/nanoprocessing/"+year+"/processed_0925/"
+outputdir="root://cms-xrdr.private.lo:2094//xrd/store/user/"+username+"/nanoprocessing/"+year+"/processed_HEM_1123/"
 samplelist="samples/samples"+year+"_v7.txt"
 
 inputmctag="RunIISummer16NanoAODv7"
