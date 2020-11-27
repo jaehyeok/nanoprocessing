@@ -277,7 +277,6 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
     tree->SetBranchAddress("L1PreFiringWeight_Nom",  &L1PreFiringWeight_Nom);
     tree->SetBranchAddress("L1PreFiringWeight_Up",  &L1PreFiringWeight_Up);
   }
-
   if(!isData){
     tree->SetBranchAddress("LHEScaleWeight",  &LHEScaleWeight);
     tree->SetBranchAddress("LHE_HTIncoming",  &LHE_HTIncoming);
@@ -489,6 +488,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   std::vector<bool>  jets_islep;
   //std::vector<int>   jets_fjet_index;
   std::vector<int>   jets_hflavor;
+  std::vector<bool>  jets_hem;
 
   // GenParticle
   int ngen;
@@ -596,6 +596,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   babyTree_->Branch("jets_id",           &jets_id);    
   babyTree_->Branch("jets_islep",        &jets_islep);    
   babyTree_->Branch("jets_hflavor",      &jets_hflavor);    
+  babyTree_->Branch("jets_hem",      &jets_hem);    
   // fatjet
   babyTree_->Branch("mj12",              &mj12);    
   babyTree_->Branch("fjets_pt",          &fjets_pt);    
@@ -650,7 +651,6 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   if(DEBUG) nentries = 1;
   cout<<"The number of entries in thie file is: "<<nentries<<endl;
 
-  cout<< "-- jet_pt : jet_eta : jet_phi : jet_m : Jet_hadronFlavour : Jet_btagCSVV2 : Jet_btagDeepB : Jet_btagDeepC : event --" << endl;
   // main event loop
   for(int ievt = 0; ievt<nentries; ievt++) {
   //for(int ievt = 0; ievt<1000; ievt++) {
@@ -726,6 +726,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
     jets_id.clear();      
     jets_islep.clear();     
     jets_hflavor.clear();      
+    jets_hem.clear();
     //
     mj12         =   0;
     fjets_pt.clear();
@@ -889,12 +890,11 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
     float sys_bctag_down = 1;
     float sys_udsgtag_up = 1;
     float sys_udsgtag_down = 1;
+    bool hem_tf;
     for(int iJ = 0; iJ < nJet; iJ++) 
     {
-      if(abs(Jet_eta[iJ])>6 || iJ > 50){//FIXME
-        cout<< "-- "<< Jet_pt[iJ] << " : " << Jet_eta[iJ] << " : " << Jet_phi[iJ] << " : " << Jet_m[iJ] << " : " << Jet_hadronFlavour[iJ] << " : " << Jet_btagCSVV2[iJ] << " : " << Jet_btagDeepB[iJ] << " : " << Jet_btagDeepC[iJ] << " : " << event << " --" << endl;
-
-      }
+      hem_tf=false;
+      if(!(Jet_eta[iJ]>-3.0 && Jet_eta[iJ]<-1.3 && Jet_phi[iJ]>-1.57 && Jet_phi[iJ]<-0.87)) hem_tf=true;  //FIXME MJ HEM issue
 
       jets_pt.push_back(Jet_pt[iJ]); 
       jets_eta.push_back(Jet_eta[iJ]);
@@ -904,6 +904,8 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
       jets_csv.push_back(Jet_btagCSVV2[iJ]); 
       jets_dcsvb.push_back(Jet_btagDeepB[iJ]); 
       jets_dcsvc.push_back(Jet_btagDeepC[iJ]);
+      jets_hem.push_back(hem_tf);
+
       bool jetid = true;
       if(year==2016 && Jet_jetId[iJ]<3 ) jetid=false; // tight Id    
       if(year>=2017 && Jet_jetId[iJ]<2 ) jetid=false; // tight Id 
@@ -912,7 +914,6 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
       bool jetislep = false;
       jetislep = jetIsLepton(Jet_eta[iJ], Jet_phi[iJ], leps_eta, leps_phi);
       jets_islep.push_back(jetislep);
-      
  
       //JEC systematics 
       if(0)
@@ -933,17 +934,19 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
       float jec_unc = JecUnc->getUncertainty(true);
       sys_jets_pt_up.push_back(Jet_pt[iJ]*(1+jec_unc)); 
       sys_jets_pt_down.push_back(Jet_pt[iJ]*(1-jec_unc)); 
-			
-			// more jet selection
+
+      // more jet selection
       if(abs(Jet_eta[iJ])>2.4) continue;
       if(!jetid)               continue; 
       if(jetislep)             continue; 
+      if(jets_hem.at(iJ))      continue;
      
       // deepCSV  cuts
       float csv_cut = 0.6321; 
       if(year==2017) csv_cut = 0.4941;
       if(year==2018) csv_cut = 0.4184;
       
+//cout<<iJ<<" , " << jets_pt.size()<<endl;
       // nominal 
       if(jets_pt.at(iJ)>30)
       {
@@ -1027,6 +1030,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
       if(jets_pt.at(iJ)<30)           continue;
       if(abs(jets_eta.at(iJ))>2.4)    continue;
       if(jets_id.at(iJ)==false)       continue;
+      if(jets_hem.at(iJ))             continue;
 
       input_particles.push_back(fastjet::PseudoJet(JetLV.Px(), JetLV.Py(), JetLV.Pz(), JetLV.E()));
       h2->Fill(JetLV.Eta(), JetLV.Phi(), JetLV.E());
@@ -1072,8 +1076,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
         fjets_m.push_back(sorted_jets[isortjets].m());
         fjets_phi.push_back( sorted_jets[isortjets].phi()<TMath::Pi()?sorted_jets[isortjets].phi():sorted_jets[isortjets].phi()-2*TMath::Pi()); 
         fjets_nconst.push_back(sorted_jets[isortjets].constituents().size()); 
-
-        mj12 += sorted_jets[isortjets].m(); 
+        mj12 += sorted_jets[isortjets].m();
 
         //
         // Link the constituents of fatjet
