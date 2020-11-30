@@ -894,7 +894,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
     for(int iJ = 0; iJ < nJet; iJ++) 
     {
       hem_tf=false;
-      if(!(Jet_eta[iJ]>-3.0 && Jet_eta[iJ]<-1.3 && Jet_phi[iJ]>-1.57 && Jet_phi[iJ]<-0.87)) hem_tf=true;  //FIXME MJ HEM issue
+      if(Jet_eta[iJ]>-3.0 && Jet_eta[iJ]<-1.3 && Jet_phi[iJ]>-1.57 && Jet_phi[iJ]<-0.87) hem_tf=true;  //FIXME MJ HEM issue
 
       jets_pt.push_back(Jet_pt[iJ]); 
       jets_eta.push_back(Jet_eta[iJ]);
@@ -939,7 +939,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
       if(abs(Jet_eta[iJ])>2.4) continue;
       if(!jetid)               continue; 
       if(jetislep)             continue; 
-      if(jets_hem.at(iJ))      continue;
+      //if(jets_hem.at(iJ))      continue;
      
       // deepCSV  cuts
       float csv_cut = 0.6321; 
@@ -1030,7 +1030,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
       if(jets_pt.at(iJ)<30)           continue;
       if(abs(jets_eta.at(iJ))>2.4)    continue;
       if(jets_id.at(iJ)==false)       continue;
-      if(jets_hem.at(iJ))             continue;
+      //if(jets_hem.at(iJ))             continue;
 
       input_particles.push_back(fastjet::PseudoJet(JetLV.Px(), JetLV.Py(), JetLV.Pz(), JetLV.E()));
       h2->Fill(JetLV.Eta(), JetLV.Phi(), JetLV.E());
@@ -1241,9 +1241,13 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
       w_lumi      = 1;
       w_pu        = 1;
     }
-    if ((inputfile.Contains("SMS-T1tbs_RPV")) || inputfile.Contains("TTJets_")) weight = w_btag_dcsv * w_lumi * w_pu * w_isr;
+    if((inputfile.Contains("SMS-T1tbs_RPV")) || inputfile.Contains("TTJets_")){
+      if(year==2017) weight = w_btag_dcsv * w_lumi * w_pu * w_isr * l1pre_nom;
+      else weight = w_btag_dcsv * w_lumi * w_pu * w_isr;
+    }
     else {
-      weight = w_btag_dcsv * w_lumi * w_pu;
+      if(year==2017) weight = w_btag_dcsv * w_lumi * w_pu * l1pre_nom;
+      else weight = w_btag_dcsv * w_lumi * w_pu;
       w_isr = 1;
     }
     if((inputfile.Contains("TTJets_Tune")) && lhe_ht>600) stitch_ht = false;
