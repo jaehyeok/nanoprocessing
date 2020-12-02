@@ -17,6 +17,7 @@ g++ norm_weights.cpp  `root-config --cflags --glibs` -o norm_weights.exe
 cp process_nano.exe $HOME
 cp skim.exe         $HOME
 cp norm_weights.exe $HOME
+cp condor/run.sh $HOME
 
 mkdir -p condor/submit_scripts/2016/log/
 mkdir -p condor/submit_scripts/2017/log/
@@ -46,4 +47,3 @@ mkdir -p ~/flist/2016
 mkdir -p ~/flist/2017
 mkdir -p ~/flist/2018
 
-ln -sf ~/flist
