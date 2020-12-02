@@ -15,8 +15,8 @@ cd -
 #cd ../
 
 #
-echo "cp -r ~/data ."
-cp -r ~/data .
+#echo "cp -r ~/data ."
+#cp -r ~/data .
 
 echo ""
 
@@ -26,6 +26,7 @@ ls -rlt
 echo ""
 
 # run
+cd ~/
 echo "./process_nano.exe $1 $2 $3 $4"
 ./process_nano.exe $1 $2 $3 $4
 
