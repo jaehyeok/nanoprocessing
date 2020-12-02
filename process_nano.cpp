@@ -894,22 +894,10 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
     for(int iJ = 0; iJ < nJet; iJ++) 
     {
       hem_tf = false;
-      if(isData){//HEM effect applied in data
-        if(run>=319077 && Jet_eta[iJ]>-3.0 && Jet_eta[iJ]<-1.3 && Jet_phi[iJ]>-1.57 && Jet_phi[iJ]<-0.87){
- 	  hem_tf=true;
-	  cout<<"run>=319077: "<<"HEM issue in data: "<< hem_tf <<endl;
-	}
-	cout<<"run<319077: "<<"HEM issue in data: "<< hem_tf <<endl;
-      }
 
-      if(!isData){//HEM effect applied in MC
-        if((event%10>=0 && event%10<=5) && Jet_eta[iJ]>-3.0 && Jet_eta[iJ]<-1.3 && Jet_phi[iJ]>-1.57 && Jet_phi[iJ]<-0.87){
-	  hem_tf = true;
-	  cout<<"event selector: "<<event%10<<", HEM issue in MC: "<< hem_tf <<endl;
-	}
-        cout<<"event selector: "<<event%10<<", hem_tf: "<< hem_tf <<endl;
-      }
+      if(isData && run>=319077 && Jet_eta[iJ]>-3.0 && Jet_eta[iJ]<-1.3 && Jet_phi[iJ]>-1.57 && Jet_phi[iJ]<-0.87) hem_tf = true;
 
+      if(!isData && (event%10>=0 && event%10<=5) && Jet_eta[iJ]>-3.0 && Jet_eta[iJ]<-1.3 && Jet_phi[iJ]>-1.57 && Jet_phi[iJ]<-0.87) hem_tf = true;
       jets_pt.push_back(Jet_pt[iJ]); 
       jets_eta.push_back(Jet_eta[iJ]);
       jets_phi.push_back(Jet_phi[iJ]); 
