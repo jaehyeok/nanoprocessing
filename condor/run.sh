@@ -9,13 +9,14 @@ export PATH=/bin:/usr/bin:/usr/local/bin:/cms/ldap_home/jaehyeok/tools/fastjet-i
 
 #
 source /cvmfs/cms.cern.ch/cmsset_default.sh
-cd /cvmfs/cms.cern.ch/slc6_amd64_gcc490/cms/cmssw/CMSSW_7_1_0/src
+cd /cvmfs/cms.cern.ch/slc7_amd64_gcc530/cms/cmssw/CMSSW_8_0_0/src
 cmsenv
 cd -
+#cd ../
 
 #
-echo "cp -r $HOME/processing/data ."
-cp -r $HOME/processing/data .
+echo "cp -r ~/data ."
+cp -r ~/data .
 
 echo ""
 
@@ -26,7 +27,8 @@ echo ""
 
 # run
 echo "./process_nano.exe $1 $2 $3 $4"
-./process_nano.exe  $1 $2 $3 $4
+./process_nano.exe $1 $2 $3 $4
+
 
 # copy
 #xrdcp *_TTZToQQ.root root://cms-xrdr.private.lo:2094//xrd/store/user/jaehyeok/2017v4/2019_09_09

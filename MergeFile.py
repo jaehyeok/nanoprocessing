@@ -6,7 +6,7 @@ year=sys.argv[1]#2016, 2017, 2018
 
 simple_PATH = "/xrootd_user/yjeong/xrootd/nanoprocessing/"
 
-inputdir = simple_PATH+year+"/skim_rpvfitnbge0_1130/"
+inputdir = simple_PATH+year+"/skim_rpvfitnbge0_1130_/"
 outputdir = simple_PATH+year+"/merged_norm/"
 #os.mkdir(outputdir)
 
