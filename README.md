@@ -6,7 +6,7 @@ This is a package to process CMS nanoAOD to flat ntuples. It is assumed that you
 You can set up environment, you can do the following on a KISTI machine. 
 ```
 source /cvmfs/cms.cern.ch/cmsset_default.sh
-cd /cvmfs/cms.cern.ch/slc6_amd64_gcc490/cms/cmssw/CMSSW_7_1_0/src
+cd /cvmfs/cms.cern.ch/slc7_amd64_gcc530/cms/cmssw/CMSSW_8_0_0/src
 cmsenv
 cd -
 ```
