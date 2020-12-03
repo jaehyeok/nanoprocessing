@@ -12,7 +12,7 @@ cd -
 ```
 Then, check out the package 
 ```
-git clone https://github.com/jaehyeok/nanoprocessing
+git clone git@github.com:jaehyeok/nanoprocessing.git
 ```
 
 # Fastjet 
