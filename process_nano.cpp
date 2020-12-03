@@ -895,9 +895,12 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
     {
       hem_tf = false;
 
-      if(isData && run>=319077 && Jet_eta[iJ]>-3.0 && Jet_eta[iJ]<-1.3 && Jet_phi[iJ]>-1.57 && Jet_phi[iJ]<-0.87) hem_tf = true;
+      if(year==2018){
+        if(isData && run>=319077 && Jet_eta[iJ]>-3.0 && Jet_eta[iJ]<-1.3 && Jet_phi[iJ]>-1.57 && Jet_phi[iJ]<-0.87) hem_tf = true;
 
-      if(!isData && (event%10>=0 && event%10<=5) && Jet_eta[iJ]>-3.0 && Jet_eta[iJ]<-1.3 && Jet_phi[iJ]>-1.57 && Jet_phi[iJ]<-0.87) hem_tf = true;
+        if(!isData && (event%10>=0 && event%10<=5) && Jet_eta[iJ]>-3.0 && Jet_eta[iJ]<-1.3 && Jet_phi[iJ]>-1.57 && Jet_phi[iJ]<-0.87) hem_tf = true;
+      }
+
       jets_pt.push_back(Jet_pt[iJ]); 
       jets_eta.push_back(Jet_eta[iJ]);
       jets_phi.push_back(Jet_phi[iJ]); 
@@ -941,9 +944,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
       if(abs(Jet_eta[iJ])>2.4) continue;
       if(!jetid)               continue; 
       if(jetislep)             continue; 
-      if(year == 2018){
-        if(jets_hem.at(iJ)) continue;
-      }
+      if(jets_hem.at(iJ)) continue;
 
       // deepCSV  cuts
       float csv_cut = 0.6321; 
@@ -1034,9 +1035,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
       if(jets_pt.at(iJ)<30)           continue;
       if(abs(jets_eta.at(iJ))>2.4)    continue;
       if(jets_id.at(iJ)==false)       continue;
-      if(year==2018){
-        if(jets_hem.at(iJ)) continue;
-      }
+      if(jets_hem.at(iJ)) continue;
 
       input_particles.push_back(fastjet::PseudoJet(JetLV.Px(), JetLV.Py(), JetLV.Pz(), JetLV.E()));
       h2->Fill(JetLV.Eta(), JetLV.Phi(), JetLV.E());
