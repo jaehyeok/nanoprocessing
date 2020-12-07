@@ -9,7 +9,7 @@ export PATH=/bin:/usr/bin:/usr/local/bin:/cms/ldap_home/jaehyeok/tools/fastjet-i
 
 #
 source /cvmfs/cms.cern.ch/cmsset_default.sh
-cd /cvmfs/cms.cern.ch/slc6_amd64_gcc490/cms/cmssw/CMSSW_7_1_0/src
+cd /cvmfs/cms.cern.ch/slc7_amd64_gcc530/cms/cmssw/CMSSW_8_0_0/src
 cmsenv
 cd -
 
@@ -19,6 +19,7 @@ ls -rlt
 echo ""
 
 # run
+cd ~
 echo "./norm_weights.exe $1 $2 $3 $4"
 ./norm_weights.exe  $1 $2 $3 $4
 

@@ -66,9 +66,9 @@ void save_weights(TString inputfile)
   float w_lumi_ =1;
   float weight_ =1;
   ch.SetBranchAddress("w_btag_dcsv",   	 	&w_btag_dcsv_);
-  ch.SetBranchAddress("w_isr",   	 				&w_isr_);
-  ch.SetBranchAddress("w_lumi",   	 			&w_lumi_);
-  ch.SetBranchAddress("weight",   	 		  &weight_);
+  ch.SetBranchAddress("w_isr",   		&w_isr_);
+  ch.SetBranchAddress("w_lumi",   		&w_lumi_);
+  ch.SetBranchAddress("weight",   		&weight_);
   for(Long64_t entry = 0; entry < ch.GetEntries(); ++entry)
   {
     ch.GetEntry(entry); 
@@ -220,7 +220,7 @@ int main(int argc, char **argv)
     string file_path = __FILE__;
     string dir_path = file_path.substr(0,file_path.rfind("\\"));
     cout<<file_path<<endl;
-    tag_all = getFileListFromFile(Form("/cms/scratch/yjeong/CMSSW_7_1_0/src/nanoprocessing/condor/samples/samples%d_v7.txt",year)); //FIXME : You should change this directory to your nanoprocessing directory.
+    tag_all = getFileListFromFile(Form("/cms/scratch/yjeong/CMSSW_8_0_0/src/nanoprocessing/condor/samples/samples%d_v7.txt",year)); //FIXME : You should change this directory to your nanoprocessing directory.
 
     for(auto tag_check:tag_all){
       if(!tag_check.Contains("HT")) continue;

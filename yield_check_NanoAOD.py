@@ -7,18 +7,18 @@ from ROOT import TChain, TSelector, TTree, TH1F, TCanvas, TPad, TStyle, TString,
 ROOT.gROOT.SetBatch(True)
 year = sys.argv[1]
 
-inputdir_1="/xrootd_user/yjeong/xrootd/nanoprocessing/"+year+"/processed_0925/"
-inputdir_2="/xrootd_user/yjeong/xrootd/nanoprocessing/"+year+"/processed/"
+inputdir_1="/xrootd_user/yjeong/xrootd/nanoprocessing/"+year+"/processed_1202/"
+inputdir_2="/xrootd_user/yjeong/xrootd/nanoprocessing/"+year+"/processed_0925/"
 outputdir="plots/yield/"
 #os.mkdir(outputdir)
 
 flistdir = "/cms/ldap_home/yjeong/flist/"+year
 flists = os.listdir(flistdir)
-h1 = ROOT.TH1D("h1","",10,0,10E+11)
-h2 = ROOT.TH1D("h2","",10,0,10E+11)
+h1 = ROOT.TH1D("h1","",10,-1,1)
+h2 = ROOT.TH1D("h2","",10,-1,1)
 
 print('-------------------------------------------processed vs processed_0925---------------------------------------------')
-print('%46s %3s %15s %15s %15s' %(year, "tag", "processed", "processed_0925", "ratio"))
+print('%46s %3s %15s %15s %15s' %(year, "tag", "processed_1202", "processed_0925", "ratio"))
 #print('%46s %4s %20s' %(year, "tag", "v7_sys_muf[0]"))
 print('--------------------------------------------------------------------------------------------------------')
 
@@ -30,8 +30,8 @@ for i, mcname in enumerate(flists):
 	mc2.Add(inputdir_2+"*_"+tag+"*.root")
 	mc1.GetEntry()
 	mc2.GetEntry()
-	mc1.Draw("event>>h1","w_lumi","goff")
-	mc2.Draw("event>>h2","w_lumi","goff")
+	mc1.Draw("weight>>h1","","goff")
+	mc2.Draw("weight>>h2","","goff")
 	v6_weight = h1.Integral()
 	v7_weight = h2.Integral()
 	if v6_weight==0 or v7_weight==0:
