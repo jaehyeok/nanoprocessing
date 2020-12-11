@@ -272,7 +272,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   tree->SetBranchAddress("fixedGridRhoFastjetAll",          &fixedGridRhoFastjetAll);
   //LHE HT incoming
   //PreFiring weight
-  if(!isData && year==2017){
+  if(!isData && (year==2016 || year==2017)){
     tree->SetBranchAddress("L1PreFiringWeight_Dn",  &L1PreFiringWeight_Dn);
     tree->SetBranchAddress("L1PreFiringWeight_Nom",  &L1PreFiringWeight_Nom);
     tree->SetBranchAddress("L1PreFiringWeight_Up",  &L1PreFiringWeight_Up);
@@ -584,7 +584,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   babyTree_->Branch("els_miniso",        &els_miniso);    
   babyTree_->Branch("els_reliso",        &els_reliso);    
   // jets 
-  babyTree_->Branch("njets",             &njets);    
+  babyTree_->Branch("njets",             &njets);
   babyTree_->Branch("nbm",               &nbm);    
   babyTree_->Branch("jets_pt",           &jets_pt);    
   babyTree_->Branch("jets_eta",          &jets_eta);    
@@ -782,7 +782,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
     ntrupv_mean  = Pileup_nTrueInt;
     lhe_ht = LHE_HTIncoming;
 
-    if(year==2017){
+    if(!isData && (year==2016 || year==2017)){
       l1pre_nom = L1PreFiringWeight_Nom;
       l1pre_dn = L1PreFiringWeight_Dn;
       l1pre_up = L1PreFiringWeight_Up;
@@ -895,7 +895,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
     {
       hem_tf = false;
 
-      if(year==2018){
+      if(year==2018){//HEM effect in 2018 year
         if(isData && run>=319077 && Jet_eta[iJ]>-3.0 && Jet_eta[iJ]<-1.3 && Jet_phi[iJ]>-1.57 && Jet_phi[iJ]<-0.87) hem_tf = true;
 
         if(!isData && (event%10>=0 && event%10<=5) && Jet_eta[iJ]>-3.0 && Jet_eta[iJ]<-1.3 && Jet_phi[iJ]>-1.57 && Jet_phi[iJ]<-0.87) hem_tf = true;
@@ -944,7 +944,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
       if(abs(Jet_eta[iJ])>2.4) continue;
       if(!jetid)               continue; 
       if(jetislep)             continue; 
-      if(jets_hem.at(iJ)) continue;
+      if(jets_hem.at(iJ))	continue;
 
       // deepCSV  cuts
       float csv_cut = 0.6321; 
@@ -958,7 +958,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
         njets++;
         ht += Jet_pt[iJ];
         if(Jet_btagDeepB[iJ]>csv_cut) nbm++; 
-        if(!isData) //FIXME
+        if(!isData)
 	  {
 	    w_btag_dcsv *= getBtagWeight(f_btef,calibreader, Jet_pt[iJ], Jet_eta[iJ], Jet_hadronFlavour[iJ], Jet_btagDeepB[iJ], csv_cut);
 	    sys_bctag_up *= getBtagWeight(f_btef,calibreader, Jet_pt[iJ], Jet_eta[iJ], Jet_hadronFlavour[iJ], Jet_btagDeepB[iJ], csv_cut, "up_hf");
@@ -1247,11 +1247,11 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
       w_pu        = 1;
     }
     if((inputfile.Contains("SMS-T1tbs_RPV")) || inputfile.Contains("TTJets_")){
-      if(year==2017) weight = w_btag_dcsv * w_lumi * w_pu * w_isr * l1pre_nom;
+      if(year==2016 || year==2017) weight = w_btag_dcsv * w_lumi * w_pu * w_isr * l1pre_nom;
       else weight = w_btag_dcsv * w_lumi * w_pu * w_isr;
     }
     else {
-      if(year==2017) weight = w_btag_dcsv * w_lumi * w_pu * l1pre_nom;
+      if(year==2016 || year==2017) weight = w_btag_dcsv * w_lumi * w_pu * l1pre_nom;
       else weight = w_btag_dcsv * w_lumi * w_pu;
       w_isr = 1;
     }
