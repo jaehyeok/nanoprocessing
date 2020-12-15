@@ -131,7 +131,7 @@ int main(int argc, char **argv)
     file_selector = atoi(argv[3]);
 
     outputdir = inputdir;
-    outputdir.ReplaceAll("test_HEM", Form("skim_%s_testHEM", skim.Data()));
+    outputdir.ReplaceAll("processed_1214", Form("skim_%s_1214", skim.Data()));
 
     cout << " input   dir  		: " << inputdir << endl;
     cout << " output  dir  		: " << outputdir << endl;
