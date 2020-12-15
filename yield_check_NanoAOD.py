@@ -6,9 +6,10 @@ import ROOT
 from ROOT import TChain, TSelector, TTree, TH1F, TCanvas, TPad, TStyle, TString, TH1D
 ROOT.gROOT.SetBatch(True)
 year = sys.argv[1]
+username = getpass.getuser()
 
-inputdir_1="/xrootd_user/yjeong/xrootd/nanoprocessing/"+year+"/processed_1214/"
-inputdir_2="/xrootd_user/yjeong/xrootd/nanoprocessing/"+year+"/processed_1211/"
+inputdir_1="/xrootd_user/"+username+"/xrootd/nanoprocessing/"+year+"/processed_1214/"
+inputdir_2="/xrootd_user/"+username+"/xrootd/nanoprocessing/"+year+"/processed_1211/"
 outputdir="plots/yield/"
 #os.mkdir(outputdir)
 
