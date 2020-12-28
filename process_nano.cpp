@@ -479,6 +479,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
 
   //Jets   
   int njets;
+  int njets2;
   int nbm;
 
   std::vector<float> jets_pt;
@@ -589,6 +590,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   babyTree_->Branch("els_reliso",        &els_reliso);    
   // jets 
   babyTree_->Branch("njets",             &njets);
+  babyTree_->Branch("njets2",             &njets2);
   babyTree_->Branch("nbm",               &nbm);    
   babyTree_->Branch("jets_pt",           &jets_pt);    
   babyTree_->Branch("jets_eta",          &jets_eta);    
@@ -719,6 +721,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
     els_reliso.clear();          
     // jets 
     njets      =   0;        
+    njets2      =   0;        
     nbm        =   0;          
     jets_pt.clear();      
     jets_eta.clear();      
@@ -949,6 +952,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
       if(abs(Jet_eta[iJ])>2.4) continue;
       if(!jetid)               continue; 
       if(jetislep)             continue; 
+	njets++;
       if(jets_hem.at(iJ))	continue;
 
       // deepCSV  cuts
@@ -960,7 +964,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
       // nominal 
       if(jets_pt.at(iJ)>30)
       {
-        njets++;
+        njets2++;
         ht += Jet_pt[iJ];
         if(Jet_btagDeepB[iJ]>csv_cut) nbm++; 
         if(!isData)

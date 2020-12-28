@@ -64,10 +64,12 @@ void save_weights(TString inputfile)
   float w_btag_dcsv_ =1;
   float w_isr_ =1;
   float w_lumi_ =1;
+  float l1pre_nom_ =1;
   float weight_ =1;
   ch.SetBranchAddress("w_btag_dcsv",   	 	&w_btag_dcsv_);
   ch.SetBranchAddress("w_isr",   		&w_isr_);
   ch.SetBranchAddress("w_lumi",   		&w_lumi_);
+  ch.SetBranchAddress("l1pre_nom",   		&l1pre_nom_);
   ch.SetBranchAddress("weight",   		&weight_);
   for(Long64_t entry = 0; entry < ch.GetEntries(); ++entry)
   {
@@ -122,7 +124,7 @@ void norm_onefile(TString inputfile, TString outputdir)
     tree_new->GetEntry(entry); 
     w_btag_dcsv=vec_w_btag_dcsv.at(entry)/w_btag_dcsv_mean; 
     w_isr=vec_w_isr.at(entry)/w_isr_mean; 
-    weight=vec_weight.at(entry)/weight_over_w_lumi_mean; 
+    weight=vec_weight.at(entry)/weight_over_w_lumi_mean;//FIXME 
     
     b_w_btag_dcsv->Fill(); 
     b_w_isr->Fill(); 
@@ -280,9 +282,9 @@ int main(int argc, char **argv)
   cout << "w_isr mean = " << w_isr_mean << endl;
   
 	TH1D  *h_weight_over_w_lumi = new TH1D("h_weight_over_w_lumi","h_weight_over_w_lumi",100,-5,5);
-  ch_mean.Draw("weight/w_lumi>>h_weight_over_w_lumi","","geoff");
+  ch_mean.Draw("weight/(w_lumi*l1pre_nom)>>h_weight_over_w_lumi","","geoff");
   weight_over_w_lumi_mean = h_weight_over_w_lumi->GetMean();
-  cout << "weight/w_lumi mean = " << weight_over_w_lumi_mean << endl;
+  cout << "weight/(w_lumi mean*l1pre_nom) = " << weight_over_w_lumi_mean << endl;//FIXME
  
 	// 
 	// Process 
