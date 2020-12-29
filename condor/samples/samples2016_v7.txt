@@ -124,6 +124,18 @@ ZZ_TuneCUETP8M1_13TeV-pythia8/NANOAODSIM/PUMoriond17_Nano02Apr2020_102X_mcRun2_a
 /xrootd/store/data/Run2016G/JetHT/NANOAOD/02Apr2020-v1
 /xrootd/store/data/Run2016H/JetHT/NANOAOD/02Apr2020-v1
 
+## SingleMuon
+
+/xrootd/store/data/Run2016B/SingleMuon/NANOAOD/02Apr2020_ver1-v1	
+#/xrootd/store/data/Run2016B/SingleMuon/NANOAOD/02Apr2020_ver2-v1	
+/xrootd/store/data/Run2016C/SingleMuon/NANOAOD/02Apr2020-v1	
+/xrootd/store/data/Run2016D/SingleMuon/NANOAOD/02Apr2020-v1	
+/xrootd/store/data/Run2016E/SingleMuon/NANOAOD/02Apr2020-v1	
+/xrootd/store/data/Run2016F/SingleMuon/NANOAOD/02Apr2020-v1	
+/xrootd/store/data/Run2016G/SingleMuon/NANOAOD/02Apr2020-v1	
+/xrootd/store/data/Run2016H/SingleMuon/NANOAOD/02Apr2020-v1	
+
+
 ## Stealth
 
 #StealthSHH_2t4b_mStop-1000_mSo-100_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/NANOAODSIM/PUMoriond17_Nano02Apr2020_102X_mcRun2_asymptotic_v8-v1
@@ -149,3 +161,4 @@ ZZ_TuneCUETP8M1_13TeV-pythia8/NANOAODSIM/PUMoriond17_Nano02Apr2020_102X_mcRun2_a
 #StealthSHH_2t4b_mStop-850_mSo-100_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/NANOAODSIM/PUMoriond17_Nano02Apr2020_102X_mcRun2_asymptotic_v8_ext1-v1
 #StealthSHH_2t4b_mStop-900_mSo-100_TuneCUEP8M1_13TeV-madgraphMLM-pythia8/NANOAODSIM/PUMoriond17_Nano02Apr2020_102X_mcRun2_asymptotic_v8-v1
 #StealthSHH_2t4b_mStop-950_mSo-100_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/NANOAODSIM/PUMoriond17_Nano02Apr2020_102X_mcRun2_asymptotic_v8-v1
+

@@ -101,7 +101,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   // string csvfile = "data/DeepCSV_2016LegacySF_V1.csv"; //for loose cuts only 
   // string csvfile = "data/DeepCSV_2016LegacySF_V1_TuneCP5.csv"; 
   TFile *f_btef;
-  if(!isData ){//FIXME
+  if(!isData){//FIXME
     if(year==2016)f_btef = new TFile("btagEfficiency/btagEfficiency_"+tag+"_2016.root","READ");//FIXME
     if(year==2017)f_btef = new TFile("btagEfficiency/btagEfficiency_"+tag+"_2017.root","READ");//FIXME
     if(year==2018)f_btef = new TFile("btagEfficiency/btagEfficiency_"+tag+"_2018.root","READ");//FIXME
@@ -907,6 +907,11 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
         if(isData && run>=319077 && Jet_eta[iJ]>-3.0 && Jet_eta[iJ]<-1.3 && Jet_phi[iJ]>-1.57 && Jet_phi[iJ]<-0.87) hem_tf = true;
 
         if(!isData && (event%10>=0 && event%10<=5) && Jet_eta[iJ]>-3.0 && Jet_eta[iJ]<-1.3 && Jet_phi[iJ]>-1.57 && Jet_phi[iJ]<-0.87) hem_tf = true;
+      }
+
+      if(abs(Jet_eta[iJ])>6 || iJ > 50){//FIXME
+        cout<< "-- "<< Jet_pt[iJ] << " : " << Jet_eta[iJ] << " : " << Jet_phi[iJ] << " : " << Jet_m[iJ] << " : " << Jet_hadronFlavour[iJ] << " : " << Jet_btagCSVV2[iJ] << " : " << Jet_btagDeepB[iJ] << " : " << Jet_btagDeepC[iJ] << " : " << event << " --" << endl;
+
       }
 
       jets_pt.push_back(Jet_pt[iJ]); 

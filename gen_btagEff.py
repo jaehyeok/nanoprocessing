@@ -15,7 +15,7 @@ def get_sample_tag_list(year):
 		tag = line.split("_13TeV")[0]
 		if tag.startswith('#'): continue
 		if tag == '' : continue
-		#if not 'WW_' in tag : continue
+		if not 'TTZToLLNuNu_M-10' in tag : continue
 		ret.append(tag)
 	return ret
 
@@ -84,7 +84,7 @@ def gen_btagEff(out_file_path, docuts, process, year):
 	ROOT.TH1.SetDefaultSumw2()
 
 	c = ROOT.TChain("tree")
-	c.Add("/xrootd_user/yjeong/xrootd/nanoprocessing/"+year+"/processed_0925/*"+process+"*.root")
+	c.Add("/xrootd_user/yjeong/xrootd/nanoprocessing/"+year+"/processed_1211/*"+process+"*.root")
 	print(c.GetEntries())
 
 	dcsv_med = ("medium", dcsv_med_WP[year])
@@ -163,10 +163,10 @@ if __name__ == "__main__":
 	parser = argparse.ArgumentParser(description = "Computes b-tagging efficiency as a fucntion of pT, eta, and flavor", formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 	parser.add_argument("-o", "--out_file", metavar="OUT_FILE", default="btagEfficiency.root", help="Save efficiencies to %(metavar)s")
 	parser.add_argument("-c", "--docuts", action="store_true", help="Use all available events, applying only basic filters")
-	parser.add_argument("-y", "--year", action="store", default="2016",help="Select the year that you want to make trigger efficiency")
-	parser.add_argument("-i", "--in_file", metavar="IN_FILE", action="store", default="STealthSHH_2t4b_mStop",help="Input file if you want, you should use this with --docuts")
+	parser.add_argument("-y", "--year", action="store", default="2017",help="Select the year that you want to make trigger efficiency")
+	parser.add_argument("-i", "--in_file", metavar="IN_FILE", action="store", default="TTZToLLNuNu_M-10_TuneCP5",help="Input file if you want, you should use this with --docuts")
 
-#	parser.add_argument("-p", "--process", action="store", default="*StealthSHH_2t4b_mStop*",help="make process")
+	parser.add_argument("-p", "--process", action="store", default="TTZToLLNuNu_M-10_",help="make process")
 
 	args = parser.parse_args()
 

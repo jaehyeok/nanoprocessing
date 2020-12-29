@@ -131,7 +131,7 @@ int main(int argc, char **argv)
     file_selector = atoi(argv[3]);
 
     outputdir = inputdir;
-    outputdir.ReplaceAll("processed_0819", Form("skim_%s_nbm3", skim.Data()));
+    outputdir.ReplaceAll("processed_1211", Form("skim_%s_1211", skim.Data()));
 
     cout << " input   dir  		: " << inputdir << endl;
     cout << " output  dir  		: " << outputdir << endl;
@@ -144,13 +144,13 @@ int main(int argc, char **argv)
 
   // get list of files in a directory
   //vector<TString> files = globVector(Form("%s/*.root", inputdir.Data())); 
-  vector<TString> files = globVector(Form("%s/*JetHTRun*.root", inputdir.Data())); 
+  vector<TString> files = globVector(Form("%s/*TTZToLLNuNu_*.root", inputdir.Data())); 
 
 	cout << "skimming " << files.size() << " files" << endl;
 	
   for(int i=0; i<files.size(); i++)
   {
-    if(file_selector!=-1 && i%10!=file_selector) continue;
+    if(file_selector!=-1 && i%2!=file_selector) continue;
 		// 
     cout << "skimming: " << files.at(i) << endl; 
     skimonefile(files.at(i), outputdir, skim); 
