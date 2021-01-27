@@ -910,7 +910,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
       }
 
       if(abs(Jet_eta[iJ])>6 || iJ > 50){//FIXME
-        cout<< "-- "<< Jet_pt[iJ] << " : " << Jet_eta[iJ] << " : " << Jet_phi[iJ] << " : " << Jet_m[iJ] << " : " << Jet_hadronFlavour[iJ] << " : " << Jet_btagCSVV2[iJ] << " : " << Jet_btagDeepB[iJ] << " : " << Jet_btagDeepC[iJ] << " : " << event << " --" << endl;
+        cout<< "-- "<< Jet_pt[iJ] << " : " << Jet_eta[iJ] << " : " << Jet_phi[iJ] << " : " << Jet_m[iJ] << " : " << Jet_hadronFlavour[iJ] << " : " << Jet_btagCSVV2[iJ] << " : " << Jet_btagDeepB[iJ] << " : " << Jet_btagDeepC[iJ] << " : " << event << " --" << nJet << endl;
 
       }
 
@@ -1049,7 +1049,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
       if(jets_pt.at(iJ)<30)           continue;
       if(abs(jets_eta.at(iJ))>2.4)    continue;
       if(jets_id.at(iJ)==false)       continue;
-      if(jets_hem.at(iJ)) continue;
+      if(jets_hem.at(iJ)) continue; 
 
       input_particles.push_back(fastjet::PseudoJet(JetLV.Px(), JetLV.Py(), JetLV.Pz(), JetLV.E()));
       h2->Fill(JetLV.Eta(), JetLV.Phi(), JetLV.E());
@@ -1331,9 +1331,8 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
             run, ls, event, Rparam));
       h2->Reset(); 
       for(int ijets=0; ijets<(int)fjets_eta.size(); ijets++) delete cone[ijets];
-
     } 
-
+if(ievt>=400000)cout<<event<<": !!!"<<endl;//FIXME
   } // event loop
 
 

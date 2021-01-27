@@ -124,5 +124,6 @@ bool ProblematicEvent(TString inputfile, int event)
 	else if(inputfile.Contains("QCD_HT1000to1500") && (event==192336035 || event==38179046 || event==38180511 || event==84518624 || event==41679647 )) return false;
 	else if(inputfile.Contains("WZ_TuneCP5") && (event==3140552 || event==2587523 || event==2587541)) return false;
 	else if(inputfile.Contains("TTZToLLNuNu_M-10") && event==4950593) return false;
+	//else if(inputfile.Contains("Run2016G") && event==9711159) return false;
 	else return true;
 }// */

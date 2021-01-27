@@ -1,0 +1,13 @@
+### JetHT
+
+/xrootd/store/data/Run2018A/JetHT/NANOAOD/UL2018_MiniAODv1_NanoAODv2-v1	
+/xrootd/store/data/Run2018B/JetHT/NANOAOD/UL2018_MiniAODv1_NanoAODv2-v1	
+/xrootd/store/data/Run2018C/JetHT/NANOAOD/UL2018_MiniAODv1_NanoAODv2-v1	
+
+
+### SingleMuon
+
+/xrootd/store/data/Run2018A/SingleMuon/NANOAOD/UL2018_MiniAODv1_NanoAODv2-v1	
+/xrootd/store/data/Run2018B/SingleMuon/NANOAOD/UL2018_MiniAODv1_NanoAODv2-v1	
+/xrootd/store/data/Run2018C/SingleMuon/NANOAOD/UL2018_MiniAODv1_NanoAODv2-v1	
+/xrootd/store/data/Run2018D/SingleMuon/NANOAOD/UL2018_MiniAODv1_NanoAODv2-v1	
