@@ -101,10 +101,10 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   // string csvfile = "data/DeepCSV_2016LegacySF_V1.csv"; //for loose cuts only 
   // string csvfile = "data/DeepCSV_2016LegacySF_V1_TuneCP5.csv"; 
   TFile *f_btef;
-  if(!isData){//FIXME
-    if(year==2016)f_btef = new TFile("btagEfficiency/btagEfficiency_"+tag+"_2016.root","READ");//FIXME
-    if(year==2017)f_btef = new TFile("btagEfficiency/btagEfficiency_"+tag+"_2017.root","READ");//FIXME
-    if(year==2018)f_btef = new TFile("btagEfficiency/btagEfficiency_"+tag+"_2018.root","READ");//FIXME
+  if(!isData){
+    if(year==2016)f_btef = new TFile("btagEfficiency/btagEfficiency_"+tag+"_2016.root","READ");
+    if(year==2017)f_btef = new TFile("btagEfficiency/btagEfficiency_"+tag+"_2017.root","READ");
+    if(year==2018)f_btef = new TFile("btagEfficiency/btagEfficiency_"+tag+"_2018.root","READ");
   }
 
   string csvfile = "data/DeepCSV_2016LegacySF_V1.csv"; //for loose cuts only 
@@ -795,6 +795,11 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
       l1pre_nom = L1PreFiringWeight_Nom;
       l1pre_dn = L1PreFiringWeight_Dn;
       l1pre_up = L1PreFiringWeight_Up;
+    }
+    else if(!isData && year == 2018){
+      l1pre_nom = 1;
+      l1pre_dn = 1;
+      l1pre_up = 1;
     }
 
     bool pnf = true;
