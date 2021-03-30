@@ -71,12 +71,13 @@ void skimonefile(TString inputfile, TString outputdir, TString skim)
 		skimcut="mj12>500&&njets>=4";
 	}
 	else if(skim=="rpvfitnbge0") {
-		if(inputfile.Contains("SingleMuon")) skimcut = "njets>=4 && mj12>500 && nleps==1";
-		//if(inputfile.Contains("JetHTRun")) skimcut = "njets>=4 && mj12>500 && ht>1200 && nbm<2";
+		//if(inputfile.Contains("SingleMuon")) skimcut = "njets>=4 && mj12>500 && nleps==1";
+		//if(inputfile.Contains("JetHTRun")) skimcut = "njets>=4 && mj12>500 && ht>1200 && nbm<3";
+		if(inputfile.Contains("JetHTRun")) skimcut = "njets>=4 && mj12>500 && ht>1200 && ( nbm<3 || (njets>=4 && njets<=5 && nleps==1 ) || (njets<=6 && njets<=7 && nleps==0))";
 		//if(inputfile.Contains("JetHTRun")) skimcut = "ht>1200 && mj12>500 && ((njets>=4 && nbm<3) || (nleps==0 && njets>=6 && njets<=7) || (nleps==1 && njets>=4 && njets<=5))";
-		else if(inputfile.Contains("TTJets_Tune")) skimcut="(sys_ht[0]>1200 || sys_ht[1]>1200 || ht>1200) && (sys_mj12[0]>500 || sys_mj12[1]>500 || mj12>500) && (sys_njets[0]>=4 || sys_njets[1]>=4 || njets>=4) && stitch_ht==1";
-		//else if(inputfile.Contains("TTJets_Tune")) skimcut="(sys_ht[0]>1200 || sys_ht[1]>1200 || ht>1200) && (sys_mj12[0]>500 || sys_mj12[1]>500 || mj12>500) && (sys_njets[0]>=3 || sys_njets[1]>=3 || njets>=3) && stitch_ht==1 && nleps==2";
-		else skimcut="(sys_ht[0]>1200 || sys_ht[1]>1200 || ht>1200) && (sys_mj12[0]>500 || sys_mj12[1]>500 || mj12>500) && (sys_njets[0]>=4 || sys_njets[1]>=4 || njets>=4)";// */
+		//else if(inputfile.Contains("TTJets_Tune")) skimcut="(sys_ht[0]>1200 || sys_ht[1]>1200 || ht>1200) && (sys_mj12[0]>500 || sys_mj12[1]>500 || mj12>500) && (sys_njets[0]>=4 || sys_njets[1]>=4 || njets>=3) && stitch_ht==1";
+		else if(inputfile.Contains("TTJets_Tune")) skimcut="(sys_ht[0]>1200 || sys_ht[1]>1200 || ht>1200) && (sys_mj12[0]>500 || sys_mj12[1]>500 || mj12>500) && (sys_njets[0]>=3 || sys_njets[1]>=3 || njets>=3) && stitch_ht==1 && nleps==2";
+		else skimcut="(sys_ht[0]+Sum$(leps_pt)>1200 || sys_ht[1]+Sum$(leps_pt)>1200 || ht+Sum$(leps_pt)>1200) && (sys_mj12[0]>500 || sys_mj12[1]>500 || mj12>500) && (sys_njets[0]>=4 || sys_njets[1]>=4 || njets>=4)";// 
 		//else skimcut="(sys_ht[0]>1200 || sys_ht[1]>1200 || ht>1200) && (sys_mj12[0]>500 || sys_mj12[1]>500 || mj12>500) && (sys_njets[0]>=3 || sys_njets[1]>=3 || njets>=3) && nleps==2";// */
 		//if(inputfile.Contains("SingleMuonRun")) skimcut = "nmus==1 && njets>=4 && mj12>=500 && trig_isomu24==1 && trig_isomu27==1";
 	}
@@ -132,8 +133,9 @@ int main(int argc, char **argv)
     file_selector = atoi(argv[3]);
 
     outputdir = inputdir;
-    //outputdir.ReplaceAll("processed_1211", Form("skim_%s_1211", skim.Data()));
-    outputdir.ReplaceAll("SingleMuon_v7", Form("SingleMuon_%s_v7", skim.Data()));
+    //outputdir.ReplaceAll("JetHTRun_v7", Form("skimfitval_%s_210325_2", skim.Data()));
+    //outputdir.ReplaceAll("processed_1211", Form("skimNjets3Nleps2_%s_210326", skim.Data()));
+    outputdir.ReplaceAll("processed_1202", Form("skim_%s_210324", skim.Data()));
 
     cout << " input   dir  		: " << inputdir << endl;
     cout << " output  dir  		: " << outputdir << endl;
@@ -145,8 +147,8 @@ int main(int argc, char **argv)
   gSystem->mkdir(outputdir.Data());
 
   // get list of files in a directory
+  vector<TString> files = globVector(Form("%s/*QCD_HT*.root", inputdir.Data())); 
   //vector<TString> files = globVector(Form("%s/*.root", inputdir.Data())); 
-  vector<TString> files = globVector(Form("%s/*SingleMuon*.root", inputdir.Data())); 
 
 	cout << "skimming " << files.size() << " files" << endl;
 	

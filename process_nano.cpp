@@ -244,6 +244,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   Float_t    Jet_btagDeepC[100];
   Float_t    Jet_rawFactor[100];
   Float_t    Jet_area[100];
+  Float_t    Jet_qgl[100];
   Int_t      Jet_jetId[100];
   Int_t      Jet_nElectrons[100];
   Int_t      Jet_nMuons[100];
@@ -338,7 +339,8 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   tree->SetBranchAddress("Jet_mass",            &Jet_m); 
   tree->SetBranchAddress("Jet_btagCSVV2",       &Jet_btagCSVV2); 
   tree->SetBranchAddress("Jet_btagDeepB",       &Jet_btagDeepB); 
-  tree->SetBranchAddress("Jet_btagDeepC",       &Jet_btagDeepC); 
+  tree->SetBranchAddress("Jet_btagDeepC",       &Jet_btagDeepC);
+  tree->SetBranchAddress("Jet_qgl",		&Jet_qgl);
   tree->SetBranchAddress("Jet_jetId",           &Jet_jetId); 
   tree->SetBranchAddress("Jet_nElectrons",      &Jet_nElectrons); 
   tree->SetBranchAddress("Jet_nMuons",          &Jet_nMuons); 
@@ -488,6 +490,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   std::vector<float> jets_csv;
   std::vector<float> jets_dcsvb;
   std::vector<float> jets_dcsvc;
+  std::vector<float> jets_qgl;
   std::vector<bool>  jets_id;
   std::vector<bool>  jets_islep;
   //std::vector<int>   jets_fjet_index;
@@ -596,7 +599,8 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   babyTree_->Branch("jets_m",            &jets_m);    
   babyTree_->Branch("jets_csv",          &jets_csv);    
   babyTree_->Branch("jets_dcsvb",        &jets_dcsvb);    
-  babyTree_->Branch("jets_dcsvc",        &jets_dcsvc);    
+  babyTree_->Branch("jets_dcsvc",        &jets_dcsvc);
+  babyTree_->Branch("jets_qgl",		 &jets_qgl);
   babyTree_->Branch("jets_id",           &jets_id);    
   babyTree_->Branch("jets_islep",        &jets_islep);    
   babyTree_->Branch("jets_hflavor",      &jets_hflavor);    
@@ -726,7 +730,8 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
     jets_m.clear();        
     jets_csv.clear();      
     jets_dcsvb.clear();      
-    jets_dcsvc.clear();      
+    jets_dcsvc.clear();
+    jets_qgl.clear();
     jets_id.clear();      
     jets_islep.clear();     
     jets_hflavor.clear();      
@@ -918,6 +923,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
       jets_hflavor.push_back(Jet_hadronFlavour[iJ]); 
       jets_csv.push_back(Jet_btagCSVV2[iJ]); 
       jets_dcsvb.push_back(Jet_btagDeepB[iJ]); 
+      jets_qgl.push_back(Jet_qgl[iJ]);
       jets_dcsvc.push_back(Jet_btagDeepC[iJ]);
       jets_hem.push_back(hem_tf);
 

@@ -82,6 +82,14 @@ WZ_TuneCP5_13TeV-pythia8/NANOAODSIM/Nano02Apr2020_102X_upgrade2018_realistic_v21
 ZZ_TuneCP5_13TeV-pythia8/NANOAODSIM/Nano02Apr2020_102X_upgrade2018_realistic_v21-v1
 WW_TuneCP5_13TeV-pythia8/NANOAODSIM/Nano02Apr2020_102X_upgrade2018_realistic_v21-v1
 
+
+## GGToNeuNeu
+GluinoGluinoToNeutralinoNeutralinoTo2T2B2S_M-1200_CTau-1mm_TuneCP2_13TeV_2018-pythia8/NANOAODSIM/Nano02Apr2020_102X_upgrade2018_realistic_v21-v1
+GluinoGluinoToNeutralinoNeutralinoTo2T2B2S_M-1600_CTau-1mm_TuneCP2_13TeV_2018-pythia8/NANOAODSIM/Nano02Apr2020_102X_upgrade2018_realistic_v21-v1
+GluinoGluinoToNeutralinoNeutralinoTo2T2B2S_M-2400_CTau-1mm_TuneCP2_13TeV_2018-pythia8/NANOAODSIM/Nano02Apr2020_102X_upgrade2018_realistic_v21-v1
+GluinoGluinoToNeutralinoNeutralinoTo2T2B2S_M-3000_CTau-1mm_TuneCP2_13TeV_2018-pythia8/NANOAODSIM/Nano02Apr2020_102X_upgrade2018_realistic_v21-v1
+
+
 ## JetHT
 
 /xrootd/store/data/Run2018A/JetHT/NANOAOD/02Apr2020-v1
@@ -95,6 +103,9 @@ WW_TuneCP5_13TeV-pythia8/NANOAODSIM/Nano02Apr2020_102X_upgrade2018_realistic_v21
 /xrootd/store/data/Run2018B/SingleMuon/NANOAOD/02Apr2020-v1	
 /xrootd/store/data/Run2018C/SingleMuon/NANOAOD/02Apr2020-v1	
 /xrootd/store/data/Run2018D/SingleMuon/NANOAOD/02Apr2020-v1	
+
+## GGToNeuNeu
+
 
 
 ## Stealth
