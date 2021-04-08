@@ -437,6 +437,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   bool pass=true;
   bool fromGS=false;
   bool matched;
+  float llp_dR;
   /*
   //MC   
   int ntruleps;
@@ -604,7 +605,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   babyTree_->Branch("jets_id",           &jets_id);    
   babyTree_->Branch("jets_islep",        &jets_islep);    
   babyTree_->Branch("jets_hflavor",      &jets_hflavor);    
-  babyTree_->Branch("jets_hem",      &jets_hem);    
+  babyTree_->Branch("jets_hem",     	 &jets_hem);    
   // fatjet
   babyTree_->Branch("mj12",              &mj12);    
   babyTree_->Branch("fjets_pt",          &fjets_pt);    
@@ -625,6 +626,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   // filters
   babyTree_->Branch("pass",              &pass);
   babyTree_->Branch("fromGS",            &fromGS);
+  babyTree_->Branch("llp_dR",            &llp_dR);
   //
   babyTree_->Branch("sys_mj12",          &sys_mj12);    
   babyTree_->Branch("sys_lep",           &sys_lep);    
@@ -962,11 +964,12 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
       sys_jets_pt_down.push_back(Jet_pt[iJ]*(1-jec_unc)); 
 
       // more jet selection
-      if(abs(Jet_eta[iJ])>2.4) continue;
+      if(jets_pt.at(iJ)<30)	continue;
+      if(abs(jets_eta.at(iJ))>2.4) continue;
       if(!jetid)               continue; 
       if(jetislep)             continue; 
-	njets++;
       if(jets_hem.at(iJ))	continue;
+      njets++;
 
       // deepCSV  cuts
       float csv_cut = 0.6321; 
@@ -1197,6 +1200,22 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
       if(matched_==false) nisr_++;//--> not matched with final state.
     }
 
+    TLorentzVector jets_1, jets_2;
+    for(size_t imc(0); imc<gen_pt.size(); imc++){
+      //cout<<"gen_idxMother: "<<gen_PartIdxMother.at(imc)<<endl;
+      if((gen_PartIdxMother.at(imc))==-1) continue;
+      int momid = abs(gen_pdgId.at(gen_PartIdxMother.at(imc)));
+
+      if(!((momid >= 1000022 && momid <= 1000025) || momid==1000035 || momid==1000037)) continue; //neutralino
+      if(!(abs(gen_pdgId.at(imc))==3 || abs(gen_pdgId.at(imc))==5 || abs(gen_pdgId.at(imc))==6)) continue;//tbs
+      jets_1.SetPtEtaPhiM(gen_pt.at(imc), gen_eta.at(imc), gen_phi.at(imc), gen_m.at(imc));
+
+      for(size_t igen(0); igen<gen_pt.size(); igen++){
+	jets_2.SetPtEtaPhiM(gen_pt.at(igen), gen_eta.at(igen), gen_phi.at(igen), gen_m.at(igen));
+	if(jets_1!=jets_2) llp_dR=jets_1.DeltaR(jets_2);
+	//cout<<"deltaR: "<<llp_dR<<endl;
+      }
+    }
     /*if(year==2016){
       if((inputfile.Contains("TTJets_"))) isr_norm =1.101;
       if(inputfile.Contains("SMS-T1tbs_RPV_mGluino1000")) isr_norm = 1.27982;
@@ -1267,7 +1286,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
       w_lumi      = 1;
       w_pu        = 1;
     }
-    if((inputfile.Contains("SMS-T1tbs_RPV")) || inputfile.Contains("TTJets_")){
+    if(inputfile.Contains("SMS-T1tbs_RPV") || inputfile.Contains("GluinoGluinoToNeutralinoNeutralinoTo2T2B2S") || inputfile.Contains("TTJets_")){
       if(year==2016 || year==2017) weight = w_btag_dcsv * w_lumi * w_pu * w_isr * l1pre_nom;
       else weight = w_btag_dcsv * w_lumi * w_pu * w_isr;
     }
@@ -1327,17 +1346,17 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
 
       //Draw circles around jets
       TEllipse *cone[fjets_eta.size()]; 
-      for(int ijets=0; ijets<(int)fjets_eta.size(); ijets++){
-        cone[ijets] = new TEllipse(fjets_eta.at(ijets), fjets_phi.at(ijets), Rparam, Rparam);
-        cone[ijets]->SetFillStyle(3003);
-        cone[ijets]->SetFillColor(kYellow);
-        cone[ijets]->Draw();
+      for(int imc=0; imc<(int)fjets_eta.size(); imc++){
+        cone[imc] = new TEllipse(fjets_eta.at(imc), fjets_phi.at(imc), Rparam, Rparam);
+        cone[imc]->SetFillStyle(3003);
+        cone[imc]->SetFillColor(kYellow);
+        cone[imc]->Draw();
       }
 
       c->SaveAs(Form("EtaPhiViewPFCand_Run%i_Lumi%i_Event%llu_R%.1f.pdf", 
             run, ls, event, Rparam));
       h2->Reset(); 
-      for(int ijets=0; ijets<(int)fjets_eta.size(); ijets++) delete cone[ijets];
+      for(int imc=0; imc<(int)fjets_eta.size(); imc++) delete cone[imc];
     } 
 //if(ievt>=400000)cout<<event<<": !!!"<<endl;//FIXME
   } // event loop
