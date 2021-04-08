@@ -964,12 +964,10 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
       sys_jets_pt_down.push_back(Jet_pt[iJ]*(1-jec_unc)); 
 
       // more jet selection
-      if(jets_pt.at(iJ)<30)	continue;
       if(abs(jets_eta.at(iJ))>2.4) continue;
       if(!jetid)               continue; 
       if(jetislep)             continue; 
       if(jets_hem.at(iJ))	continue;
-      njets++;
 
       // deepCSV  cuts
       float csv_cut = 0.6321; 
@@ -980,6 +978,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
       // nominal 
       if(jets_pt.at(iJ)>30)
       {
+        njets++;
         ht += Jet_pt[iJ];
         if(Jet_btagDeepB[iJ]>csv_cut) nbm++; 
         if(!isData)
