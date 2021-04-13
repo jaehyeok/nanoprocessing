@@ -107,7 +107,7 @@ float getXsec(TString process)
   if(process.Contains("2T2B2S_M-1200"))			xsec = 0.985E-01;
   if(process.Contains("2T2B2S_M-1600"))			xsec = 0.887E-02;
   if(process.Contains("2T2B2S_M-2400"))			xsec = 0.128E-03;
-  if(process.Contains("2T2B2S_M-3000"))			xsec = 0.128E-03;
+  if(process.Contains("2T2B2S_M-3000"))			xsec = 0.621E-05;
 
   // StealthSHH_mStop
   if(process.Contains("StealthSHH_2t4b_mStop-300_mSo-100_Tune")) xsec = 0.1E+02;
