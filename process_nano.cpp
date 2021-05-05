@@ -1394,7 +1394,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
 # ifndef __CINT__  // the following code will be invisible for the interpreter
 int main(int argc, char **argv)
 {
-
+  ROOT::EnableImplicitMT(8);
   bool useCondor = true;
   TString inputdir, outputdir, process, list_processed; 
   
