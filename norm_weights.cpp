@@ -36,11 +36,14 @@ using namespace std;
 
 const bool DEBUG = false; 
 
-
 // store mean here
 float w_btag_dcsv_mean;
-vector<float> sys_bctag_mean;
-vector<float> sys_ucsgtag_mean;
+float sys_bctag_mean;
+float sys_udsgtag_mean;
+float sys_mur_mean;
+float sys_muf_mean;
+float sys_murf_mean;
+
 float w_pu_mean;
 vector<float> sys_pu_mean;
 float w_isr_mean;
@@ -55,6 +58,11 @@ vector<float> vec_w_isr;
 vector<float> vec_w_lumi; 
 vector<float> vec_weight; 
 
+vector<float> vec_sys_mur;
+vector<float> vec_sys_muf;
+vector<float> vec_sys_murf;
+vector<float> vec_sys_bctag;
+vector<float> vec_sys_udsgtag;
 
 void save_weights(TString inputfile) 
 {
@@ -66,11 +74,24 @@ void save_weights(TString inputfile)
   float w_lumi_ =1;
   float l1pre_nom_ =1;
   float weight_ =1;
+  vector<float> *sys_mur_=new vector<float>;
+  vector<float> *sys_muf_=new vector<float>;
+  vector<float> *sys_murf_=new vector<float>;
+  vector<float> *sys_bctag_=new vector<float>;
+  vector<float> *sys_udsgtag_=new vector<float>;// */
+
   ch.SetBranchAddress("w_btag_dcsv",   	 	&w_btag_dcsv_);
   ch.SetBranchAddress("w_isr",   		&w_isr_);
   ch.SetBranchAddress("w_lumi",   		&w_lumi_);
   ch.SetBranchAddress("l1pre_nom",   		&l1pre_nom_);
   ch.SetBranchAddress("weight",   		&weight_);
+
+  ch.SetBranchAddress("sys_mur",   		&sys_mur_);
+  ch.SetBranchAddress("sys_muf",   		&sys_muf_);
+  ch.SetBranchAddress("sys_murf",   		&sys_murf_);
+  ch.SetBranchAddress("sys_bctag",   		&sys_bctag_);
+  ch.SetBranchAddress("sys_udsgtag",   		&sys_udsgtag_);// */
+
   for(Long64_t entry = 0; entry < ch.GetEntries(); ++entry)
   {
     ch.GetEntry(entry); 
@@ -78,6 +99,12 @@ void save_weights(TString inputfile)
     vec_w_isr.push_back(w_isr_);
     vec_w_lumi.push_back(w_lumi_);
     vec_weight.push_back(weight_);
+
+    vec_sys_mur.insert(vec_sys_mur.end(), sys_mur_->begin(), sys_mur_->end());
+    vec_sys_muf.insert(vec_sys_muf.end(), sys_muf_->begin(), sys_muf_->end());
+    vec_sys_murf.insert(vec_sys_murf.end(), sys_murf_->begin(), sys_murf_->end());
+    vec_sys_bctag.insert(vec_sys_bctag.end(), sys_bctag_->begin(), sys_bctag_->end());
+    vec_sys_udsgtag.insert(vec_sys_udsgtag.end(), sys_udsgtag_->begin(), sys_udsgtag_->end());// */
   }
 }
 
@@ -94,15 +121,22 @@ void copy_onefile(TString inputfile)
   TFile *newfile= new TFile(outputfile,"recreate");
   // remove branch
   ch.SetBranchStatus("w_btag_dcsv", 0);
-  ch.SetBranchStatus("w_isr", 			0);
-  ch.SetBranchStatus("weight", 			0);
+  ch.SetBranchStatus("w_isr", 	    0);
+  ch.SetBranchStatus("weight", 	    0);
+
+  ch.SetBranchStatus("sys_mur",	0);
+  ch.SetBranchStatus("sys_muf",	0);
+  ch.SetBranchStatus("sys_murf",0);
+  ch.SetBranchStatus("sys_bctag",0);
+  ch.SetBranchStatus("sys_udsgtag",0); // */ //FIXME
+
   TTree *ctree = ch.CopyTree(""); 
   newfile->cd();
   if(ctree) ctree->Write();
   newfile->Close();
 }
 
-void norm_onefile(TString inputfile, TString outputdir) 
+void norm_onefile(TString inputfile, TString outputdir, TString inputdir)
 {	
   TObjArray *tokens = inputfile.Tokenize("/"); 
   TString outputfile = (dynamic_cast<TObjString*>(tokens->At(tokens->GetEntries()-1)))->GetString();
@@ -112,12 +146,28 @@ void norm_onefile(TString inputfile, TString outputdir)
   file_new->cd();
   TTree *tree_new = (TTree*)file_new->Get("tree");
 
-  float w_btag_dcsv=1.; 
+  float w_btag_dcsv=1., w_isr=1., weight=1., frac1718=1.;
+  vector<float> sys_mur;
+  vector<float> sys_muf;
+  vector<float> sys_murf;
+  vector<float> sys_bctag;
+  vector<float> sys_udsgtag;
+
+  TBranch *b_frac1718 = tree_new->Branch("frac1718",&frac1718);
   TBranch *b_w_btag_dcsv = tree_new->Branch("w_btag_dcsv", &w_btag_dcsv);
-  float w_isr=1.; 
   TBranch *b_w_isr = tree_new->Branch("w_isr", &w_isr);
-  float weight=1.; 
   TBranch *b_weight = tree_new->Branch("weight", &weight);
+
+  TBranch *b_sys_mur = tree_new->Branch("sys_mur",&sys_mur);
+  TBranch *b_sys_muf = tree_new->Branch("sys_muf",&sys_muf);
+  TBranch *b_sys_murf = tree_new->Branch("sys_murf",&sys_murf);
+  TBranch *b_sys_bctag = tree_new->Branch("sys_bctag",&sys_bctag);
+  TBranch *b_sys_udsgtag = tree_new->Branch("sys_udsgtag",&sys_udsgtag);
+
+   int year    = 0;
+  if(inputdir.Contains("/2016/")) year = 2016;
+  else if(inputdir.Contains("/2017/")) year = 2017;
+  else if(inputdir.Contains("/2018/")) year = 2018;
 
   for(Long64_t entry = 0; entry < tree_new->GetEntries(); ++entry)
   {	
@@ -125,10 +175,41 @@ void norm_onefile(TString inputfile, TString outputdir)
     w_btag_dcsv=vec_w_btag_dcsv.at(entry)/w_btag_dcsv_mean; 
     w_isr=vec_w_isr.at(entry)/w_isr_mean; 
     weight=vec_weight.at(entry)/weight_over_w_lumi_mean;//FIXME 
-    
+
+    sys_mur.clear();
+
+    sys_mur.push_back(vec_sys_mur.at(2*entry)/sys_mur_mean);
+    sys_mur.push_back(vec_sys_mur.at(2*entry+1)/sys_mur_mean);
+    sys_muf.push_back(vec_sys_muf.at(2*entry)/sys_muf_mean);
+    sys_muf.push_back(vec_sys_muf.at(2*entry+1)/sys_muf_mean);
+    sys_murf.push_back(vec_sys_murf.at(2*entry)/sys_murf_mean);
+    sys_murf.push_back(vec_sys_murf.at(2*entry+1)/sys_murf_mean);
+    sys_bctag.push_back(vec_sys_bctag.at(2*entry)/sys_bctag_mean);
+    sys_bctag.push_back(vec_sys_bctag.at(2*entry+1)/sys_bctag_mean);
+    sys_udsgtag.push_back(vec_sys_udsgtag.at(2*entry)/sys_udsgtag_mean);
+    sys_udsgtag.push_back(vec_sys_udsgtag.at(2*entry+1)/sys_udsgtag_mean);
+
+    if(year == 2016) frac1718 = 1;
+    else if(year == 2017) frac1718 = 41.5/(41.5+59.7);
+    else if(year == 2018) frac1718 = 59.7/(41.5+59.7);
+
+    b_frac1718->Fill();
+
     b_w_btag_dcsv->Fill(); 
     b_w_isr->Fill(); 
     b_weight->Fill(); 
+
+    b_sys_mur->Fill();
+    b_sys_muf->Fill();
+    b_sys_murf->Fill();
+    b_sys_bctag->Fill();
+    b_sys_udsgtag->Fill();
+
+    sys_mur.clear();
+    sys_muf.clear();
+    sys_murf.clear();
+    sys_bctag.clear();
+    sys_udsgtag.clear();
   }
 
   //
@@ -136,6 +217,12 @@ void norm_onefile(TString inputfile, TString outputdir)
   vec_w_isr.clear(); 
   vec_w_lumi.clear(); 
   vec_weight.clear(); 
+
+  vec_sys_mur.clear();
+  vec_sys_muf.clear();
+  vec_sys_murf.clear();
+  vec_sys_bctag.clear();
+  vec_sys_udsgtag.clear();
 
   //
   file_new->cd();
@@ -155,6 +242,7 @@ void norm_onefile(TString inputfile, TString outputdir)
 int main(int argc, char **argv)
 //int main()
 {
+  ROOT::EnableImplicitMT(8);
   bool useCondor = true;
   TString inputdir, outputdir, tag, prenormdir; 
   
@@ -264,12 +352,12 @@ int main(int argc, char **argv)
       prenorm_files.at(i).ReplaceAll("/xrootd","");
     }
     cout << prenorm_files.at(i) << endl;
-		ch_mean.Add(prenorm_files.at(i));
+    ch_mean.Add(prenorm_files.at(i));
   }
 
-	cout << "weights calculated using " << prenorm_files.size() << " files" << endl;
-	cout << "number of events in the babies: " << ch_mean.GetEntries() << endl;
-	if(ch_mean.GetEntries()==0) return 0;
+  cout << "weights calculated using " << prenorm_files.size() << " files" << endl;
+  cout << "number of events in the babies: " << ch_mean.GetEntries() << endl;
+  if(ch_mean.GetEntries()==0) return 0;
 
   TH1D  *h_w_btag_dcsv = new TH1D("h_w_btag_dcsv","h_w_btag_dcsv",100,-5,5);
   ch_mean.Draw("w_btag_dcsv>>h_w_btag_dcsv","","geoff");
@@ -281,11 +369,37 @@ int main(int argc, char **argv)
   w_isr_mean = h_w_isr->GetMean();
   cout << "w_isr mean = " << w_isr_mean << endl;
   
-	TH1D  *h_weight_over_w_lumi = new TH1D("h_weight_over_w_lumi","h_weight_over_w_lumi",100,-5,5);
+  TH1D  *h_weight_over_w_lumi = new TH1D("h_weight_over_w_lumi","h_weight_over_w_lumi",100,-5,5);
   ch_mean.Draw("weight/(w_lumi*l1pre_nom)>>h_weight_over_w_lumi","","geoff");
   weight_over_w_lumi_mean = h_weight_over_w_lumi->GetMean();
   cout << "weight/(w_lumi mean*l1pre_nom) = " << weight_over_w_lumi_mean << endl;//FIXME
- 
+
+
+  TH1D  *h_sys_mur = new TH1D("h_sys_mur","h_sys_mur",100,-5,5);
+  ch_mean.Draw("sys_mur>>h_sys_mur","","geoff");
+  sys_mur_mean = h_sys_mur->GetMean();
+  cout << "sys_mur mean = " << sys_mur_mean << endl;
+
+  TH1D  *h_sys_muf = new TH1D("h_sys_muf","h_sys_muf",100,-5,5);
+  ch_mean.Draw("sys_muf>>h_sys_muf","","geoff");
+  sys_muf_mean = h_sys_muf->GetMean();
+  cout << "sys_muf mean = " << sys_muf_mean << endl;
+
+  TH1D  *h_sys_murf = new TH1D("h_sys_murf","h_sys_murf",100,-5,5);
+  ch_mean.Draw("sys_murf>>h_sys_murf","","geoff");
+  sys_murf_mean = h_sys_murf->GetMean();
+  cout << "sys_murf mean = " << sys_murf_mean << endl;
+
+  TH1D  *h_sys_bctag = new TH1D("h_sys_bctag","h_sys_bctag",100,-5,5);
+  ch_mean.Draw("sys_bctag>>h_sys_bctag","","geoff");
+  sys_bctag_mean = h_sys_bctag->GetMean();
+  cout << "sys_bctag mean = " << sys_bctag_mean << endl;
+
+  TH1D  *h_sys_udsgtag = new TH1D("h_sys_udsgtag","h_sys_udsgtag",100,-5,5);
+  ch_mean.Draw("sys_udsgtag>>h_sys_udsgtag","","geoff");
+  sys_udsgtag_mean = h_sys_udsgtag->GetMean();
+  cout << "sys_udsgtag mean = " << sys_udsgtag_mean << endl;
+
 	// 
 	// Process 
 	// 
@@ -314,7 +428,7 @@ int main(int argc, char **argv)
     cout << "processing: " << tonorm_files.at(i) << endl; 
     save_weights(tonorm_files.at(i)); 
     copy_onefile(tonorm_files.at(i)); 
-    norm_onefile(tonorm_files.at(i), outputdir); 
+    norm_onefile(tonorm_files.at(i), outputdir, inputdir); 
   }
   return 0;
 }
