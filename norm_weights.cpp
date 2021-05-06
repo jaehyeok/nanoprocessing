@@ -112,7 +112,10 @@ void copy_onefile(TString inputfile)
 {
   TChain ch("tree");
   ch.Add(inputfile);
-	
+
+  bool mGluino = false;
+  if(inputfile.Contains("SMS-T1tbs")) mGluino = true;
+
   TObjArray *tokens = inputfile.Tokenize("/"); 
   TString outputfile = (dynamic_cast<TObjString*>(tokens->At(tokens->GetEntries()-1)))->GetString();
   outputfile.ReplaceAll(".root", "_norm.root");
@@ -124,11 +127,13 @@ void copy_onefile(TString inputfile)
   ch.SetBranchStatus("w_isr", 	    0);
   ch.SetBranchStatus("weight", 	    0);
 
-  ch.SetBranchStatus("sys_mur",	0);
-  ch.SetBranchStatus("sys_muf",	0);
-  ch.SetBranchStatus("sys_murf",0);
-  ch.SetBranchStatus("sys_bctag",0);
-  ch.SetBranchStatus("sys_udsgtag",0); // */ //FIXME
+  if(mGluino){
+    ch.SetBranchStatus("sys_mur",	0);
+    ch.SetBranchStatus("sys_muf",	0);
+    ch.SetBranchStatus("sys_murf",0);
+    ch.SetBranchStatus("sys_bctag",0);
+    ch.SetBranchStatus("sys_udsgtag",0);
+  }
 
   TTree *ctree = ch.CopyTree(""); 
   newfile->cd();
@@ -146,6 +151,9 @@ void norm_onefile(TString inputfile, TString outputdir, TString inputdir)
   file_new->cd();
   TTree *tree_new = (TTree*)file_new->Get("tree");
 
+  bool mGluino = false;
+  if(inputfile.Contains("SMS-T1tbs")) mGluino = true;
+
   float w_btag_dcsv=1., w_isr=1., weight=1., frac1718=1.;
   vector<float> sys_mur;
   vector<float> sys_muf;
@@ -153,18 +161,23 @@ void norm_onefile(TString inputfile, TString outputdir, TString inputdir)
   vector<float> sys_bctag;
   vector<float> sys_udsgtag;
 
-  TBranch *b_frac1718 = tree_new->Branch("frac1718",&frac1718);
-  TBranch *b_w_btag_dcsv = tree_new->Branch("w_btag_dcsv", &w_btag_dcsv);
-  TBranch *b_w_isr = tree_new->Branch("w_isr", &w_isr);
-  TBranch *b_weight = tree_new->Branch("weight", &weight);
+  TBranch *b_frac1718, *b_w_btag_dcsv, *b_w_isr, *b_weight;
+  TBranch *b_sys_mur, *b_sys_muf, *b_sys_murf, *b_sys_bctag, *b_sys_udsgtag;
 
-  TBranch *b_sys_mur = tree_new->Branch("sys_mur",&sys_mur);
-  TBranch *b_sys_muf = tree_new->Branch("sys_muf",&sys_muf);
-  TBranch *b_sys_murf = tree_new->Branch("sys_murf",&sys_murf);
-  TBranch *b_sys_bctag = tree_new->Branch("sys_bctag",&sys_bctag);
-  TBranch *b_sys_udsgtag = tree_new->Branch("sys_udsgtag",&sys_udsgtag);
+  b_frac1718 = tree_new->Branch("frac1718",&frac1718);
+  b_w_btag_dcsv = tree_new->Branch("w_btag_dcsv", &w_btag_dcsv);
+  b_w_isr = tree_new->Branch("w_isr", &w_isr);
+  b_weight = tree_new->Branch("weight", &weight);
 
-   int year    = 0;
+  if(mGluino){
+    b_sys_mur = tree_new->Branch("sys_mur",&sys_mur);
+    b_sys_muf = tree_new->Branch("sys_muf",&sys_muf);
+    b_sys_murf = tree_new->Branch("sys_murf",&sys_murf);
+    b_sys_bctag = tree_new->Branch("sys_bctag",&sys_bctag);
+    b_sys_udsgtag = tree_new->Branch("sys_udsgtag",&sys_udsgtag);
+  }
+
+  int year    = 0;
   if(inputdir.Contains("/2016/")) year = 2016;
   else if(inputdir.Contains("/2017/")) year = 2017;
   else if(inputdir.Contains("/2018/")) year = 2018;
@@ -174,20 +187,20 @@ void norm_onefile(TString inputfile, TString outputdir, TString inputdir)
     tree_new->GetEntry(entry); 
     w_btag_dcsv=vec_w_btag_dcsv.at(entry)/w_btag_dcsv_mean; 
     w_isr=vec_w_isr.at(entry)/w_isr_mean; 
-    weight=vec_weight.at(entry)/weight_over_w_lumi_mean;//FIXME 
+    weight=vec_weight.at(entry)/weight_over_w_lumi_mean;
 
-    sys_mur.clear();
-
-    sys_mur.push_back(vec_sys_mur.at(2*entry)/sys_mur_mean);
-    sys_mur.push_back(vec_sys_mur.at(2*entry+1)/sys_mur_mean);
-    sys_muf.push_back(vec_sys_muf.at(2*entry)/sys_muf_mean);
-    sys_muf.push_back(vec_sys_muf.at(2*entry+1)/sys_muf_mean);
-    sys_murf.push_back(vec_sys_murf.at(2*entry)/sys_murf_mean);
-    sys_murf.push_back(vec_sys_murf.at(2*entry+1)/sys_murf_mean);
-    sys_bctag.push_back(vec_sys_bctag.at(2*entry)/sys_bctag_mean);
-    sys_bctag.push_back(vec_sys_bctag.at(2*entry+1)/sys_bctag_mean);
-    sys_udsgtag.push_back(vec_sys_udsgtag.at(2*entry)/sys_udsgtag_mean);
-    sys_udsgtag.push_back(vec_sys_udsgtag.at(2*entry+1)/sys_udsgtag_mean);
+    if(mGluino){
+      sys_mur.push_back(vec_sys_mur.at(2*entry)/sys_mur_mean);
+      sys_mur.push_back(vec_sys_mur.at(2*entry+1)/sys_mur_mean);
+      sys_muf.push_back(vec_sys_muf.at(2*entry)/sys_muf_mean);
+      sys_muf.push_back(vec_sys_muf.at(2*entry+1)/sys_muf_mean);
+      sys_murf.push_back(vec_sys_murf.at(2*entry)/sys_murf_mean);
+      sys_murf.push_back(vec_sys_murf.at(2*entry+1)/sys_murf_mean);
+      sys_bctag.push_back(vec_sys_bctag.at(2*entry)/sys_bctag_mean);
+      sys_bctag.push_back(vec_sys_bctag.at(2*entry+1)/sys_bctag_mean);
+      sys_udsgtag.push_back(vec_sys_udsgtag.at(2*entry)/sys_udsgtag_mean);
+      sys_udsgtag.push_back(vec_sys_udsgtag.at(2*entry+1)/sys_udsgtag_mean);
+    }
 
     if(year == 2016) frac1718 = 1;
     else if(year == 2017) frac1718 = 41.5/(41.5+59.7);
@@ -199,11 +212,13 @@ void norm_onefile(TString inputfile, TString outputdir, TString inputdir)
     b_w_isr->Fill(); 
     b_weight->Fill(); 
 
-    b_sys_mur->Fill();
-    b_sys_muf->Fill();
-    b_sys_murf->Fill();
-    b_sys_bctag->Fill();
-    b_sys_udsgtag->Fill();
+    if(mGluino){
+      b_sys_mur->Fill();
+      b_sys_muf->Fill();
+      b_sys_murf->Fill();
+      b_sys_bctag->Fill();
+      b_sys_udsgtag->Fill();
+    }
 
     sys_mur.clear();
     sys_muf.clear();
@@ -372,7 +387,7 @@ int main(int argc, char **argv)
   TH1D  *h_weight_over_w_lumi = new TH1D("h_weight_over_w_lumi","h_weight_over_w_lumi",100,-5,5);
   ch_mean.Draw("weight/(w_lumi*l1pre_nom)>>h_weight_over_w_lumi","","geoff");
   weight_over_w_lumi_mean = h_weight_over_w_lumi->GetMean();
-  cout << "weight/(w_lumi mean*l1pre_nom) = " << weight_over_w_lumi_mean << endl;//FIXME
+  cout << "weight/(w_lumi mean*l1pre_nom) = " << weight_over_w_lumi_mean << endl;
 
 
   TH1D  *h_sys_mur = new TH1D("h_sys_mur","h_sys_mur",100,-5,5);
