@@ -38,11 +38,11 @@ const bool DEBUG = false;
 
 // store mean here
 float w_btag_dcsv_mean;
-float sys_bctag_mean;
-float sys_udsgtag_mean;
-float sys_mur_mean;
-float sys_muf_mean;
-float sys_murf_mean;
+float sys_bctag_mean_0, sys_bctag_mean_1;
+float sys_udsgtag_mean_0, sys_udsgtag_mean_1;
+float sys_mur_mean_0, sys_mur_mean_1;
+float sys_muf_mean_0, sys_muf_mean_1;
+float sys_murf_mean_0, sys_murf_mean_1;
 
 float w_pu_mean;
 vector<float> sys_pu_mean;
@@ -153,13 +153,13 @@ void norm_onefile(TString inputfile, TString outputdir, TString inputdir)
 
   bool mGluino = false;
   if(inputfile.Contains("SMS-T1tbs")) mGluino = true;
-
-  float w_btag_dcsv=1., w_isr=1., weight=1., frac1718=1.;
   vector<float> sys_mur;
   vector<float> sys_muf;
   vector<float> sys_murf;
   vector<float> sys_bctag;
   vector<float> sys_udsgtag;
+
+  float w_btag_dcsv=1., w_isr=1., weight=1., frac1718=1.;
 
   TBranch *b_frac1718, *b_w_btag_dcsv, *b_w_isr, *b_weight;
   TBranch *b_sys_mur, *b_sys_muf, *b_sys_murf, *b_sys_bctag, *b_sys_udsgtag;
@@ -190,16 +190,16 @@ void norm_onefile(TString inputfile, TString outputdir, TString inputdir)
     weight=vec_weight.at(entry)/weight_over_w_lumi_mean;
 
     if(mGluino){
-      sys_mur.push_back(vec_sys_mur.at(2*entry)/sys_mur_mean);
-      sys_mur.push_back(vec_sys_mur.at(2*entry+1)/sys_mur_mean);
-      sys_muf.push_back(vec_sys_muf.at(2*entry)/sys_muf_mean);
-      sys_muf.push_back(vec_sys_muf.at(2*entry+1)/sys_muf_mean);
-      sys_murf.push_back(vec_sys_murf.at(2*entry)/sys_murf_mean);
-      sys_murf.push_back(vec_sys_murf.at(2*entry+1)/sys_murf_mean);
-      sys_bctag.push_back(vec_sys_bctag.at(2*entry)/sys_bctag_mean);
-      sys_bctag.push_back(vec_sys_bctag.at(2*entry+1)/sys_bctag_mean);
-      sys_udsgtag.push_back(vec_sys_udsgtag.at(2*entry)/sys_udsgtag_mean);
-      sys_udsgtag.push_back(vec_sys_udsgtag.at(2*entry+1)/sys_udsgtag_mean);
+      sys_mur.push_back(vec_sys_mur.at(2*entry)/sys_mur_mean_0);
+      sys_mur.push_back(vec_sys_mur.at(2*entry+1)/sys_mur_mean_1);
+      sys_muf.push_back(vec_sys_muf.at(2*entry)/sys_muf_mean_0);
+      sys_muf.push_back(vec_sys_muf.at(2*entry+1)/sys_muf_mean_1);
+      sys_murf.push_back(vec_sys_murf.at(2*entry)/sys_murf_mean_0);
+      sys_murf.push_back(vec_sys_murf.at(2*entry+1)/sys_murf_mean_1);
+      sys_bctag.push_back(vec_sys_bctag.at(2*entry)/sys_bctag_mean_0);
+      sys_bctag.push_back(vec_sys_bctag.at(2*entry+1)/sys_bctag_mean_1);
+      sys_udsgtag.push_back(vec_sys_udsgtag.at(2*entry)/sys_udsgtag_mean_0);
+      sys_udsgtag.push_back(vec_sys_udsgtag.at(2*entry+1)/sys_udsgtag_mean_1);
     }
 
     if(year == 2016) frac1718 = 1;
@@ -390,30 +390,63 @@ int main(int argc, char **argv)
   cout << "weight/(w_lumi mean*l1pre_nom) = " << weight_over_w_lumi_mean << endl;
 
 
-  TH1D  *h_sys_mur = new TH1D("h_sys_mur","h_sys_mur",100,-5,5);
-  ch_mean.Draw("sys_mur>>h_sys_mur","","geoff");
-  sys_mur_mean = h_sys_mur->GetMean();
-  cout << "sys_mur mean = " << sys_mur_mean << endl;
+  TH1D  *h_sys_mur_0 = new TH1D("h_sys_mur_0","h_sys_mur_0",100,-5,5);
+  ch_mean.Draw("sys_mur[0]>>h_sys_mur_0","","geoff");
+  sys_mur_mean_0 = h_sys_mur_0->GetMean();
+  cout << "sys_mur mean down = " << sys_mur_mean_0 << endl;
 
-  TH1D  *h_sys_muf = new TH1D("h_sys_muf","h_sys_muf",100,-5,5);
-  ch_mean.Draw("sys_muf>>h_sys_muf","","geoff");
-  sys_muf_mean = h_sys_muf->GetMean();
-  cout << "sys_muf mean = " << sys_muf_mean << endl;
+  TH1D  *h_sys_mur_1 = new TH1D("h_sys_mur_1","h_sys_mur_1",100,-5,5);
+  ch_mean.Draw("sys_mur[1]>>h_sys_mur_1","","geoff");
+  sys_mur_mean_1 = h_sys_mur_1->GetMean();
+  cout << "sys_mur mean up = " << sys_mur_mean_1 << endl;
 
-  TH1D  *h_sys_murf = new TH1D("h_sys_murf","h_sys_murf",100,-5,5);
-  ch_mean.Draw("sys_murf>>h_sys_murf","","geoff");
-  sys_murf_mean = h_sys_murf->GetMean();
-  cout << "sys_murf mean = " << sys_murf_mean << endl;
+  //----
 
-  TH1D  *h_sys_bctag = new TH1D("h_sys_bctag","h_sys_bctag",100,-5,5);
-  ch_mean.Draw("sys_bctag>>h_sys_bctag","","geoff");
-  sys_bctag_mean = h_sys_bctag->GetMean();
-  cout << "sys_bctag mean = " << sys_bctag_mean << endl;
+  TH1D  *h_sys_muf_0 = new TH1D("h_sys_muf_0","h_sys_muf_0",100,-5,5);
+  ch_mean.Draw("sys_muf[0]>>h_sys_muf_0","","geoff");
+  sys_muf_mean_0 = h_sys_muf_0->GetMean();
+  cout << "sys_muf mean down = " << sys_muf_mean_0 << endl;
 
-  TH1D  *h_sys_udsgtag = new TH1D("h_sys_udsgtag","h_sys_udsgtag",100,-5,5);
-  ch_mean.Draw("sys_udsgtag>>h_sys_udsgtag","","geoff");
-  sys_udsgtag_mean = h_sys_udsgtag->GetMean();
-  cout << "sys_udsgtag mean = " << sys_udsgtag_mean << endl;
+  TH1D  *h_sys_muf_1 = new TH1D("h_sys_muf_1","h_sys_muf_1",100,-5,5);
+  ch_mean.Draw("sys_muf[1]>>h_sys_muf_1","","geoff");
+  sys_muf_mean_1 = h_sys_muf_1->GetMean();
+  cout << "sys_muf mean up = " << sys_muf_mean_1 << endl;
+
+  //----
+
+  TH1D  *h_sys_murf_0 = new TH1D("h_sys_murf_0","h_sys_murf_0",100,-5,5);
+  ch_mean.Draw("sys_murf[0]>>h_sys_murf_0","","geoff");
+  sys_murf_mean_0 = h_sys_murf_0->GetMean();
+  cout << "sys_murf mean down = " << sys_murf_mean_0 << endl;
+
+  TH1D  *h_sys_murf_1 = new TH1D("h_sys_murf_1","h_sys_murf_1",100,-5,5);
+  ch_mean.Draw("sys_murf[1]>>h_sys_murf_1","","geoff");
+  sys_murf_mean_1 = h_sys_murf_1->GetMean();
+  cout << "sys_murf mean up = " << sys_murf_mean_1 << endl;
+
+  //----
+
+  TH1D  *h_sys_bctag_0 = new TH1D("h_sys_bctag_0","h_sys_bctag_0",100,-5,5);
+  ch_mean.Draw("sys_bctag[0]>>h_sys_bctag_0","","geoff");
+  sys_bctag_mean_0 = h_sys_bctag_0->GetMean();
+  cout << "sys_bctag mean down = " << sys_bctag_mean_0 << endl;
+
+  TH1D  *h_sys_bctag_1 = new TH1D("h_sys_bctag_1","h_sys_bctag_1",100,-5,5);
+  ch_mean.Draw("sys_bctag[1]>>h_sys_bctag_1","","geoff");
+  sys_bctag_mean_1 = h_sys_bctag_1->GetMean();
+  cout << "sys_bctag mean up = " << sys_bctag_mean_1 << endl;
+
+  //----
+
+  TH1D  *h_sys_udsgtag_0 = new TH1D("h_sys_udsgtag_0","h_sys_udsgtag_0",100,-5,5);
+  ch_mean.Draw("sys_udsgtag[0]>>h_sys_udsgtag_0","","geoff");
+  sys_udsgtag_mean_0 = h_sys_udsgtag_0->GetMean();
+  cout << "sys_udsgtag mean down = " << sys_udsgtag_mean_0 << endl;
+
+  TH1D  *h_sys_udsgtag_1 = new TH1D("h_sys_udsgtag_1","h_sys_udsgtag_1",100,-5,5);
+  ch_mean.Draw("sys_udsgtag[1]>>h_sys_udsgtag_1","","geoff");
+  sys_udsgtag_mean_1 = h_sys_udsgtag_1->GetMean();
+  cout << "sys_udsgtag mean up = " << sys_udsgtag_mean_1 << endl;
 
 	// 
 	// Process 
