@@ -1241,7 +1241,8 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
       else if(nisr_>=6)  isr_wgt = 0.511; 
     }
 
-    w_isr = isr_wgt*isr_norm;
+    //w_isr = isr_wgt*isr_norm;
+    w_isr = isr_wgt;
     if(year==2016){
       sys_isr.push_back(w_isr+((1-w_isr)/2));
       sys_isr.push_back(w_isr-((1-w_isr)/2));

@@ -43,6 +43,7 @@ float sys_udsgtag_mean_0, sys_udsgtag_mean_1;
 float sys_mur_mean_0, sys_mur_mean_1;
 float sys_muf_mean_0, sys_muf_mean_1;
 float sys_murf_mean_0, sys_murf_mean_1;
+float sys_isr_mean_0, sys_isr_mean_1;
 
 float w_pu_mean;
 vector<float> sys_pu_mean;
@@ -58,6 +59,7 @@ vector<float> vec_w_isr;
 vector<float> vec_w_lumi; 
 vector<float> vec_weight; 
 
+vector<float> vec_sys_isr;
 vector<float> vec_sys_mur;
 vector<float> vec_sys_muf;
 vector<float> vec_sys_murf;
@@ -74,6 +76,7 @@ void save_weights(TString inputfile)
   float w_lumi_ =1;
   float l1pre_nom_ =1;
   float weight_ =1;
+  vector<float> *sys_isr_=new vector<float>;
   vector<float> *sys_mur_=new vector<float>;
   vector<float> *sys_muf_=new vector<float>;
   vector<float> *sys_murf_=new vector<float>;
@@ -86,6 +89,7 @@ void save_weights(TString inputfile)
   ch.SetBranchAddress("l1pre_nom",   		&l1pre_nom_);
   ch.SetBranchAddress("weight",   		&weight_);
 
+  ch.SetBranchAddress("sys_isr",   		&sys_isr_);
   ch.SetBranchAddress("sys_mur",   		&sys_mur_);
   ch.SetBranchAddress("sys_muf",   		&sys_muf_);
   ch.SetBranchAddress("sys_murf",   		&sys_murf_);
@@ -100,6 +104,7 @@ void save_weights(TString inputfile)
     vec_w_lumi.push_back(w_lumi_);
     vec_weight.push_back(weight_);
 
+    vec_sys_isr.insert(vec_sys_isr.end(), sys_isr_->begin(), sys_isr_->end());
     vec_sys_mur.insert(vec_sys_mur.end(), sys_mur_->begin(), sys_mur_->end());
     vec_sys_muf.insert(vec_sys_muf.end(), sys_muf_->begin(), sys_muf_->end());
     vec_sys_murf.insert(vec_sys_murf.end(), sys_murf_->begin(), sys_murf_->end());
@@ -128,6 +133,7 @@ void copy_onefile(TString inputfile)
   ch.SetBranchStatus("weight", 	    0);
 
   if(mGluino){
+    ch.SetBranchStatus("sys_isr",	0);
     ch.SetBranchStatus("sys_mur",	0);
     ch.SetBranchStatus("sys_muf",	0);
     ch.SetBranchStatus("sys_murf",0);
@@ -153,6 +159,7 @@ void norm_onefile(TString inputfile, TString outputdir, TString inputdir)
 
   bool mGluino = false;
   if(inputfile.Contains("SMS-T1tbs")) mGluino = true;
+  vector<float> sys_isr;
   vector<float> sys_mur;
   vector<float> sys_muf;
   vector<float> sys_murf;
@@ -162,7 +169,7 @@ void norm_onefile(TString inputfile, TString outputdir, TString inputdir)
   float w_btag_dcsv=1., w_isr=1., weight=1., frac1718=1.;
 
   TBranch *b_frac1718, *b_w_btag_dcsv, *b_w_isr, *b_weight;
-  TBranch *b_sys_mur, *b_sys_muf, *b_sys_murf, *b_sys_bctag, *b_sys_udsgtag;
+  TBranch *b_sys_isr, *b_sys_mur, *b_sys_muf, *b_sys_murf, *b_sys_bctag, *b_sys_udsgtag;
 
   b_frac1718 = tree_new->Branch("frac1718",&frac1718);
   b_w_btag_dcsv = tree_new->Branch("w_btag_dcsv", &w_btag_dcsv);
@@ -170,6 +177,7 @@ void norm_onefile(TString inputfile, TString outputdir, TString inputdir)
   b_weight = tree_new->Branch("weight", &weight);
 
   if(mGluino){
+    b_sys_isr = tree_new->Branch("sys_isr",&sys_isr);
     b_sys_mur = tree_new->Branch("sys_mur",&sys_mur);
     b_sys_muf = tree_new->Branch("sys_muf",&sys_muf);
     b_sys_murf = tree_new->Branch("sys_murf",&sys_murf);
@@ -190,6 +198,8 @@ void norm_onefile(TString inputfile, TString outputdir, TString inputdir)
     weight=vec_weight.at(entry)/weight_over_w_lumi_mean;
 
     if(mGluino){
+      sys_isr.push_back(vec_sys_isr.at(2*entry)/sys_isr_mean_0);
+      sys_isr.push_back(vec_sys_isr.at(2*entry+1)/sys_isr_mean_1);
       sys_mur.push_back(vec_sys_mur.at(2*entry)/sys_mur_mean_0);
       sys_mur.push_back(vec_sys_mur.at(2*entry+1)/sys_mur_mean_1);
       sys_muf.push_back(vec_sys_muf.at(2*entry)/sys_muf_mean_0);
@@ -213,6 +223,7 @@ void norm_onefile(TString inputfile, TString outputdir, TString inputdir)
     b_weight->Fill(); 
 
     if(mGluino){
+      b_sys_isr->Fill();
       b_sys_mur->Fill();
       b_sys_muf->Fill();
       b_sys_murf->Fill();
@@ -220,6 +231,7 @@ void norm_onefile(TString inputfile, TString outputdir, TString inputdir)
       b_sys_udsgtag->Fill();
     }
 
+    sys_isr.clear();
     sys_mur.clear();
     sys_muf.clear();
     sys_murf.clear();
@@ -233,6 +245,7 @@ void norm_onefile(TString inputfile, TString outputdir, TString inputdir)
   vec_w_lumi.clear(); 
   vec_weight.clear(); 
 
+  vec_sys_isr.clear();
   vec_sys_mur.clear();
   vec_sys_muf.clear();
   vec_sys_murf.clear();
@@ -447,6 +460,18 @@ int main(int argc, char **argv)
   ch_mean.Draw("sys_udsgtag[1]>>h_sys_udsgtag_1","","geoff");
   sys_udsgtag_mean_1 = h_sys_udsgtag_1->GetMean();
   cout << "sys_udsgtag mean up = " << sys_udsgtag_mean_1 << endl;
+
+  //----
+
+  TH1D  *h_sys_isr_0 = new TH1D("h_sys_isr_0","h_sys_isr_0",100,-5,5);
+  ch_mean.Draw("sys_isr[0]>>h_sys_isr_0","","geoff");
+  sys_isr_mean_0 = h_sys_isr_0->GetMean();
+  cout << "sys_isr mean down = " << sys_isr_mean_0 << endl;
+
+  TH1D  *h_sys_isr_1 = new TH1D("h_sys_isr_1","h_sys_isr_1",100,-5,5);
+  ch_mean.Draw("sys_isr[1]>>h_sys_isr_1","","geoff");
+  sys_isr_mean_1 = h_sys_isr_1->GetMean();
+  cout << "sys_isr mean up = " << sys_isr_mean_1 << endl;
 
 	// 
 	// Process 
