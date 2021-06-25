@@ -118,6 +118,13 @@ void copy_onefile(TString inputfile)
   TChain ch("tree");
   ch.Add(inputfile);
 
+  TString inputdir;
+
+  int year    = 0;
+  if(inputdir.Contains("/2016/")) year = 2016;
+  else if(inputdir.Contains("/2017/")) year = 2017;
+  else if(inputdir.Contains("/2018/")) year = 2018;
+
   bool mGluino = false;
   if(inputfile.Contains("SMS-T1tbs")) mGluino = true;
   bool tW = false;
@@ -126,7 +133,7 @@ void copy_onefile(TString inputfile)
   bool WZ = false;
   bool ZZ = false;
   if(inputfile.Contains("ST_tW")) tW = true;
-  if(inputfile.Contains("WW_")) WW = true;
+  if(inputfile.Contains("WW")) WW = true;
   if(inputfile.Contains("DYJetsToLL_M-50_HT-400to600")) DY400to600 = true;
   if(inputfile.Contains("WZ_")) WZ = true;
   if(inputfile.Contains("ZZ")) ZZ = true;
@@ -151,8 +158,15 @@ void copy_onefile(TString inputfile)
     ch.SetBranchStatus("sys_muf",	0);
     ch.SetBranchStatus("sys_murf",	0);
   }
-  else if(tW || WW || DY400to600 || WZ || ZZ){
+  if(year==2016 && (tW || WW || DY400to600 || WZ || ZZ)){
     ch.SetBranchStatus("sys_murf",	0);
+    ch.SetBranchStatus("sys_mur",	0);
+    ch.SetBranchStatus("sys_muf",	0);
+  }
+  else if(year!=2016 && (WW || DY400to600 || WZ || ZZ)){
+    ch.SetBranchStatus("sys_murf",      0);
+    ch.SetBranchStatus("sys_mur",       0);
+    ch.SetBranchStatus("sys_muf",       0);
   }
 
   TTree *ctree = ch.CopyTree(""); 
@@ -162,11 +176,16 @@ void copy_onefile(TString inputfile)
 }
 
 void norm_onefile(TString inputfile, TString outputdir, TString inputdir)
-{	
+{
+   int year    = 0;
+  if(inputdir.Contains("/2016/")) year = 2016;
+  else if(inputdir.Contains("/2017/")) year = 2017;
+  else if(inputdir.Contains("/2018/")) year = 2018;
+
   TObjArray *tokens = inputfile.Tokenize("/"); 
   TString outputfile = (dynamic_cast<TObjString*>(tokens->At(tokens->GetEntries()-1)))->GetString();
   outputfile.ReplaceAll(".root", "_norm.root");
-	
+
   TFile *file_new = new TFile(outputfile,"update");
   file_new->cd();
   TTree *tree_new = (TTree*)file_new->Get("tree");
@@ -211,14 +230,16 @@ void norm_onefile(TString inputfile, TString outputdir, TString inputdir)
     b_sys_muf = tree_new->Branch("sys_muf",&sys_muf);
     b_sys_murf = tree_new->Branch("sys_murf",&sys_murf);
   }
-  else if(ZZ || WZ || DY400to600 || WW || tW){
+  if(year == 2016 && (ZZ || WZ || DY400to600 || WW || tW)){
     b_sys_murf = tree_new->Branch("sys_murf",&sys_murf);
+    b_sys_mur = tree_new->Branch("sys_mur",&sys_murf);
+    b_sys_muf = tree_new->Branch("sys_muf",&sys_murf);
   }
-
-  int year    = 0;
-  if(inputdir.Contains("/2016/")) year = 2016;
-  else if(inputdir.Contains("/2017/")) year = 2017;
-  else if(inputdir.Contains("/2018/")) year = 2018;
+  else if(year!=2016 && (WW || DY400to600 || WZ || ZZ)){
+    b_sys_murf = tree_new->Branch("sys_murf",&sys_murf);
+    b_sys_mur = tree_new->Branch("sys_mur",&sys_murf);
+    b_sys_muf = tree_new->Branch("sys_muf",&sys_murf);
+  }
 
   for(Long64_t entry = 0; entry < tree_new->GetEntries(); ++entry)
   {	
@@ -235,9 +256,15 @@ void norm_onefile(TString inputfile, TString outputdir, TString inputdir)
       sys_murf.push_back(vec_sys_murf.at(2*entry)/sys_murf_mean_0);
       sys_murf.push_back(vec_sys_murf.at(2*entry+1)/sys_murf_mean_1);
     }
-    else if(ZZ || WZ || DY400to600 || WW || tW){
+    if(year == 2016 && (ZZ || WZ || DY400to600 || WW || tW)){
       sys_murf.push_back(1);
+      sys_mur.push_back(1);
+      sys_muf.push_back(1);
+    }
+    else if(year != 2016 && (WW || DY400to600 || WZ || ZZ)){
       sys_murf.push_back(1);
+      sys_mur.push_back(1);
+      sys_muf.push_back(1);
     }
 
     sys_bctag.push_back(vec_sys_bctag.at(2*entry)/sys_bctag_mean_0);
@@ -248,7 +275,7 @@ void norm_onefile(TString inputfile, TString outputdir, TString inputdir)
       sys_isr.push_back(vec_sys_isr.at(2*entry)/sys_isr_mean_0);
       sys_isr.push_back(vec_sys_isr.at(2*entry+1)/sys_isr_mean_1);
     }
-    else if(!(mGluino || ttbar) && year == 2016){
+    if(!(mGluino || ttbar) && year == 2016){
       sys_isr.push_back(1);
       sys_isr.push_back(1);
     }
@@ -268,8 +295,15 @@ void norm_onefile(TString inputfile, TString outputdir, TString inputdir)
       b_sys_muf->Fill();
       b_sys_murf->Fill();
     }
-    else if(ZZ || WZ || DY400to600 || WW || tW){
+    if(year == 2016 && (ZZ || WZ || DY400to600 || WW || tW)){
       b_sys_murf->Fill();
+      b_sys_mur->Fill();
+      b_sys_muf->Fill();
+    }
+    else if(year!=2016 && (WW || DY400to600 || WZ || ZZ)){
+      b_sys_murf->Fill();
+      b_sys_mur->Fill();
+      b_sys_muf->Fill();
     }
 
     b_sys_bctag->Fill();
