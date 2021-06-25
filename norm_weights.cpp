@@ -120,6 +120,17 @@ void copy_onefile(TString inputfile)
 
   bool mGluino = false;
   if(inputfile.Contains("SMS-T1tbs")) mGluino = true;
+  bool tW = false;
+  bool WW = false;
+  bool DY400to600 = false;
+  bool WZ = false;
+  bool ZZ = false;
+  if(inputfile.Contains("ST_tW")) tW = true;
+  if(inputfile.Contains("WW_")) WW = true;
+  if(inputfile.Contains("DYJetsToLL_M-50_HT-400to600")) DY400to600 = true;
+  if(inputfile.Contains("WZ_")) WZ = true;
+  if(inputfile.Contains("ZZ")) ZZ = true;
+
 
   TObjArray *tokens = inputfile.Tokenize("/"); 
   TString outputfile = (dynamic_cast<TObjString*>(tokens->At(tokens->GetEntries()-1)))->GetString();
@@ -138,7 +149,10 @@ void copy_onefile(TString inputfile)
   if(mGluino){
     ch.SetBranchStatus("sys_mur",	0);
     ch.SetBranchStatus("sys_muf",	0);
-    ch.SetBranchStatus("sys_murf",0);
+    ch.SetBranchStatus("sys_murf",	0);
+  }
+  else if(tW || WW || DY400to600 || WZ || ZZ){
+    ch.SetBranchStatus("sys_murf",	0);
   }
 
   TTree *ctree = ch.CopyTree(""); 
@@ -159,8 +173,18 @@ void norm_onefile(TString inputfile, TString outputdir, TString inputdir)
 
   bool mGluino = false;
   bool ttbar = false;
+  bool tW = false;
+  bool WW = false;
+  bool DY400to600 = false;
+  bool WZ = false;
+  bool ZZ = false;
   if(inputfile.Contains("SMS-T1tbs")) mGluino = true;
   if(inputfile.Contains("TTJets")) ttbar = true;
+  if(inputfile.Contains("ST_tW")) tW = true;
+  if(inputfile.Contains("WW_")) WW = true;
+  if(inputfile.Contains("DYJetsToLL_M-50_HT-400to600")) DY400to600 = true;
+  if(inputfile.Contains("WZ_")) WZ = true;
+  if(inputfile.Contains("ZZ")) ZZ = true;
 
   vector<float> sys_mur;
   vector<float> sys_muf;
@@ -187,6 +211,9 @@ void norm_onefile(TString inputfile, TString outputdir, TString inputdir)
     b_sys_muf = tree_new->Branch("sys_muf",&sys_muf);
     b_sys_murf = tree_new->Branch("sys_murf",&sys_murf);
   }
+  else if(ZZ || WZ || DY400to600 || WW || tW){
+    b_sys_murf = tree_new->Branch("sys_murf",&sys_murf);
+  }
 
   int year    = 0;
   if(inputdir.Contains("/2016/")) year = 2016;
@@ -208,6 +235,11 @@ void norm_onefile(TString inputfile, TString outputdir, TString inputdir)
       sys_murf.push_back(vec_sys_murf.at(2*entry)/sys_murf_mean_0);
       sys_murf.push_back(vec_sys_murf.at(2*entry+1)/sys_murf_mean_1);
     }
+    else if(ZZ || WZ || DY400to600 || WW || tW){
+      sys_murf.push_back(1);
+      sys_murf.push_back(1);
+    }
+
     sys_bctag.push_back(vec_sys_bctag.at(2*entry)/sys_bctag_mean_0);
     sys_bctag.push_back(vec_sys_bctag.at(2*entry+1)/sys_bctag_mean_1);
     sys_udsgtag.push_back(vec_sys_udsgtag.at(2*entry)/sys_udsgtag_mean_0);
@@ -236,6 +268,10 @@ void norm_onefile(TString inputfile, TString outputdir, TString inputdir)
       b_sys_muf->Fill();
       b_sys_murf->Fill();
     }
+    else if(ZZ || WZ || DY400to600 || WW || tW){
+      b_sys_murf->Fill();
+    }
+
     b_sys_bctag->Fill();
     b_sys_udsgtag->Fill();
     b_sys_isr->Fill();
