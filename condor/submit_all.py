@@ -9,7 +9,7 @@ import glob
 username = getpass.getuser()
 year=sys.argv[1]
 
-outputdir="root://cms-xrdr.private.lo:2094//xrd/store/user/"+username+"/nanoprocessing/"+year+"/GluGluToNeuNeu/"
+outputdir="root://cms-xrdr.private.lo:2094//xrd/store/user/"+username+"/nanoprocessing/"+year+"/processed_deepTvsQCD/"
 
 #samplelist="samples/samples"+year+"UL_v2.txt"
 samplelist="samples/samples"+year+"_v7.txt"
@@ -37,11 +37,12 @@ f = open(samplelist, 'r')
 splits = outputdir.split("/")
 #list_processed = "flist_"+splits[4]+"_"+splits[5]+".txt"
 list_processed = "flist_outputdir_"+splits[8]+"_"+splits[9]+".txt"
+#list_processed = "flist_outputdir_"+splits[9]+"_"+splits[10]+".txt"#FIXME
 
 # list of samples from sample list
 lines_with_ext = f.readlines()
 # remove everything after "asymptotic_v7" to include both ext and non-ext samples
-lines_duplicates = [sample_with_ext.split("asymptotic_v7")[0] for sample_with_ext in lines_with_ext]
+lines_duplicates = [sample_with_ext.split("asymptotic_v8")[0] for sample_with_ext in lines_with_ext]
 # remove duplicates
 lines = list(dict.fromkeys(lines_duplicates))
 
@@ -53,6 +54,7 @@ for line in lines:
   # mc
   if "13TeV" in line:
     f_list = glob.glob("/xrootd/store/mc/"+inputmctag+"/"+splits[0].rstrip()+"*/*")
+    #f_list = glob.glob("/xrootd/store/user/"+username+"/"+inputmctag+"/"+splits[0].rstrip()+"*/*")#FIXME
     process=line.split('_13TeV')[0]
     list_file = open("/cms/ldap_home/"+username+"/flist/"+year+"/flist_"+process+".txt", "w")
     for subdir in f_list:

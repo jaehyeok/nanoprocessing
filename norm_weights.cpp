@@ -153,12 +153,12 @@ void copy_onefile(TString inputfile)
   ch.SetBranchStatus("sys_bctag",0);
   ch.SetBranchStatus("sys_udsgtag",0);
 
-  if(mGluino){
+  //if(mGluino){
     ch.SetBranchStatus("sys_mur",	0);
     ch.SetBranchStatus("sys_muf",	0);
     ch.SetBranchStatus("sys_murf",	0);
-  }
-  if(year==2016 && (tW || WW || DY400to600 || WZ || ZZ)){
+  //}
+  /*if(year==2016 && (WW || DY400to600 || WZ || ZZ || tW)){
     ch.SetBranchStatus("sys_murf",	0);
     ch.SetBranchStatus("sys_mur",	0);
     ch.SetBranchStatus("sys_muf",	0);
@@ -167,7 +167,7 @@ void copy_onefile(TString inputfile)
     ch.SetBranchStatus("sys_murf",      0);
     ch.SetBranchStatus("sys_mur",       0);
     ch.SetBranchStatus("sys_muf",       0);
-  }
+  }*/
 
   TTree *ctree = ch.CopyTree(""); 
   newfile->cd();
@@ -225,12 +225,12 @@ void norm_onefile(TString inputfile, TString outputdir, TString inputdir)
   b_sys_bctag = tree_new->Branch("sys_bctag",&sys_bctag);
   b_sys_udsgtag = tree_new->Branch("sys_udsgtag",&sys_udsgtag);
 
-  if(mGluino){
+  //if(mGluino){
     b_sys_mur = tree_new->Branch("sys_mur",&sys_mur);
     b_sys_muf = tree_new->Branch("sys_muf",&sys_muf);
     b_sys_murf = tree_new->Branch("sys_murf",&sys_murf);
-  }
-  if(year == 2016 && (ZZ || WZ || DY400to600 || WW || tW)){
+  //}
+  /*if(year == 2016 && (ZZ || WZ || DY400to600 || WW || tW)){
     b_sys_murf = tree_new->Branch("sys_murf",&sys_murf);
     b_sys_mur = tree_new->Branch("sys_mur",&sys_murf);
     b_sys_muf = tree_new->Branch("sys_muf",&sys_murf);
@@ -239,7 +239,7 @@ void norm_onefile(TString inputfile, TString outputdir, TString inputdir)
     b_sys_murf = tree_new->Branch("sys_murf",&sys_murf);
     b_sys_mur = tree_new->Branch("sys_mur",&sys_murf);
     b_sys_muf = tree_new->Branch("sys_muf",&sys_murf);
-  }
+  }*/
 
   for(Long64_t entry = 0; entry < tree_new->GetEntries(); ++entry)
   {	
@@ -248,7 +248,7 @@ void norm_onefile(TString inputfile, TString outputdir, TString inputdir)
     w_isr=vec_w_isr.at(entry)/w_isr_mean; 
     weight=vec_weight.at(entry)/weight_over_w_lumi_mean;
 
-    if(mGluino){
+    /*if(mGluino){
       sys_mur.push_back(vec_sys_mur.at(2*entry)/sys_mur_mean_0);
       sys_mur.push_back(vec_sys_mur.at(2*entry+1)/sys_mur_mean_1);
       sys_muf.push_back(vec_sys_muf.at(2*entry)/sys_muf_mean_0);
@@ -260,22 +260,23 @@ void norm_onefile(TString inputfile, TString outputdir, TString inputdir)
       sys_murf.push_back(1);
       sys_mur.push_back(1);
       sys_muf.push_back(1);
-    }
-    else if(year != 2016 && (WW || DY400to600 || WZ || ZZ)){
+    }*/
+    //else if(year != 2016 && (WW || DY400to600 || WZ || ZZ)){
       sys_murf.push_back(1);
       sys_mur.push_back(1);
       sys_muf.push_back(1);
-    }
+   // }
 
     sys_bctag.push_back(vec_sys_bctag.at(2*entry)/sys_bctag_mean_0);
     sys_bctag.push_back(vec_sys_bctag.at(2*entry+1)/sys_bctag_mean_1);
     sys_udsgtag.push_back(vec_sys_udsgtag.at(2*entry)/sys_udsgtag_mean_0);
     sys_udsgtag.push_back(vec_sys_udsgtag.at(2*entry+1)/sys_udsgtag_mean_1);
+
     if((mGluino || ttbar) && year == 2016){
       sys_isr.push_back(vec_sys_isr.at(2*entry)/sys_isr_mean_0);
       sys_isr.push_back(vec_sys_isr.at(2*entry+1)/sys_isr_mean_1);
     }
-    if(!(mGluino || ttbar) && year == 2016){
+    else if(!(mGluino || ttbar)){
       sys_isr.push_back(1);
       sys_isr.push_back(1);
     }
@@ -290,12 +291,12 @@ void norm_onefile(TString inputfile, TString outputdir, TString inputdir)
     b_w_isr->Fill(); 
     b_weight->Fill(); 
 
-    if(mGluino){
+    //if(mGluino){
       b_sys_mur->Fill();
       b_sys_muf->Fill();
       b_sys_murf->Fill();
-    }
-    if(year == 2016 && (ZZ || WZ || DY400to600 || WW || tW)){
+    //}
+    /*if(year == 2016 && (ZZ || WZ || DY400to600 || WW || tW)){
       b_sys_murf->Fill();
       b_sys_mur->Fill();
       b_sys_muf->Fill();
@@ -304,7 +305,7 @@ void norm_onefile(TString inputfile, TString outputdir, TString inputdir)
       b_sys_murf->Fill();
       b_sys_mur->Fill();
       b_sys_muf->Fill();
-    }
+    }*/
 
     b_sys_bctag->Fill();
     b_sys_udsgtag->Fill();

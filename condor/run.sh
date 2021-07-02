@@ -5,7 +5,7 @@ pwd
 echo ""
 
 #
-export PATH=/bin:/usr/bin:/usr/local/bin:/cms/ldap_home/jaehyeok/tools/fastjet-install/bin:/usr/texbin/:/opt/pdflabs/pdftk/bin/$PATH
+export PATH=/bin:/usr/bin:/usr/local/bin:/cms/ldap_home/yjeong/tools/fastjet-install/bin:/usr/texbin/:/opt/pdflabs/pdftk/bin/$PATH
 
 #
 source /cvmfs/cms.cern.ch/cmsset_default.sh

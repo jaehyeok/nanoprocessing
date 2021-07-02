@@ -189,6 +189,9 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   Float_t     Pileup_nTrueInt = 0; 
   Int_t       Pileup_nPU      = 0; 
   Float_t     fixedGridRhoFastjetAll = 0; 
+  // deepTag
+  Float_t     FatJet_deepTagMD_TvsQCD = 0;
+  Float_t     FatJet_deepTag_TvsQCD = 0;
   // weights
   Float_t     btagWeight_CSVV2 = 1;
   Float_t     btagWeight_DeepCSVB = 1;
@@ -245,6 +248,8 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   Float_t    Jet_rawFactor[100];
   Float_t    Jet_area[100];
   Float_t    Jet_qgl[100];
+  Float_t    Jet_pt_jerUp[100];
+  Float_t    Jet_pt_jerDown[100];
   Int_t      Jet_jetId[100];
   Int_t      Jet_nElectrons[100];
   Int_t      Jet_nMuons[100];
@@ -288,6 +293,12 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   {
     tree->SetBranchAddress("Pileup_nTrueInt",     &Pileup_nTrueInt);
     tree->SetBranchAddress("Pileup_nPU",          &Pileup_nPU);
+  }
+  // deepTag
+  if(!isData)
+  {
+    tree->SetBranchAddress("FatJet_deepTagMD_TvsQCD",    &FatJet_deepTagMD_TvsQCD);
+    tree->SetBranchAddress("FatJet_deepTag_TvsQCD",    &FatJet_deepTag_TvsQCD);
   }
   // weights 
   if(!isData){
@@ -341,6 +352,8 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   tree->SetBranchAddress("Jet_btagDeepB",       &Jet_btagDeepB); 
   tree->SetBranchAddress("Jet_btagDeepC",       &Jet_btagDeepC);
   tree->SetBranchAddress("Jet_qgl",		&Jet_qgl);
+  tree->SetBranchAddress("Jet_pt_jerUp",	&Jet_pt_jerUp);
+  tree->SetBranchAddress("Jet_pt_jerDown",	&Jet_pt_jerDown);
   tree->SetBranchAddress("Jet_jetId",           &Jet_jetId); 
   tree->SetBranchAddress("Jet_nElectrons",      &Jet_nElectrons); 
   tree->SetBranchAddress("Jet_nMuons",          &Jet_nMuons); 
@@ -406,6 +419,9 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   float weight      =1;
   float w_btag_csv  =1;
   float w_btag_dcsv =1;
+  //deepTag
+  float deep_tagMD_TvsQCD = 1;
+  float deep_tag_TvsQCD = 1;
   //float w_btag_dcsv_norm =1;
   float w_pu        =1;
   float w_lumi      =1;
@@ -497,6 +513,8 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   //std::vector<int>   jets_fjet_index;
   std::vector<int>   jets_hflavor;
   std::vector<bool>  jets_hem;
+  std::vector<bool>  jets_pt_jerUp;
+  std::vector<bool>  jets_pt_jerDown;
 
   // GenParticle
   int ngen;
@@ -556,6 +574,9 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   babyTree_->Branch("l1pre_dn", 	 &l1pre_dn);
   babyTree_->Branch("l1pre_up",		 &l1pre_up);
   babyTree_->Branch("stitch_ht",         &stitch_ht);
+  //deepTag
+  babyTree_->Branch("deep_tagMD_TvsQCD", &deep_tagMD_TvsQCD);
+  babyTree_->Branch("deep_tag_TvsQCD", &deep_tag_TvsQCD);
   // weights 
   babyTree_->Branch("weight",            &weight);
   babyTree_->Branch("w_btag_csv",    	 &w_btag_csv);
@@ -606,6 +627,8 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   babyTree_->Branch("jets_islep",        &jets_islep);    
   babyTree_->Branch("jets_hflavor",      &jets_hflavor);    
   babyTree_->Branch("jets_hem",     	 &jets_hem);    
+  babyTree_->Branch("jets_pt_jerUp",     &jets_pt_jerUp);
+  babyTree_->Branch("jets_pt_jerDown",   &jets_pt_jerDown);
   // fatjet
   babyTree_->Branch("mj12",              &mj12);    
   babyTree_->Branch("fjets_pt",          &fjets_pt);    
@@ -695,6 +718,9 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
     l1pre_nom = -1;
     l1pre_dn = -1;
     l1pre_up = -1;
+    // deepTag
+    deep_tagMD_TvsQCD = 1;
+    deep_tag_TvsQCD = 1;
     // weights 
     weight        =    1;
     w_lep         =    1; 
@@ -738,6 +764,8 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
     jets_islep.clear();     
     jets_hflavor.clear();      
     jets_hem.clear();
+    jets_pt_jerUp.clear();
+    jets_pt_jerDown.clear();
     //
     mj12         =   0;
     fjets_pt.clear();
@@ -792,6 +820,8 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
     ntrupv  = Pileup_nPU;
     ntrupv_mean  = Pileup_nTrueInt;
     lhe_ht = LHE_HTIncoming;
+    deep_tagMD_TvsQCD = FatJet_deepTagMD_TvsQCD;
+    deep_tag_TvsQCD = FatJet_deepTag_TvsQCD;
 
     if(!isData && (year==2016 || year==2017)){
       l1pre_nom = L1PreFiringWeight_Nom;
@@ -806,7 +836,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
 
     bool pnf = true;
     pnf = ProblematicEvent(inputfile, event);
-    //if(!pnf) continue;
+    if(!pnf) continue;
 
     //
     // get electrons
@@ -893,16 +923,28 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
     // systematics up/down jets_pt: not stored in the babies
     std::vector<float> sys_jets_pt_up;
     std::vector<float> sys_jets_pt_down;
+    std::vector<float> sys_jets_pt_jerUp;
+    std::vector<float> sys_jets_pt_jerDown;
     sys_jets_pt_up.clear();
     sys_jets_pt_down.clear(); 
+    sys_jets_pt_jerUp.clear();
+    sys_jets_pt_jerDown.clear();
     int sys_njets_up = 0;
     int sys_njets_down = 0;
+    int sys_njets_jerUp = 0;
+    int sys_njets_jerDown = 0;
     int sys_nbm_up = 0;
     int sys_nbm_down = 0;
+    int sys_nbm_jerUp = 0;
+    int sys_nbm_jerDown = 0;
     float sys_ht_up = 0;
     float sys_ht_down = 0;
+    float sys_ht_jerUp = 0;
+    float sys_ht_jerDown = 0;
     float sys_mj12_up = 0;
     float sys_mj12_down = 0;
+    float sys_mj12_jerUp = 0;
+    float sys_mj12_jerDown = 0;
     float sys_bctag_up = 1;
     float sys_bctag_down = 1;
     float sys_udsgtag_up = 1;
@@ -933,6 +975,11 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
       jets_qgl.push_back(Jet_qgl[iJ]);
       jets_dcsvc.push_back(Jet_btagDeepC[iJ]);
       jets_hem.push_back(hem_tf);
+
+      sys_jets_pt_jerUp.push_back(Jet_pt_jerUp[iJ]);
+      sys_jets_pt_jerDown.push_back(Jet_pt_jerDown[iJ]);
+      jets_pt_jerUp.push_back(Jet_pt_jerUp[iJ]);
+      jets_pt_jerDown.push_back(Jet_pt_jerDown[iJ]);
 
       bool jetid = true;
       if(year==2016 && Jet_jetId[iJ]<3 ) jetid=false; // tight Id    
@@ -982,13 +1029,13 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
         ht += Jet_pt[iJ];
         if(Jet_btagDeepB[iJ]>csv_cut) nbm++; 
         if(!isData)
-	  {
-	    w_btag_dcsv *= getBtagWeight(f_btef,calibreader, Jet_pt[iJ], Jet_eta[iJ], Jet_hadronFlavour[iJ], Jet_btagDeepB[iJ], csv_cut);
-	    sys_bctag_up *= getBtagWeight(f_btef,calibreader, Jet_pt[iJ], Jet_eta[iJ], Jet_hadronFlavour[iJ], Jet_btagDeepB[iJ], csv_cut, "up_hf");
-	    sys_bctag_down *= getBtagWeight(f_btef,calibreader, Jet_pt[iJ], Jet_eta[iJ], Jet_hadronFlavour[iJ], Jet_btagDeepB[iJ], csv_cut, "down_hf");
-	    sys_udsgtag_up *= getBtagWeight(f_btef,calibreader, Jet_pt[iJ], Jet_eta[iJ], Jet_hadronFlavour[iJ], Jet_btagDeepB[iJ], csv_cut, "up_lf");
-	    sys_udsgtag_down *= getBtagWeight(f_btef,calibreader, Jet_pt[iJ], Jet_eta[iJ], Jet_hadronFlavour[iJ], Jet_btagDeepB[iJ], csv_cut, "down_lf");
-	  }
+	{
+	  w_btag_dcsv *= getBtagWeight(f_btef,calibreader, Jet_pt[iJ], Jet_eta[iJ], Jet_hadronFlavour[iJ], Jet_btagDeepB[iJ], csv_cut);
+	  sys_bctag_up *= getBtagWeight(f_btef,calibreader, Jet_pt[iJ], Jet_eta[iJ], Jet_hadronFlavour[iJ], Jet_btagDeepB[iJ], csv_cut, "up_hf");
+	  sys_bctag_down *= getBtagWeight(f_btef,calibreader, Jet_pt[iJ], Jet_eta[iJ], Jet_hadronFlavour[iJ], Jet_btagDeepB[iJ], csv_cut, "down_hf");
+	  sys_udsgtag_up *= getBtagWeight(f_btef,calibreader, Jet_pt[iJ], Jet_eta[iJ], Jet_hadronFlavour[iJ], Jet_btagDeepB[iJ], csv_cut, "up_lf");
+	  sys_udsgtag_down *= getBtagWeight(f_btef,calibreader, Jet_pt[iJ], Jet_eta[iJ], Jet_hadronFlavour[iJ], Jet_btagDeepB[iJ], csv_cut, "down_lf");
+	}
       }
       //      cout<<w_btag_dcsv<<endl;
       // jec syst up 
@@ -1004,6 +1051,19 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
         sys_njets_down++;
         sys_ht_down += sys_jets_pt_down.at(iJ);
         if(Jet_btagDeepB[iJ]>csv_cut) sys_nbm_down++;
+      }
+
+      // jer syst up
+      if(sys_jets_pt_jerUp.at(iJ)>30){
+	sys_njets_jerUp++;
+	sys_ht_jerUp += sys_jets_pt_jerUp.at(iJ);
+        if(Jet_btagDeepB[iJ]>csv_cut) sys_nbm_jerUp++;
+      }
+      // jer syst down
+      if(sys_jets_pt_jerDown.at(iJ)>30){
+	sys_njets_jerDown++;
+	sys_ht_jerDown += sys_jets_pt_jerDown.at(iJ);
+        if(Jet_btagDeepB[iJ]>csv_cut) sys_nbm_jerDown++;
       }
     }
 
@@ -1159,11 +1219,18 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
     sys_mj12_up   =  getMJ(sys_jets_pt_up, jets_eta, jets_phi, jets_m, jets_id);
     sys_mj12_down =  getMJ(sys_jets_pt_down, jets_eta, jets_phi, jets_m, jets_id);
 
+    sys_mj12_jerUp   =  getMJ(sys_jets_pt_jerUp, jets_eta, jets_phi, jets_m, jets_id);
+    sys_mj12_jerDown =  getMJ(sys_jets_pt_jerDown, jets_eta, jets_phi, jets_m, jets_id);
+
 		  // fill jec syst branches: vec.at(0) is up and vec.at(1) is down 
     sys_njets.push_back(sys_njets_up);	sys_njets.push_back(sys_njets_down);	
+    sys_njets.push_back(sys_njets_jerUp); sys_njets.push_back(sys_njets_jerDown);	
     sys_nbm.push_back(sys_nbm_up);	sys_nbm.push_back(sys_nbm_down);	
+    sys_nbm.push_back(sys_nbm_jerUp);	sys_nbm.push_back(sys_nbm_jerDown);	
     sys_ht.push_back(sys_ht_up);	sys_ht.push_back(sys_ht_down);	
+    sys_ht.push_back(sys_ht_jerUp);	sys_ht.push_back(sys_ht_jerDown);	
     sys_mj12.push_back(sys_mj12_up);	sys_mj12.push_back(sys_mj12_down);	
+    sys_mj12.push_back(sys_mj12_jerUp);	sys_mj12.push_back(sys_mj12_jerDown);	
 
 		  // btagging
     sys_bctag.push_back(sys_bctag_up);	sys_bctag.push_back(sys_bctag_down);	
@@ -1215,21 +1282,6 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
 	//cout<<"deltaR: "<<llp_dR<<endl;
       }
     }
-    /*if(year==2016){
-      if((inputfile.Contains("TTJets_"))) isr_norm =1.101;
-      if(inputfile.Contains("SMS-T1tbs_RPV_mGluino1000")) isr_norm = 1.27982;
-      else if(inputfile.Contains("SMS-T1tbs_RPV_mGluino1100")) isr_norm = 1.28991;
-      else if(inputfile.Contains("SMS-T1tbs_RPV_mGluino1200")) isr_norm = 1.29881;
-      else if(inputfile.Contains("SMS-T1tbs_RPV_mGluino1300")) isr_norm = 1.30728;
-      else if(inputfile.Contains("SMS-T1tbs_RPV_mGluino1400")) isr_norm = 1.31325;
-      else if(inputfile.Contains("SMS-T1tbs_RPV_mGluino1500")) isr_norm = 1.31898;
-      else if(inputfile.Contains("SMS-T1tbs_RPV_mGluino1600")) isr_norm = 1.32481;
-      else if(inputfile.Contains("SMS-T1tbs_RPV_mGluino1700")) isr_norm = 1.32986;
-      else if(inputfile.Contains("SMS-T1tbs_RPV_mGluino1800")) isr_norm = 1.33543;
-      else if(inputfile.Contains("SMS-T1tbs_RPV_mGluino1900")) isr_norm = 1.33801;
-      else if(inputfile.Contains("SMS-T1tbs_RPV_mGluino2000")) isr_norm = 1.34401;
-      else if(inputfile.Contains("SMS-T1tbs_RPV_mGluino2100")) isr_norm = 1.34697;
-      else if(inputfile.Contains("SMS-T1tbs_RPV_mGluino2200")) isr_norm = 1.35132;*/
 
     if(year==2016){
       if(nisr_==0)       isr_wgt = 1.; 
@@ -1254,9 +1306,9 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
     nisr = nisr_;
   }
 
-    if(!isData){
-      for(int imc(0); imc<ngen; imc++){
-        if(gen_PartIdxMother.at(imc)==-1) continue;//exclude incoming particle
+  if(!isData){
+    for(int imc(0); imc<ngen; imc++){
+      if(gen_PartIdxMother.at(imc)==-1) continue;//exclude incoming particle
 	int momid = abs(gen_pdgId.at(gen_PartIdxMother.at(imc)));
 	int momstat = gen_status.at(gen_PartIdxMother.at(imc));
 	int genId = abs(gen_pdgId.at(imc));
@@ -1264,10 +1316,10 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
 	if(gen_PartIdxMother.at(imc)!=0 && (momstat<=21 || momstat>=29) && momid!=4 && momid!=5){ // momid 4 and 5 is come from hard process
 	  if(momid==21 && (genId==5 || genId==4)){
 	    fromGS = true;//gluon split to b quark
-	  }
 	}
       }
     }
+  }
 
     // 
     // weights 
@@ -1286,7 +1338,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
       w_lumi      = 1;
       w_pu        = 1;
     }
-    if(inputfile.Contains("SMS-T1tbs_RPV") || inputfile.Contains("GluinoGluinoToNeutralinoNeutralinoTo2T2B2S") || inputfile.Contains("TTJets_")){
+    if(inputfile.Contains("SMS-T1tbs_RPV") || inputfile.Contains("TTJets_")){
       if(year==2016 || year==2017) weight = w_btag_dcsv * w_lumi * w_pu * w_isr * l1pre_nom;
       else weight = w_btag_dcsv * w_lumi * w_pu * w_isr;
     }
@@ -1395,7 +1447,8 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
 # ifndef __CINT__  // the following code will be invisible for the interpreter
 int main(int argc, char **argv)
 {
-  ROOT::EnableImplicitMT(8);
+  int nthreads = 16;
+  ROOT::EnableImplicitMT(nthreads);
   bool useCondor = true;
   TString inputdir, outputdir, process, list_processed; 
   
@@ -1525,7 +1578,7 @@ int main(int argc, char **argv)
       if(outputfile == files_processed.at(j)) file_is_processed=true;
     }
        
-    if(file_is_processed) 
+    if(file_is_processed == true) 
     { 
       cout << "file already exists in " << outputdir << endl; 
       cout << "skip it!" << endl;
