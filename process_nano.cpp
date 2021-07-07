@@ -420,8 +420,8 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   float w_btag_csv  =1;
   float w_btag_dcsv =1;
   //deepTag
-  float deep_tagMD_TvsQCD = 1;
-  float deep_tag_TvsQCD = 1;
+  float deep_tag_md_ttbar_vs_qcd = 1;
+  float deep_tag_ttbar_vs_qcd = 1;
   //float w_btag_dcsv_norm =1;
   float w_pu        =1;
   float w_lumi      =1;
@@ -575,8 +575,8 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   babyTree_->Branch("l1pre_up",		 &l1pre_up);
   babyTree_->Branch("stitch_ht",         &stitch_ht);
   //deepTag
-  babyTree_->Branch("deep_tagMD_TvsQCD", &deep_tagMD_TvsQCD);
-  babyTree_->Branch("deep_tag_TvsQCD", &deep_tag_TvsQCD);
+  babyTree_->Branch("deep_tag_md_ttbar_vs_qcd", &deep_tag_md_ttbar_vs_qcd);
+  babyTree_->Branch("deep_tag_ttbar_vs_qcd", &deep_tag_ttbar_vs_qcd);
   // weights 
   babyTree_->Branch("weight",            &weight);
   babyTree_->Branch("w_btag_csv",    	 &w_btag_csv);
@@ -719,8 +719,8 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
     l1pre_dn = -1;
     l1pre_up = -1;
     // deepTag
-    deep_tagMD_TvsQCD = 1;
-    deep_tag_TvsQCD = 1;
+    deep_tag_md_ttbar_vs_qcd = 1;
+    deep_tag_ttbar_vs_qcd = 1;
     // weights 
     weight        =    1;
     w_lep         =    1; 
@@ -820,8 +820,8 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
     ntrupv  = Pileup_nPU;
     ntrupv_mean  = Pileup_nTrueInt;
     lhe_ht = LHE_HTIncoming;
-    deep_tagMD_TvsQCD = FatJet_deepTagMD_TvsQCD;
-    deep_tag_TvsQCD = FatJet_deepTag_TvsQCD;
+    deep_tag_md_ttbar_vs_qcd = FatJet_deepTagMD_TvsQCD;
+    deep_tag_ttbar_vs_qcd = FatJet_deepTag_TvsQCD;
 
     if(!isData && (year==2016 || year==2017)){
       l1pre_nom = L1PreFiringWeight_Nom;

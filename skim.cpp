@@ -77,7 +77,7 @@ void skimonefile(TString inputfile, TString outputdir, TString skim)
 		//if(inputfile.Contains("JetHTRun")) skimcut = "njets>=4 && mj12>500 && ht>1200 && ( nbm<3 || (njets>=4 && njets<=5 && nleps==1 ) || (njets<=6 && njets<=7 && nleps==0))";
 		//if(inputfile.Contains("JetHTRun")) skimcut = "ht>1200 && mj12>500 && ((njets>=4 && nbm<3) || (nleps==0 && njets>=6 && njets<=7) || (nleps==1 && njets>=4 && njets<=5))";
 		//else if(inputfile.Contains("TTJets_Tune")) skimcut="(sys_ht[0]>1200 || sys_ht[1]>1200 || ht>1200) && (sys_mj12[0]>500 || sys_mj12[1]>500 || mj12>500) && (sys_njets[0]>=4 || sys_njets[1]>=4 || njets>=3) && stitch_ht==1";
-		else if(inputfile.Contains("TTJets_Tune")) skimcut="(sys_ht[0]>1200 || sys_ht[1]>1200 || ht>1200) && (sys_mj12[0]>500 || sys_mj12[1]>500 || mj12>500) && (sys_njets[0]>=4 || sys_njets[1]>=4 || njets>=3)";
+		else if(inputfile.Contains("TTJets_Tune")) skimcut="(sys_ht[0]>1200 || sys_ht[1]>1200 || ht>1200) && (sys_mj12[0]>500 || sys_mj12[1]>500 || mj12>500) && (sys_njets[0]>=4 || sys_njets[1]>=4 || njets>=3) && stitch_ht==1";
 		//else if(inputfile.Contains("TTJets_Tune")) skimcut="(sys_ht[0]>1200 || sys_ht[1]>1200 || ht>1200) && (sys_mj12[0]>500 || sys_mj12[1]>500 || mj12>500) && (sys_njets[0]>=3 || sys_njets[1]>=3 || njets>=3) && stitch_ht==1 && nleps==2";
 		else skimcut="(sys_ht[0]+Sum$(leps_pt)>1200 || sys_ht[1]+Sum$(leps_pt)>1200 || ht+Sum$(leps_pt)>1200) && (sys_mj12[0]>500 || sys_mj12[1]>500 || mj12>500) && (sys_njets[0]>=4 || sys_njets[1]>=4 || njets>=4)";// 
 		//else skimcut="(sys_ht[0]>1200 || sys_ht[1]>1200 || ht>1200) && (sys_mj12[0]>500 || sys_mj12[1]>500 || mj12>500) && (sys_njets[0]>=3 || sys_njets[1]>=3 || njets>=3) && nleps==2";// */
