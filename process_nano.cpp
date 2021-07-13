@@ -288,9 +288,6 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   if(!isData){
     tree->SetBranchAddress("LHEScaleWeight",  &LHEScaleWeight);
     tree->SetBranchAddress("LHE_HTIncoming",  &LHE_HTIncoming);
-  }
-  if(!isData)
-  {
     tree->SetBranchAddress("Pileup_nTrueInt",     &Pileup_nTrueInt);
     tree->SetBranchAddress("Pileup_nPU",          &Pileup_nPU);
   }
@@ -568,6 +565,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   babyTree_->Branch("event",             &event);
   babyTree_->Branch("ht",                &ht);
   babyTree_->Branch("met",               &met);
+  babyTree_->Branch("ntrupv",            &ntrupv);
   babyTree_->Branch("met_phi",           &met_phi);
   babyTree_->Branch("lhe_ht",            &lhe_ht);
   babyTree_->Branch("l1pre_nom", 	 &l1pre_nom);
@@ -817,7 +815,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
     ls      = ls_;
     met     = MET_pt;
     met_phi = MET_phi;
-    ntrupv  = Pileup_nPU;
+    if(Pileup_nPU > 0 && Pileup_nPU < 100) ntrupv = Pileup_nPU;
     ntrupv_mean  = Pileup_nTrueInt;
     lhe_ht = LHE_HTIncoming;
     deep_tag_md_ttbar_vs_qcd = FatJet_deepTagMD_TvsQCD;
