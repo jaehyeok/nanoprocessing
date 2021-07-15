@@ -187,7 +187,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   Float_t     MET_pt  = 0;
   Float_t     MET_phi = 0;
   Float_t     Pileup_nTrueInt = 0; 
-  Int_t       Pileup_nPU      = 0; 
+  Int_t       Pileup_nPU = 0;
   Float_t     fixedGridRhoFastjetAll = 0; 
   // deepTag
   Float_t     FatJet_deepTagMD_TvsQCD = 0;
@@ -288,8 +288,8 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   if(!isData){
     tree->SetBranchAddress("LHEScaleWeight",  &LHEScaleWeight);
     tree->SetBranchAddress("LHE_HTIncoming",  &LHE_HTIncoming);
-    tree->SetBranchAddress("Pileup_nTrueInt",     &Pileup_nTrueInt);
-    tree->SetBranchAddress("Pileup_nPU",          &Pileup_nPU);
+    tree->SetBranchAddress("Pileup_nTrueInt", &Pileup_nTrueInt);
+    tree->SetBranchAddress("Pileup_nPU",      &Pileup_nPU);
   }
   // deepTag
   if(!isData)
@@ -417,8 +417,8 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   float w_btag_csv  =1;
   float w_btag_dcsv =1;
   //deepTag
-  float deep_tag_md_ttbar_vs_qcd = 1;
-  float deep_tag_ttbar_vs_qcd = 1;
+  float toptag_md_ttvsqcd = 1;
+  float toptag_ttvsqcd = 1;
   //float w_btag_dcsv_norm =1;
   float w_pu        =1;
   float w_lumi      =1;
@@ -573,8 +573,8 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   babyTree_->Branch("l1pre_up",		 &l1pre_up);
   babyTree_->Branch("stitch_ht",         &stitch_ht);
   //deepTag
-  babyTree_->Branch("deep_tag_md_ttbar_vs_qcd", &deep_tag_md_ttbar_vs_qcd);
-  babyTree_->Branch("deep_tag_ttbar_vs_qcd", &deep_tag_ttbar_vs_qcd);
+  babyTree_->Branch("toptag_md_ttvsqcd", &toptag_md_ttvsqcd);
+  babyTree_->Branch("toptag_ttvsqcd", &toptag_ttvsqcd);
   // weights 
   babyTree_->Branch("weight",            &weight);
   babyTree_->Branch("w_btag_csv",    	 &w_btag_csv);
@@ -683,8 +683,8 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   cout<<"The number of entries in thie file is: "<<nentries<<endl;
 
   // main event loop
-  for(int ievt = 0; ievt<nentries; ievt++) {
-  //for(int ievt = 0; ievt<1000; ievt++) {
+  //for(int ievt = 0; ievt<nentries; ievt++) {
+ for(int ievt = 0; ievt<200; ievt++) {
 
     // Counting to see progress
   if(ievt%100000==0) 
@@ -717,8 +717,8 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
     l1pre_dn = -1;
     l1pre_up = -1;
     // deepTag
-    deep_tag_md_ttbar_vs_qcd = 1;
-    deep_tag_ttbar_vs_qcd = 1;
+    toptag_md_ttvsqcd = 1;
+    toptag_ttvsqcd = 1;
     // weights 
     weight        =    1;
     w_lep         =    1; 
@@ -814,12 +814,17 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
     run     = run_;
     ls      = ls_;
     met     = MET_pt;
-    met_phi = MET_phi;
+    met_phi = MET_phi; 
+
+    // 
+    cout << ievt << " Pileup_nPU: " <<  Pileup_nPU << endl; // FIXME 
+    cout << ievt << " Pileup_nTrueInt: " << Pileup_nTrueInt << endl; // FIXME 
+
     if(Pileup_nPU > 0 && Pileup_nPU < 100) ntrupv = Pileup_nPU;
     ntrupv_mean  = Pileup_nTrueInt;
     lhe_ht = LHE_HTIncoming;
-    deep_tag_md_ttbar_vs_qcd = FatJet_deepTagMD_TvsQCD;
-    deep_tag_ttbar_vs_qcd = FatJet_deepTag_TvsQCD;
+    toptag_md_ttvsqcd = FatJet_deepTagMD_TvsQCD;
+    toptag_ttvsqcd = FatJet_deepTag_TvsQCD;
 
     if(!isData && (year==2016 || year==2017)){
       l1pre_nom = L1PreFiringWeight_Nom;
