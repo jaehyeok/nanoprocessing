@@ -190,8 +190,8 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   Int_t       Pileup_nPU = 0;
   Float_t     fixedGridRhoFastjetAll = 0; 
   // deepTag
-  Float_t     FatJet_deepTagMD_TvsQCD = 0;
-  Float_t     FatJet_deepTag_TvsQCD = 0;
+  Float_t     FatJet_deepTagMD_TvsQCD[100];
+  Float_t     FatJet_deepTag_TvsQCD[100];
   // weights
   Float_t     btagWeight_CSVV2 = 1;
   Float_t     btagWeight_DeepCSVB = 1;
@@ -416,9 +416,6 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   float weight      =1;
   float w_btag_csv  =1;
   float w_btag_dcsv =1;
-  //deepTag
-  float toptag_md_ttvsqcd = 1;
-  float toptag_ttvsqcd = 1;
   //float w_btag_dcsv_norm =1;
   float w_pu        =1;
   float w_lumi      =1;
@@ -512,6 +509,9 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   std::vector<bool>  jets_hem;
   std::vector<bool>  jets_pt_jerUp;
   std::vector<bool>  jets_pt_jerDown;
+  // top tagging
+  std::vector<float> toptag_md_ttvsqcd;
+  std::vector<float> toptag_ttvsqcd;
 
   // GenParticle
   int ngen;
@@ -572,9 +572,6 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   babyTree_->Branch("l1pre_dn", 	 &l1pre_dn);
   babyTree_->Branch("l1pre_up",		 &l1pre_up);
   babyTree_->Branch("stitch_ht",         &stitch_ht);
-  //deepTag
-  babyTree_->Branch("toptag_md_ttvsqcd", &toptag_md_ttvsqcd);
-  babyTree_->Branch("toptag_ttvsqcd", &toptag_ttvsqcd);
   // weights 
   babyTree_->Branch("weight",            &weight);
   babyTree_->Branch("w_btag_csv",    	 &w_btag_csv);
@@ -627,6 +624,9 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   babyTree_->Branch("jets_hem",     	 &jets_hem);    
   babyTree_->Branch("jets_pt_jerUp",     &jets_pt_jerUp);
   babyTree_->Branch("jets_pt_jerDown",   &jets_pt_jerDown);
+  //deepTag
+  babyTree_->Branch("toptag_md_ttvsqcd", &toptag_md_ttvsqcd);
+  babyTree_->Branch("toptag_ttvsqcd", &toptag_ttvsqcd);
   // fatjet
   babyTree_->Branch("mj12",              &mj12);    
   babyTree_->Branch("fjets_pt",          &fjets_pt);    
@@ -684,7 +684,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
 
   // main event loop
   //for(int ievt = 0; ievt<nentries; ievt++) {
- for(int ievt = 0; ievt<200; ievt++) {
+ for(int ievt = 0; ievt<nentries; ievt++) {
 
     // Counting to see progress
   if(ievt%100000==0) 
@@ -716,9 +716,6 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
     l1pre_nom = -1;
     l1pre_dn = -1;
     l1pre_up = -1;
-    // deepTag
-    toptag_md_ttvsqcd = 1;
-    toptag_ttvsqcd = 1;
     // weights 
     weight        =    1;
     w_lep         =    1; 
@@ -764,6 +761,8 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
     jets_hem.clear();
     jets_pt_jerUp.clear();
     jets_pt_jerDown.clear();
+    toptag_md_ttvsqcd.clear();
+    toptag_ttvsqcd.clear();
     //
     mj12         =   0;
     fjets_pt.clear();
@@ -816,15 +815,9 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
     met     = MET_pt;
     met_phi = MET_phi; 
 
-    // 
-    cout << ievt << " Pileup_nPU: " <<  Pileup_nPU << endl; // FIXME 
-    cout << ievt << " Pileup_nTrueInt: " << Pileup_nTrueInt << endl; // FIXME 
-
-    if(Pileup_nPU > 0 && Pileup_nPU < 100) ntrupv = Pileup_nPU;
+    ntrupv = Pileup_nPU;
     ntrupv_mean  = Pileup_nTrueInt;
     lhe_ht = LHE_HTIncoming;
-    toptag_md_ttvsqcd = FatJet_deepTagMD_TvsQCD;
-    toptag_ttvsqcd = FatJet_deepTag_TvsQCD;
 
     if(!isData && (year==2016 || year==2017)){
       l1pre_nom = L1PreFiringWeight_Nom;
@@ -983,6 +976,8 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
       sys_jets_pt_jerDown.push_back(Jet_pt_jerDown[iJ]);
       jets_pt_jerUp.push_back(Jet_pt_jerUp[iJ]);
       jets_pt_jerDown.push_back(Jet_pt_jerDown[iJ]);
+      toptag_md_ttvsqcd.push_back(FatJet_deepTagMD_TvsQCD[iJ]);
+      toptag_ttvsqcd.push_back(FatJet_deepTag_TvsQCD[iJ]);
 
       bool jetid = true;
       if(year==2016 && Jet_jetId[iJ]<3 ) jetid=false; // tight Id    
