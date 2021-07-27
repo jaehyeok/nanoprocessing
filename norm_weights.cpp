@@ -44,6 +44,7 @@ float sys_mur_mean_0, sys_mur_mean_1;
 float sys_muf_mean_0, sys_muf_mean_1;
 float sys_murf_mean_0, sys_murf_mean_1;
 float sys_isr_mean_0, sys_isr_mean_1;
+float sys_pu_mean_0, sys_pu_mean_1;
 
 float w_pu_mean;
 vector<float> sys_pu_mean;
@@ -65,6 +66,7 @@ vector<float> vec_sys_muf;
 vector<float> vec_sys_murf;
 vector<float> vec_sys_bctag;
 vector<float> vec_sys_udsgtag;
+vector<float> vec_sys_pu;
 
 void save_weights(TString inputfile) 
 {
@@ -81,7 +83,8 @@ void save_weights(TString inputfile)
   vector<float> *sys_muf_=new vector<float>;
   vector<float> *sys_murf_=new vector<float>;
   vector<float> *sys_bctag_=new vector<float>;
-  vector<float> *sys_udsgtag_=new vector<float>;// */
+  vector<float> *sys_udsgtag_=new vector<float>;
+  vector<float> *sys_pu_=new vector<float>;// */
 
   ch.SetBranchAddress("w_btag_dcsv",   	 	&w_btag_dcsv_);
   ch.SetBranchAddress("w_isr",   		&w_isr_);
@@ -94,7 +97,8 @@ void save_weights(TString inputfile)
   ch.SetBranchAddress("sys_muf",   		&sys_muf_);
   ch.SetBranchAddress("sys_murf",   		&sys_murf_);
   ch.SetBranchAddress("sys_bctag",   		&sys_bctag_);
-  ch.SetBranchAddress("sys_udsgtag",   		&sys_udsgtag_);// */
+  ch.SetBranchAddress("sys_udsgtag",   		&sys_udsgtag_);
+  ch.SetBranchAddress("sys_pu",   		&sys_pu_);// */
 
   for(Long64_t entry = 0; entry < ch.GetEntries(); ++entry)
   {
@@ -109,7 +113,8 @@ void save_weights(TString inputfile)
     vec_sys_muf.insert(vec_sys_muf.end(), sys_muf_->begin(), sys_muf_->end());
     vec_sys_murf.insert(vec_sys_murf.end(), sys_murf_->begin(), sys_murf_->end());
     vec_sys_bctag.insert(vec_sys_bctag.end(), sys_bctag_->begin(), sys_bctag_->end());
-    vec_sys_udsgtag.insert(vec_sys_udsgtag.end(), sys_udsgtag_->begin(), sys_udsgtag_->end());// */
+    vec_sys_udsgtag.insert(vec_sys_udsgtag.end(), sys_udsgtag_->begin(), sys_udsgtag_->end());
+    vec_sys_pu.insert(vec_sys_pu.end(), sys_pu_->begin(), sys_pu_->end());// */
   }
 }
 
@@ -152,13 +157,14 @@ void copy_onefile(TString inputfile)
   ch.SetBranchStatus("sys_isr",	0);
   ch.SetBranchStatus("sys_bctag",0);
   ch.SetBranchStatus("sys_udsgtag",0);
+  ch.SetBranchStatus("sys_pu",0);
 
-  //if(mGluino){
+  if(mGluino){
     ch.SetBranchStatus("sys_mur",	0);
     ch.SetBranchStatus("sys_muf",	0);
     ch.SetBranchStatus("sys_murf",	0);
-  //}
-  /*if(year==2016 && (WW || DY400to600 || WZ || ZZ || tW)){
+  }
+  if(year==2016 && (WW || DY400to600 || WZ || ZZ || tW)){
     ch.SetBranchStatus("sys_murf",	0);
     ch.SetBranchStatus("sys_mur",	0);
     ch.SetBranchStatus("sys_muf",	0);
@@ -167,7 +173,7 @@ void copy_onefile(TString inputfile)
     ch.SetBranchStatus("sys_murf",      0);
     ch.SetBranchStatus("sys_mur",       0);
     ch.SetBranchStatus("sys_muf",       0);
-  }*/
+  }// */
 
   TTree *ctree = ch.CopyTree(""); 
   newfile->cd();
@@ -211,11 +217,12 @@ void norm_onefile(TString inputfile, TString outputdir, TString inputdir)
   vector<float> sys_bctag;
   vector<float> sys_udsgtag;
   vector<float> sys_isr;
+  vector<float> sys_pu;
 
   float w_btag_dcsv=1., w_isr=1., weight=1., frac1718=1.;
 
   TBranch *b_frac1718, *b_w_btag_dcsv, *b_w_isr, *b_weight;
-  TBranch *b_sys_isr, *b_sys_mur, *b_sys_muf, *b_sys_murf, *b_sys_bctag, *b_sys_udsgtag;
+  TBranch *b_sys_isr, *b_sys_mur, *b_sys_muf, *b_sys_murf, *b_sys_bctag, *b_sys_udsgtag, *b_sys_pu;
 
   b_frac1718 = tree_new->Branch("frac1718",&frac1718);
   b_w_btag_dcsv = tree_new->Branch("w_btag_dcsv", &w_btag_dcsv);
@@ -224,13 +231,14 @@ void norm_onefile(TString inputfile, TString outputdir, TString inputdir)
   b_sys_isr = tree_new->Branch("sys_isr",&sys_isr);
   b_sys_bctag = tree_new->Branch("sys_bctag",&sys_bctag);
   b_sys_udsgtag = tree_new->Branch("sys_udsgtag",&sys_udsgtag);
+  b_sys_pu = tree_new->Branch("sys_pu",&sys_pu);
 
-  //if(mGluino){
+  if(mGluino){
     b_sys_mur = tree_new->Branch("sys_mur",&sys_mur);
     b_sys_muf = tree_new->Branch("sys_muf",&sys_muf);
     b_sys_murf = tree_new->Branch("sys_murf",&sys_murf);
-  //}
-  /*if(year == 2016 && (ZZ || WZ || DY400to600 || WW || tW)){
+  }
+  if(year == 2016 && (ZZ || WZ || DY400to600 || WW || tW)){
     b_sys_murf = tree_new->Branch("sys_murf",&sys_murf);
     b_sys_mur = tree_new->Branch("sys_mur",&sys_murf);
     b_sys_muf = tree_new->Branch("sys_muf",&sys_murf);
@@ -239,7 +247,7 @@ void norm_onefile(TString inputfile, TString outputdir, TString inputdir)
     b_sys_murf = tree_new->Branch("sys_murf",&sys_murf);
     b_sys_mur = tree_new->Branch("sys_mur",&sys_murf);
     b_sys_muf = tree_new->Branch("sys_muf",&sys_murf);
-  }*/
+  }// */
 
   for(Long64_t entry = 0; entry < tree_new->GetEntries(); ++entry)
   {	
@@ -248,7 +256,7 @@ void norm_onefile(TString inputfile, TString outputdir, TString inputdir)
     w_isr=vec_w_isr.at(entry)/w_isr_mean; 
     weight=vec_weight.at(entry)/weight_over_w_lumi_mean;
 
-    /*if(mGluino){
+    if(mGluino){
       sys_mur.push_back(vec_sys_mur.at(2*entry)/sys_mur_mean_0);
       sys_mur.push_back(vec_sys_mur.at(2*entry+1)/sys_mur_mean_1);
       sys_muf.push_back(vec_sys_muf.at(2*entry)/sys_muf_mean_0);
@@ -260,17 +268,19 @@ void norm_onefile(TString inputfile, TString outputdir, TString inputdir)
       sys_murf.push_back(1);
       sys_mur.push_back(1);
       sys_muf.push_back(1);
-    }*/
-    //else if(year != 2016 && (WW || DY400to600 || WZ || ZZ)){
+    }// */
+    else if(year != 2016 && (WW || DY400to600 || WZ || ZZ)){
       sys_murf.push_back(1);
       sys_mur.push_back(1);
       sys_muf.push_back(1);
-   // }
+    }
 
     sys_bctag.push_back(vec_sys_bctag.at(2*entry)/sys_bctag_mean_0);
     sys_bctag.push_back(vec_sys_bctag.at(2*entry+1)/sys_bctag_mean_1);
     sys_udsgtag.push_back(vec_sys_udsgtag.at(2*entry)/sys_udsgtag_mean_0);
     sys_udsgtag.push_back(vec_sys_udsgtag.at(2*entry+1)/sys_udsgtag_mean_1);
+    sys_pu.push_back(vec_sys_pu.at(2*entry)/sys_pu_mean_0);
+    sys_pu.push_back(vec_sys_pu.at(2*entry+1)/sys_pu_mean_1);
 
     if((mGluino || ttbar) && year == 2016){
       sys_isr.push_back(vec_sys_isr.at(2*entry)/sys_isr_mean_0);
@@ -291,12 +301,12 @@ void norm_onefile(TString inputfile, TString outputdir, TString inputdir)
     b_w_isr->Fill(); 
     b_weight->Fill(); 
 
-    //if(mGluino){
+    if(mGluino){
       b_sys_mur->Fill();
       b_sys_muf->Fill();
       b_sys_murf->Fill();
-    //}
-    /*if(year == 2016 && (ZZ || WZ || DY400to600 || WW || tW)){
+    }
+    if(year == 2016 && (ZZ || WZ || DY400to600 || WW || tW)){
       b_sys_murf->Fill();
       b_sys_mur->Fill();
       b_sys_muf->Fill();
@@ -305,11 +315,12 @@ void norm_onefile(TString inputfile, TString outputdir, TString inputdir)
       b_sys_murf->Fill();
       b_sys_mur->Fill();
       b_sys_muf->Fill();
-    }*/
+    }
 
     b_sys_bctag->Fill();
     b_sys_udsgtag->Fill();
     b_sys_isr->Fill();
+    b_sys_pu->Fill();
 
     sys_isr.clear();
     sys_mur.clear();
@@ -317,6 +328,7 @@ void norm_onefile(TString inputfile, TString outputdir, TString inputdir)
     sys_murf.clear();
     sys_bctag.clear();
     sys_udsgtag.clear();
+    sys_pu.clear();
   }
 
   //
@@ -331,6 +343,7 @@ void norm_onefile(TString inputfile, TString outputdir, TString inputdir)
   vec_sys_murf.clear();
   vec_sys_bctag.clear();
   vec_sys_udsgtag.clear();
+  vec_sys_pu.clear();
 
   //
   file_new->cd();
@@ -552,6 +565,18 @@ int main(int argc, char **argv)
   ch_mean.Draw("sys_isr[1]>>h_sys_isr_1","","geoff");
   sys_isr_mean_1 = h_sys_isr_1->GetMean();
   cout << "sys_isr mean up = " << sys_isr_mean_1 << endl;
+
+  //----
+
+  TH1D  *h_sys_pu_0 = new TH1D("h_sys_pu_0","h_sys_pu_0",100,-5,5);
+  ch_mean.Draw("sys_pu[0]>>h_sys_pu_0","","geoff");
+  sys_pu_mean_0 = h_sys_pu_0->GetMean();
+  cout << "sys_pu mean down = " << sys_pu_mean_0 << endl;
+
+  TH1D  *h_sys_pu_1 = new TH1D("h_sys_pu_1","h_sys_pu_1",100,-5,5);
+  ch_mean.Draw("sys_pu[1]>>h_sys_pu_1","","geoff");
+  sys_pu_mean_1 = h_sys_pu_1->GetMean();
+  cout << "sys_pu mean up = " << sys_pu_mean_1 << endl;
 
 	// 
 	// Process 
