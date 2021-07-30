@@ -650,6 +650,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   babyTree_->Branch("llp_dR",            &llp_dR);
   //
   babyTree_->Branch("sys_mj12",          &sys_mj12);    
+  babyTree_->Branch("sys_pu",            &sys_pu);    
   babyTree_->Branch("sys_lep",           &sys_lep);    
   babyTree_->Branch("sys_ht",            &sys_ht);    
   babyTree_->Branch("sys_nbm",           &sys_nbm);    
@@ -785,6 +786,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
     fromGS=false;
     //
     sys_mj12.clear();
+    sys_pu.clear();
     sys_ht.clear();
     sys_lep.clear();
     sys_njets.clear();
@@ -976,8 +978,6 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
       sys_jets_pt_jerDown.push_back(Jet_pt_jerDown[iJ]);
       jets_pt_jerUp.push_back(Jet_pt_jerUp[iJ]);
       jets_pt_jerDown.push_back(Jet_pt_jerDown[iJ]);
-      toptag_md_ttvsqcd.push_back(FatJet_deepTagMD_TvsQCD[iJ]);
-      toptag_ttvsqcd.push_back(FatJet_deepTag_TvsQCD[iJ]);
 
       bool jetid = true;
       if(year==2016 && Jet_jetId[iJ]<3 ) jetid=false; // tight Id    
@@ -1157,6 +1157,8 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
       //store only if pt >3 GeV to match CMS jets
       if(TMath::Sqrt( sorted_jets[isortjets].px()*sorted_jets[isortjets].px()
             +sorted_jets[isortjets].py()*sorted_jets[isortjets].py())>(DEBUG?0:3)) {
+        toptag_md_ttvsqcd.push_back(FatJet_deepTagMD_TvsQCD[isortjets]);
+        toptag_ttvsqcd.push_back(FatJet_deepTag_TvsQCD[isortjets]);
         fjets_pt.push_back(sorted_jets[isortjets].pt());
         fjets_eta.push_back(sorted_jets[isortjets].eta());
         fjets_m.push_back(sorted_jets[isortjets].m());
@@ -1327,6 +1329,8 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
       w_btag_csv = btagWeight_CSVV2;
       w_lumi     = xsec*genWeight/sumWeights;//getXsec(samplename)*genWeight/sumWeights; // cross section in fb
       w_pu       = getPUweight(samplename, year, ntrupv_mean, 0); // syst=-1 0 1 (down nominal up)
+      sys_pu.push_back(getPUweight(samplename, year, ntrupv_mean, 1));
+      sys_pu.push_back(getPUweight(samplename, year, ntrupv_mean, -1));
     }
 
     if(isData) 
