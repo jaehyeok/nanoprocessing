@@ -4,6 +4,7 @@
 // Email:  kkousour@fnal.gov, philipp.schieferdecker@cern.ch
 
 #define STANDALONE
+#include <TROOT.h>
 #include "FactorizedJetCorrector.h"
 #include "SimpleJetCorrector.h"
 #include "JetCorrectorParameters.h"

@@ -5,13 +5,14 @@ pwd
 echo ""
 
 #
-export PATH=/bin:/usr/bin:/usr/local/bin:/cms/ldap_home/yjeong/tools/fastjet-install/bin:/usr/texbin/:/opt/pdflabs/pdftk/bin/$PATH
+#export PATH=/bin:/usr/bin:/usr/local/bin:/cms/ldap_home/yjeong/tools/fastjet-install/bin:/usr/texbin/:/opt/pdflabs/pdftk/bin/$PATH
+export PATH=/bin:/usr/bin:/usr/local/bin:/program/fastjet-install-3.4.0/bin:/usr/texbin/:/opt/pdflabs/pdftk/bin/$PATH
 
 #
-source /cvmfs/cms.cern.ch/cmsset_default.sh
-cd /cvmfs/cms.cern.ch/slc7_amd64_gcc700/cms/cmssw/CMSSW_10_5_0/src
-cmsenv
-cd -
+#source /cvmfs/cms.cern.ch/cmsset_default.sh
+#cd /cvmfs/cms.cern.ch/slc7_amd64_gcc700/cms/cmssw/CMSSW_10_5_0/src
+#cmsenv
+#cd -
 #cd ../
 
 #
@@ -26,9 +27,9 @@ ls -rlt
 echo ""
 
 # run
-cd ~/
-echo "./process_nano.exe $1 $2 $3 $4"
-./process_nano.exe $1 $2 $3 $4
+cd ~/nanoprocessing
+echo "srun ./process_nano.exe $1 $2 $3 $4"
+srun ./process_nano.exe $1 $2 $3 $4
 
 
 # copy

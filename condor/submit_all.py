@@ -9,7 +9,8 @@ import glob
 username = getpass.getuser()
 year=sys.argv[1]
 
-outputdir="root://cms-xrdr.private.lo:2094//xrd/store/user/"+username+"/nanoprocessing/"+year+"/processed_deepTvsQCD/"
+#outputdir="root://cms-xrdr.private.lo:2094//xrd/store/user/"+username+"/nanoprocessing/"+year+"/processed_JER_0903/"
+outputdir="/data2/nanoprocessing/"+year+"/processed_test/"
 
 #samplelist="samples/samples"+year+"UL_v2.txt"
 samplelist="samples/samples"+year+"_v7.txt"
@@ -35,9 +36,8 @@ print ""
 f = open(samplelist, 'r')
 
 splits = outputdir.split("/")
-#list_processed = "flist_"+splits[4]+"_"+splits[5]+".txt"
-list_processed = "flist_outputdir_"+splits[8]+"_"+splits[9]+".txt"
-#list_processed = "flist_outputdir_"+splits[9]+"_"+splits[10]+".txt"#FIXME
+list_processed = "flist_nanoprocessing_"+splits[2]+"_"+splits[3]+".txt"
+#list_processed = "flist_outputdir_"+splits[8]+"_"+splits[9]+".txt"
 
 # list of samples from sample list
 lines_with_ext = f.readlines()
@@ -53,10 +53,11 @@ for line in lines:
   splits = line.split("\t")
   # mc
   if "13TeV" in line:
-    f_list = glob.glob("/xrootd/store/mc/"+inputmctag+"/"+splits[0].rstrip()+"*/*")
+    #f_list = glob.glob("/xrootd/store/mc/"+inputmctag+"/"+splits[0].rstrip()+"*/*")
+    f_list = glob.glob("/data/mc/NanoAODv7/2016/"+inputmctag+"/"+splits[0].rstrip()+"*/*")
     #f_list = glob.glob("/xrootd/store/user/"+username+"/"+inputmctag+"/"+splits[0].rstrip()+"*/*")#FIXME
     process=line.split('_13TeV')[0]
-    list_file = open("/cms/ldap_home/"+username+"/flist/"+year+"/flist_"+process+".txt", "w")
+    list_file = open("/home/yjeong/flist/"+year+"/flist_"+process+".txt", "w")
     for subdir in f_list:
       f_list_subdir = os.listdir(subdir)
       for files in f_list_subdir:
@@ -64,41 +65,41 @@ for line in lines:
         #print(filename)
         if "BB833C07-5ECA-5E43-8A99-38083AACE497" not in filename:
           list_file.write(filename)
-    condor_file = open("submit_scripts/"+year+"/condor_"+process+".jds", "w")
-    condor_file.write("executable              = run.sh\n");
-    condor_file.write("arguments               = "+inputmctag+"/"+splits[0].rstrip()+" "+outputdir+" "+process+" " +list_processed+"\n");
-    condor_file.write("transfer_input_files    = process_nano.exe flist_"+process+".txt\n");
-    condor_file.write("log                     = log/run_"+process+".$(Cluster).$(Process).log\n");
-    condor_file.write("output                  = log/run_"+process+"_output.$(Cluster).$(Process).out\n");
-    condor_file.write("error                   = log/run_"+process+"_errors.$(Cluster).$(Process).err\n");
-    condor_file.write("#should_transfer_files   = Yes\n");
-    condor_file.write("#when_to_transfer_output = ON_EXIT\n");
-    condor_file.write("queue");
-    condor_file.close()
-    print("condor_submit submit_scripts/"+year+"/condor_"+process+".jds")
+    slurm_file = open("submit_scripts/"+year+"/slurm_"+process+".sh", "w")
+    #slurm_file.write("executable              = run.sh\n");
+    slurm_file.write("#!/bin/sh \n");
+    slurm_file.write("#SBATCH -J " + process+"\n");
+    slurm_file.write("#SBATCH -N 1\n");
+    slurm_file.write("#SBATCH -n 1\n");
+    slurm_file.write("#SBATCH -o log/run_%x.o%j.txt\n");
+    slurm_file.write("#SBATCH -e log/err_%x.e%j.txt\n");
+    slurm_file.write("cd ~/nanoprocessing\n");
+    slurm_file.write("srun ./process_nano.exe "+inputmctag+"/"+splits[0].rstrip()+" "+outputdir+" "+process+" " +list_processed+"\n");
+    slurm_file.close()
+    print("sbatch submit_scripts/"+year+"/slurm_"+process+".sh")
     #os.system("condor_submit condor_"+process+".jds")
   # data
   elif "Run201" in line:
     f_list = os.listdir(line.rstrip())
     process=line.split('/')[5]+line.split('/')[4]
-    list_file = open("/cms/ldap_home/"+username+"/flist/"+year+"/flist_"+process+".txt", "w")
+    list_file = open("/home/yjeong/flist/"+year+"/flist_"+process+".txt", "w")
     for subdir in f_list:
       f_list_subdir = os.listdir(splits[0].rstrip()+"/"+subdir)
       for files in f_list_subdir:
         filename=splits[0].rstrip()+"/"+subdir+"/"+files+"\n"
         list_file.write(filename)
-    condor_file = open("submit_scripts/"+year+"/condor_"+process+".jds", "w")
-    condor_file.write("executable              = run.sh\n");
-    condor_file.write("arguments               = "+splits[0].rstrip()+" "+outputdir+" "+process+" "+list_processed+"\n");
-    condor_file.write("transfer_input_files    = process_nano.exe flist_"+process+".txt\n");
-    condor_file.write("log                     = log/run_"+process+".$(Cluster).$(Process).log\n");
-    condor_file.write("output                  = log/run_"+process+"_output.$(Cluster).$(Process).out\n");
-    condor_file.write("error                   = log/run_"+process+"_errors.$(Cluster).$(Process).err\n");
-    condor_file.write("#should_transfer_files   = Yes\n");
-    condor_file.write("#when_to_transfer_output = ON_EXIT\n");
-    condor_file.write("queue");
-    condor_file.close()
-    print("condor_submit submit_scripts/"+year+"/condor_"+process+".jds")
+    slurm_file = open("submit_scripts/"+year+"/slurm_"+process+".sh", "w")
+    #slurm_file.write("executable              = run.sh\n");
+    slurm_file.write("#!/bin/sh \n");
+    slurm_file.write("#SBATCH -J " + process+"\n");
+    slurm_file.write("#SBATCH -N 1\n");
+    slurm_file.write("#SBATCH -n 1\n");
+    slurm_file.write("#SBATCH -o log/run_%x.o%j.txt\n");
+    slurm_file.write("#SBATCH -e log/err_%x.e%j.txt\n");
+    slurm_file.write("cd ~/nanoprocessing\n");
+    slurm_file.write("srun ./process_nano.exe "+inputmctag+"/"+splits[0].rstrip()+" "+outputdir+" "+process+" " +list_processed+"\n");
+    slurm_file.close()
+    print("sbatch submit_scripts/"+year+"/slurm_"+process+".sh")
     #os.system("condor_submit condor_"+process+".jds")
 f.close()
 

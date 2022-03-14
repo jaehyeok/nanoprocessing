@@ -10,12 +10,14 @@ ROOT.gROOT.SetBatch(True)
 year=sys.argv[1]
 username = getpass.getuser()
 
-outputdir="/xrootd_user/"+username+"/xrootd/nanoprocessing/"+year+"/processed_deepTvsQCD/"
+#outputdir="/xrootd_user/"+username+"/xrootd/nanoprocessing/"+year+"/processed_JER_0903/"
+outputdir="/data2/nanoprocessing/"+year+"/processed_test/"
 
 #if year == "2017" or year == "2018":
 #	outputdir="/xrootd_user/"+username+"/xrootd/nanoprocessing/"+year+"/processed_SigJer210601/"
 
-flistdir="/cms/ldap_home/"+username+"/flist/"+year
+#flistdir="/cms/ldap_home/"+username+"/flist/"+year
+flistdir="/home/yjeong/flist/"+year
 flists = os.listdir(flistdir)
 
 '''
@@ -50,7 +52,8 @@ print('-------------------------------------------------------------------------
 
 # generate list of files that have been processed
 splits = outputdir.split("/")
-list_output_file = open("/cms/ldap_home/"+username+"/flist/flist_outputdir_"+splits[4]+"_"+splits[5]+".txt", "w")
+#list_output_file = open("/cms/ldap_home/"+username+"/flist/flist_outputdir_"+splits[4]+"_"+splits[5]+".txt", "w")
+list_output_file = open("/home/yjeong/flist/flist_nanoprocessing_"+splits[2]+"_"+splits[3]+".txt", "w")
 
 lines = os.listdir(outputdir)
 for line in lines:

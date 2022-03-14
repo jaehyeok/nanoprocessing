@@ -1,10 +1,10 @@
 #!/bin/sh
 
 # set env to use an appropriate version of ROOT that comes with CMSSW_7_1_0
-source /cvmfs/cms.cern.ch/cmsset_default.sh
-cd /cvmfs/cms.cern.ch/slc7_amd64_gcc700/cms/cmssw/CMSSW_10_5_0/src
-cmsenv
-cd -
+#source /cvmfs/cms.cern.ch/cmsset_default.sh
+#cd /cvmfs/cms.cern.ch/slc7_amd64_gcc700/cms/cmssw/CMSSW_10_5_0/src
+#cmsenv
+#cd -
 
 # compile scripts
 #  - note that fastsim path is correctly set
@@ -17,7 +17,7 @@ g++ norm_weights.cpp  `root-config --cflags --glibs` -o norm_weights.exe
 cp process_nano.exe $HOME
 cp skim.exe         $HOME
 cp norm_weights.exe $HOME
-cp condor/run.sh $HOME
+#cp condor/run.sh $HOME
 
 mkdir -p condor/submit_scripts/2016/log/
 mkdir -p condor/submit_scripts/2017/log/
@@ -27,9 +27,9 @@ mkdir -p condor/submit_scripts_norm/2016/log/
 mkdir -p condor/submit_scripts_norm/2017/log/
 mkdir -p condor/submit_scripts_norm/2018/log/
 
-cp condor/run.sh condor/submit_scripts/2016
-cp condor/run.sh condor/submit_scripts/2017
-cp condor/run.sh condor/submit_scripts/2018
+#cp condor/run.sh condor/submit_scripts/2016
+#cp condor/run.sh condor/submit_scripts/2017
+#cp condor/run.sh condor/submit_scripts/2018
 cp process_nano.exe condor/submit_scripts/2016
 cp process_nano.exe condor/submit_scripts/2017
 cp process_nano.exe condor/submit_scripts/2018
