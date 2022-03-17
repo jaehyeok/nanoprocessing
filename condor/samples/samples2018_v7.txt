@@ -102,17 +102,17 @@ WW_TuneCP5_13TeV-pythia8/NANOAODSIM/Nano02Apr2020_102X_upgrade2018_realistic_v21
 
 ## JetHT
 
-/data/data/data/Run2018A/JetHT/NANOAOD/02Apr2020-v1
-/data/data/data/Run2018B/JetHT/NANOAOD/02Apr2020-v1
-/data/data/data/Run2018C/JetHT/NANOAOD/02Apr2020-v1
-/data/data/data/Run2018D/JetHT/NANOAOD/02Apr2020-v1
+/data/data/Run2018A/JetHT/NANOAOD/02Apr2020-v1/
+/data/data/Run2018B/JetHT/NANOAOD/02Apr2020-v1/
+/data/data/Run2018C/JetHT/NANOAOD/02Apr2020-v1/
+/data/data/Run2018D/JetHT/NANOAOD/02Apr2020-v1/
 
 ## SingleMuon
 
-#/data/data/data/Run2018A/SingleMuon/NANOAOD/02Apr2020-v1	
-#/data/data/data/Run2018B/SingleMuon/NANOAOD/02Apr2020-v1	
-#/data/data/data/Run2018C/SingleMuon/NANOAOD/02Apr2020-v1	
-#/data/data/data/Run2018D/SingleMuon/NANOAOD/02Apr2020-v1	
+#/data/data/Run2018A/SingleMuon/NANOAOD/02Apr2020-v1/
+#/data/data/Run2018B/SingleMuon/NANOAOD/02Apr2020-v1/	
+#/data/data/Run2018C/SingleMuon/NANOAOD/02Apr2020-v1/	
+#/data/data/Run2018D/SingleMuon/NANOAOD/02Apr2020-v1/	
 
 ## GGToNeuNeu
 
