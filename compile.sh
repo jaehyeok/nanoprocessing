@@ -46,4 +46,4 @@ cp norm_weights.exe condor/submit_scripts_norm/2018
 mkdir -p ~/flist/2016
 mkdir -p ~/flist/2017
 mkdir -p ~/flist/2018
-
+mkdir -p Running

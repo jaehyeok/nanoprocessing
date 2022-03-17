@@ -389,7 +389,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   TString outputfile = (dynamic_cast<TObjString*>(tokens->At(tokens->GetEntries()-1)))->GetString();
   outputfile.ReplaceAll(".root", Form("_fatjetbaby_%s.root", samplename.Data()));
 
-  TFile *babyFile_ = new TFile(outputfile, "RECREATE");
+  TFile *babyFile_ = new TFile("Running/"+outputfile, "RECREATE");
   babyFile_->cd();
   TTree *babyTree_ = new TTree("tree", "baby ntuple from nanoaod");
 

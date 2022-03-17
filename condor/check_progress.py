@@ -11,7 +11,7 @@ year=sys.argv[1]
 username = getpass.getuser()
 
 #outputdir="/xrootd_user/"+username+"/xrootd/nanoprocessing/"+year+"/processed_JER_0903/"
-outputdir="/data2/nanoprocessing/"+year+"/processed_test/"
+outputdir="/data2/nanoprocessing/"+year+"/processed_0317/"
 
 #if year == "2017" or year == "2018":
 #	outputdir="/xrootd_user/"+username+"/xrootd/nanoprocessing/"+year+"/processed_SigJer210601/"

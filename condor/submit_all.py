@@ -10,7 +10,7 @@ username = getpass.getuser()
 year=sys.argv[1]
 
 #outputdir="root://cms-xrdr.private.lo:2094//xrd/store/user/"+username+"/nanoprocessing/"+year+"/processed_JER_0903/"
-outputdir="/data2/nanoprocessing/"+year+"/processed_test/"
+outputdir="/data2/nanoprocessing/"+year+"/processed_0317/"
 
 #samplelist="samples/samples"+year+"UL_v2.txt"
 samplelist="samples/samples"+year+"_v7.txt"
@@ -81,7 +81,7 @@ for line in lines:
   # data
   elif "Run201" in line:
     f_list = os.listdir(line.rstrip())
-    process=line.split('/')[5]+line.split('/')[4]
+    process=line.split('/')[3]+"_"+line.split('/')[6]
     list_file = open("/home/yjeong/flist/"+year+"/flist_"+process+".txt", "w")
     for subdir in f_list:
       f_list_subdir = os.listdir(splits[0].rstrip()+"/"+subdir)
