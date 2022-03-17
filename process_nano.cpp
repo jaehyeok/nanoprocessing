@@ -1442,10 +1442,10 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   cout << "... transferring output file" << endl;
   //cout << Form("... xrdcp %s %s", outputfile.Data(), outputdir.Data()) << endl;  //for KISTI server
   //gSystem->Exec(Form("xrdcp %s %s", outputfile.Data(), outputdir.Data()));  // for KISTI server
-  cout << Form("... cp %s %s", outputfile.Data(), outputdir.Data()) << endl;  // for KoreaUniv server
-  gSystem->Exec(Form("cp %s %s", outputfile.Data(), outputdir.Data()));  // for KoreaUniv server
-  cout << Form("rm %s", outputfile.Data()) << endl;  
-  gSystem->Exec(Form("rm %s", outputfile.Data()));  
+  cout << Form("... cp Running/%s %s", outputfile.Data(), outputdir.Data()) << endl;  // for KoreaUniv server
+  gSystem->Exec(Form("cp Running/%s %s", outputfile.Data(), outputdir.Data()));  // for KoreaUniv server
+  cout << Form("rm Running/%s", outputfile.Data()) << endl;  
+  gSystem->Exec(Form("rm Running/%s", outputfile.Data()));  
 }
 
 
