@@ -54,7 +54,7 @@ for line in lines:
   # mc
   if "13TeV" in line:
     #f_list = glob.glob("/xrootd/store/mc/"+inputmctag+"/"+splits[0].rstrip()+"*/*")
-    f_list = glob.glob("/data/mc/NanoAODv7/2016/"+inputmctag+"/"+splits[0].rstrip()+"*/*")
+    f_list = glob.glob("/data/mc/NanoAODv7/"+year+"/"+inputmctag+"/"+splits[0].rstrip()+"*/*")
     #f_list = glob.glob("/xrootd/store/user/"+username+"/"+inputmctag+"/"+splits[0].rstrip()+"*/*")#FIXME
     process=line.split('_13TeV')[0]
     list_file = open("/home/"+username+"/flist/"+year+"/flist_"+process+".txt", "w")
