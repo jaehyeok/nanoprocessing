@@ -15,7 +15,7 @@ g++ norm_weights.cpp  `root-config --cflags --glibs` -o norm_weights.exe
 
 # copy executables to home directory so that they can be picked up by condor
 #cp process_nano.exe $HOME
-cp skim.exe         $HOME
+#cp skim.exe         $HOME
 cp norm_weights.exe $HOME
 #cp condor/run.sh $HOME
 

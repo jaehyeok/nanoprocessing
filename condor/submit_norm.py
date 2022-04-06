@@ -13,7 +13,7 @@ year=sys.argv[1] ##2016, 2017, 2018
 inputdir     = "/data2/nanoprocessing/"+year+"/merged_rpvfitnbge0_0317/"
 outdir       = "/data2/nanoprocessing/"+year+"/merged_norm_0317/"
 prenormdir   = "/data2/nanoprocessing/"+year+"/processed_0317/"
-#os.mkdir(outdir)
+#os.makedirs(outdir) #FIXME
 
 # list of tags (=processes)
 f_list = os.listdir(inputdir)
@@ -47,7 +47,7 @@ for files in tag_list:
   condor_file.write("#SBATCH -n 1\n")
   condor_file.write("#SBATCH -o log/run_%x.o%j.txt\n")
   condor_file.write("#SBATCH -e log/run_%x.e%j.txt\n")
-  condor_file.write("cd ~/nanoprocessing\n")
+  condor_file.write("cd ~/\n")
   condor_file.write("srun ./norm_weights.exe "+inputdir+" "+tag+" "+outdir+" " +prenormdir+"\n")
   condor_file.close()
   print("condor_submit submit_scripts_norm/"+year+"/condor_"+tag+"_norm.jds")
