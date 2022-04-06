@@ -72,8 +72,8 @@ void skimonefile(TString inputfile, TString outputdir, TString skim)
 	}
 	else if(skim=="rpvfitnbge0") {
 		//if(inputfile.Contains("SingleMuon")) skimcut = "njets>=4 && mj12>500 && nleps==1";
-		//if(inputfile.Contains("JetHTRun")) skimcut = "njets>=4 && mj12>500 && ht>1200";
-		if(inputfile.Contains("JetHTRun")) skimcut = "njets>=4 && mj12>500 && ht>1200 || (nbm>=3 && ht<2000)";
+		if(inputfile.Contains("JetHTRun")) skimcut = "njets>=4 && mj12>500 && ht>1200 && nbm<=2";
+		//if(inputfile.Contains("JetHTRun")) skimcut = "njets>=4 && mj12>500 && ht>1200 || (nbm>=3 && ht<2000)";
 		//if(inputfile.Contains("JetHTRun")) skimcut = "njets>=4 && mj12>500 && ht>1200 && ( nbm<3 || (njets>=4 && njets<=5 && nleps==1 ) || (njets<=6 && njets<=7 && nleps==0))";
 		//if(inputfile.Contains("JetHTRun")) skimcut = "ht>1200 && mj12>500 && ((njets>=4 && nbm<3) || (nleps==0 && njets>=6 && njets<=7) || (nleps==1 && njets>=4 && njets<=5))";
 		//else if(inputfile.Contains("TTJets_Tune")) skimcut="(sys_ht[0]>1200 || sys_ht[1]>1200 || ht>1200) && (sys_mj12[0]>500 || sys_mj12[1]>500 || mj12>500) && (sys_njets[0]>=4 || sys_njets[1]>=4 || njets>=3) && stitch_ht==1";
@@ -137,8 +137,7 @@ int main(int argc, char **argv)
     file_selector = atoi(argv[3]);
 
     outputdir = inputdir;
-    //outputdir.ReplaceAll("processed_1211", Form("skim_%s_1211", skim.Data()));
-    outputdir.ReplaceAll("processed_deepTvsQCD", Form("skim_%s_deepTvsQCD", skim.Data()));
+    outputdir.ReplaceAll("processed_0317", Form("skim_%s_0317", skim.Data()));
 
     cout << " input   dir  		: " << inputdir << endl;
     cout << " output  dir  		: " << outputdir << endl;

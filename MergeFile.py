@@ -5,13 +5,13 @@ from ROOT import TChain, TSelector, TTree, TH1F, TCanvas, TPad, TStyle, TString
 ROOT.ROOT.EnableImplicitMT(16)
 year=sys.argv[1]#2016, 2017, 2018
 
-simple_PATH = "/xrootd_user/yjeong/xrootd/nanoprocessing/"
+simple_PATH = "/data2/nanoprocessing/"
 
-inputdir = simple_PATH+year+"/skim_rpvfitnbge0_deepTvsQCD/"
-outputdir = simple_PATH+year+"/merged_rpvfitnbge0_deepTvsQCD/"
+inputdir = simple_PATH+year+"/skim_rpvfitnbge0_0317/"
+outputdir = simple_PATH+year+"/merged_rpvfitnbge0_0317/"
 os.mkdir(outputdir)
 
-flistdir = "/cms/ldap_home/yjeong/flist/"+year
+flistdir = "/home/yjeong/flist/"+year
 flists = os.listdir(flistdir)
 process=[]
 

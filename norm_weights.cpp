@@ -149,7 +149,7 @@ void copy_onefile(TString inputfile)
   outputfile.ReplaceAll(".root", "_norm.root");
 
   //
-  TFile *newfile= new TFile(outputfile,"recreate");
+  TFile *newfile= new TFile("~/"+outputfile,"recreate");
   // remove branch
   ch.SetBranchStatus("w_btag_dcsv", 0);
   ch.SetBranchStatus("w_isr", 	    0);
@@ -352,10 +352,10 @@ void norm_onefile(TString inputfile, TString outputdir, TString inputdir)
 
 	// copy output file to outputdir
   cout << "... transferring output file" << endl;
-  cout << Form("... xrdcp %s %s", outputfile.Data(), outputdir.Data()) << endl;  
-  gSystem->Exec(Form("xrdcp %s %s", outputfile.Data(), outputdir.Data()));  
-  cout << Form("rm %s", outputfile.Data()) << endl;  
-  gSystem->Exec(Form("rm %s", outputfile.Data()));  
+  cout << Form("... cp ~/%s %s", outputfile.Data(), outputdir.Data()) << endl;  
+  gSystem->Exec(Form("cp ~/%s %s", outputfile.Data(), outputdir.Data()));  
+  cout << Form("rm ~/%s", outputfile.Data()) << endl;  
+  gSystem->Exec(Form("rm ~/%s", outputfile.Data()));  
 }
 
 
@@ -364,7 +364,7 @@ int main(int argc, char **argv)
 //int main()
 {
   ROOT::EnableImplicitMT(8);
-  bool useCondor = true;
+  bool useCondor = false;
   TString inputdir, outputdir, tag, prenormdir; 
   
   if(argc<3)
@@ -431,7 +431,7 @@ int main(int argc, char **argv)
     string file_path = __FILE__;
     string dir_path = file_path.substr(0,file_path.rfind("\\"));
     cout<<file_path<<endl;
-    tag_all = getFileListFromFile(Form("/cms/scratch/yjeong/CMSSW_8_0_0/src/nanoprocessing/condor/samples/samples%d_v7.txt",year)); //FIXME : You should change this directory to your nanoprocessing directory.
+    tag_all = getFileListFromFile(Form("/home/yjeong/nanoprocessing/condor/samples/samples%d_v7.txt",year)); //FIXME : You should change this directory to your nanoprocessing directory.
 
     for(auto tag_check:tag_all){
       if(!tag_check.Contains("HT")) continue;
@@ -604,9 +604,12 @@ int main(int argc, char **argv)
       tonorm_files.at(i).ReplaceAll("/xrootd","");
     }
     cout << "processing: " << tonorm_files.at(i) << endl; 
-    save_weights(tonorm_files.at(i)); 
+    save_weights(tonorm_files.at(i));
+	cout << "1" << endl;
     copy_onefile(tonorm_files.at(i)); 
+	cout << "2" << endl;
     norm_onefile(tonorm_files.at(i), outputdir, inputdir); 
+	cout << "3" << endl;
   }
   return 0;
 }

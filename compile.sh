@@ -34,13 +34,13 @@ mkdir -p condor/submit_scripts_norm/2018/log/
 #cp process_nano.exe condor/submit_scripts/2017
 #cp process_nano.exe condor/submit_scripts/2018
 
-cp condor/run_norm.sh condor/submit_scripts_norm/2016
-cp condor/run_norm.sh condor/submit_scripts_norm/2017
-cp condor/run_norm.sh condor/submit_scripts_norm/2018
+#cp condor/run_norm.sh condor/submit_scripts_norm/2016
+#cp condor/run_norm.sh condor/submit_scripts_norm/2017
+#cp condor/run_norm.sh condor/submit_scripts_norm/2018
 
-cp norm_weights.exe condor/submit_scripts_norm/2016
-cp norm_weights.exe condor/submit_scripts_norm/2017
-cp norm_weights.exe condor/submit_scripts_norm/2018
+#cp norm_weights.exe condor/submit_scripts_norm/2016
+#cp norm_weights.exe condor/submit_scripts_norm/2017
+#cp norm_weights.exe condor/submit_scripts_norm/2018
 
 # make folders for flists
 mkdir -p ~/flist/2016
