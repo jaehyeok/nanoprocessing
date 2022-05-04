@@ -52,14 +52,14 @@ Renormalization of tree branch
 $ ./norm_weights.exe [input dir] [tag] [output dir] [pre-norm dir]
 ```
 
-# Slurm submission for processing
+# Slurm submit for processing
 ```
 cd condor
 ./submit_all.py [year]
 ```
 where year = 2016, 2017 or 2018. Under ~/flist diretory files that contain the nanoAOD files to be processed will be generated. It list is based on `samples/samples[year].txt`. In addition, slurm submit files will be generated in `submit_scripts` directory together with the actuall commands on the terminal. You can just copy the command and paste them in command line. 
 
-# Slurm submission for renormalization
+# Slurm submit for renormalization
 ```
 cd condor
 ./submit_norm.py [year]
