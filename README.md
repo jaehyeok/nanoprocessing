@@ -57,12 +57,14 @@ $ ./norm_weights.exe [input dir] [tag] [output dir] [pre-norm dir]
 cd condor
 ./submit_all.py [year]
 ```
-where year = 2016, 2017 or 2018. Under ~/flist diretory files that contain the nanoAOD files to be processed will be gemnerated. It list is based on `samples/samples[year].txt`. In addition, condor submit files will be generated in `submit_scripts` directory together with the actuall commands on the terminal. You can just copy the command and paste them in command line. 
+where year = 2016, 2017 or 2018. Under ~/flist diretory files that contain the nanoAOD files to be processed will be generated. It list is based on `samples/samples[year].txt`. In addition, slurm submit files will be generated in `submit_scripts` directory together with the actuall commands on the terminal. You can just copy the command and paste them in command line. 
 
 # Slurm submission for renormalization
 ```
-
+cd condor
+./submit_norm.py [year]
 ```
+where year = 2016, 2017 or 2018. Under ~/flist/norm diretory files that contain the nanoAOD files to be processed will be generated. In addition, slurm submit files will be generated in `submit_scripts_norm` directory together with the actuall commands on the terminal. You can just copy the command and paste them in command line.
 
 # Tools
 Check the status of the processing by by `./check_progress.py [year]`. It will prin out a table of status, and generate a list of process files in ~/flist directory. 
