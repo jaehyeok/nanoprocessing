@@ -16,7 +16,7 @@ git clone git@github.com:jaehyeok/nanoprocessing.git
 ```
 
 # Fastjet 
-The package uses Fastjet [1] for fat-jet clustering (to calculate MJ). So, you need to install and set it up on your machine. Or, include `/cms/ldap_home/jaehyeok/tools/fastjet-install/bin` in your PATH.   
+The package uses Fastjet [1] for fat-jet clustering (to calculate MJ). So, you need to install and set it up on your machine. Or, include `/cms/ldap_home/<user name>/tools/fastjet-install/bin` in your PATH.   
 
 # compilation
 The compliation can be done by running `./complie.ch`. It compiles two scripts (`process_nano.cpp` and `skim.cpp`) and copy them to your home directory so that they can be used by condor. 
