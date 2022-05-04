@@ -16,7 +16,7 @@ git clone git@github.com:jaehyeok/nanoprocessing.git
 ```
 
 # Fastjet 
-The package uses Fastjet [1] for fat-jet clustering (to calculate MJ). So, you need to install and set it up on your machine. Or, include `/cms/ldap_home/<user name>/tools/fastjet-install/bin` in your PATH.   
+The package uses Fastjet [1] for fat-jet clustering (to calculate MJ). So, you need to install and set it up on your machine. Or, include `/cms/ldap_home/<Username>/tools/fastjet-install/bin` in your PATH.   
 
 # compilation
 The compliation can be done by running `./complie.ch`. It compiles two scripts (`process_nano.cpp` and `skim.cpp`) and copy them to your home directory so that they can be used by condor. 
@@ -35,12 +35,34 @@ An example is
 ./process_nana.exe /xrootd/store/data/Run2017D/SingleMuon/NANOAOD/Nano14Dec2018-v1 root://cms-xrdr.private.lo:2094//xrd/store/user/jaehyeok/2017v4/2019_10_23/ SingleMuonRun2017D flist_outputdir_xrd_store.txt
 ```
 
-# Condor submission 
+# Skim
+You can run the skim
+```
+$ ./skim.exe /xrootd_user/yjeong/xrootd/nanoprocessing/[year]/JetHTRun_v7 rpvfitnbge0 [simultaneous run number] 
+```
+
+You can use the skim script
+```
+$ ./scripts/run_skim.sh [year]
+```
+
+# Renormalization
+Renormalization of tree branch
+```
+$ ./norm_weights.exe [input dir] [tag] [output dir] [pre-norm dir]
+```
+
+# Slurm submission for processing
 ```
 cd condor
 ./submit_all.py [year]
 ```
 where year = 2016, 2017 or 2018. Under ~/flist diretory files that contain the nanoAOD files to be processed will be gemnerated. It list is based on `samples/samples[year].txt`. In addition, condor submit files will be generated in `submit_scripts` directory together with the actuall commands on the terminal. You can just copy the command and paste them in command line. 
+
+# Slurm submission for renormalization
+```
+
+```
 
 # Tools
 Check the status of the processing by by `./check_progress.py [year]`. It will prin out a table of status, and generate a list of process files in ~/flist directory. 
