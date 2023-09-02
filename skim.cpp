@@ -58,56 +58,76 @@ using namespace std;
 
 const bool DEBUG = false; 
 
-void skimonefile(TString inputfile, TString outputdir, TString skim) 
+void skimfile(TString year, TString process, TString skim) 
 {
-	bool doskim = true; 
+
+  // ------------------------------------------------------ //
+  // Before running this code, do                           //
+  // python3 make_flist_processed.py [year] [mc/data]       //
+  // for getting flist in nanoprocessing/flist/processed/   //
+  // ------------------------------------------------------ //
 
   // skim cut
   TString skimcut="0";
   if(skim=="rpvfit") {
-		skimcut="ht>1200&&mj12>500&&njets>=4";
-	}
-	else if(skim=="trig") {
-		skimcut="mj12>500&&njets>=4";
-	}
-	else if(skim=="rpvfitnbge0") {
-		//if(inputfile.Contains("SingleMuon")) skimcut = "njets>=4 && mj12>500 && nleps==1";
-		if(inputfile.Contains("JetHTRun")) skimcut = "njets>=4 && mj12>500 && ht>1200 && nbm<=2";
-		//if(inputfile.Contains("JetHTRun")) skimcut = "njets>=4 && mj12>500 && ht>1200 || (nbm>=3 && ht<2000)";
-		//if(inputfile.Contains("JetHTRun")) skimcut = "njets>=4 && mj12>500 && ht>1200 && ( nbm<3 || (njets>=4 && njets<=5 && nleps==1 ) || (njets<=6 && njets<=7 && nleps==0))";
-		//if(inputfile.Contains("JetHTRun")) skimcut = "ht>1200 && mj12>500 && ((njets>=4 && nbm<3) || (nleps==0 && njets>=6 && njets<=7) || (nleps==1 && njets>=4 && njets<=5))";
-		//else if(inputfile.Contains("TTJets_Tune")) skimcut="(sys_ht[0]>1200 || sys_ht[1]>1200 || ht>1200) && (sys_mj12[0]>500 || sys_mj12[1]>500 || mj12>500) && (sys_njets[0]>=4 || sys_njets[1]>=4 || njets>=3) && stitch_ht==1";
-		else if(inputfile.Contains("TTJets_Tune")) skimcut="(sys_ht[0]>1200 || sys_ht[1]>1200 || ht>1200) && (sys_mj12[0]>500 || sys_mj12[1]>500 || mj12>500) && (sys_njets[0]>=4 || sys_njets[1]>=4 || njets>=3) && stitch_ht==1";
-		//else if(inputfile.Contains("TTJets_Tune")) skimcut="(sys_ht[0]>1200 || sys_ht[1]>1200 || ht>1200) && (sys_mj12[0]>500 || sys_mj12[1]>500 || mj12>500) && (sys_njets[0]>=3 || sys_njets[1]>=3 || njets>=3) && stitch_ht==1 && nleps==2";
-		else skimcut="(sys_ht[0]+Sum$(leps_pt)>1200 || sys_ht[1]+Sum$(leps_pt)>1200 || ht+Sum$(leps_pt)>1200) && (sys_mj12[0]>500 || sys_mj12[1]>500 || mj12>500) && (sys_njets[0]>=4 || sys_njets[1]>=4 || njets>=4)";// 
-		//else skimcut="(sys_ht[0]>1200 || sys_ht[1]>1200 || ht>1200) && (sys_mj12[0]>500 || sys_mj12[1]>500 || mj12>500) && (sys_njets[0]>=3 || sys_njets[1]>=3 || njets>=3) && nleps==2";// */
-		//if(inputfile.Contains("SingleMuonRun")) skimcut = "nmus==1 && njets>=4 && mj12>=500 && trig_isomu24==1 && trig_isomu27==1";
-	}
-	else if(skim=="ht1000") {
-		skimcut="ht>1000";
-	}
-	else {
-		cout << "enter a correct skim!" << endl;
-	  doskim = false; 
-	}
+    skimcut="ht>1200&&mj12>500&&njets>=4";
+  }
+  else if(skim=="trig") {
+    skimcut="mj12>500&&njets>=4";
+  }
+  else if(skim=="rpvfitnbge0") {
+    // Data
+    if(process.Contains("Run")) skimcut = "ht>1200 && mj12>500 && njets>=4";
+    // MC
+    else if(process.Contains("TTJets_Tune")) skimcut="(sys_ht[0]+Sum$(leps_pt)>1200 || sys_ht[1]+Sum$(leps_pt)>1200 || ht+Sum$(leps_pt)>1200) && (sys_mj12[0]>500 || sys_mj12[1]>500 || mj12>500) && (sys_njets[0]>=4 || sys_njets[1]>=4 || njets>=4) && stitch_ht==1";
+    else skimcut="(sys_ht[0]+Sum$(leps_pt)>1200 || sys_ht[1]+Sum$(leps_pt)>1200 || ht+Sum$(leps_pt)>1200) && (sys_mj12[0]>500 || sys_mj12[1]>500 || mj12>500) && (sys_njets[0]>=4 || sys_njets[1]>=4 || njets>=4)";
+  }
+  else if(skim=="dy") {
+    // Data
+    if(process.Contains("Run")) skimcut = "ht>1200 && mj12>500 && njets>=3 && nbm<=2 && nleps==2";
+    // MC
+    else if(process.Contains("TTJets_Tune")) skimcut="(sys_ht[0]+Sum$(leps_pt)>1200 || sys_ht[1]+Sum$(leps_pt)>1200 || ht+Sum$(leps_pt)>1200) && (sys_mj12[0]>500 || sys_mj12[1]>500 || mj12>500) && (sys_njets[0]>=3 || sys_njets[1]>=3 || njets>=3) && stitch_ht==1 && nleps==2";
+    else skimcut="(sys_ht[0]+Sum$(leps_pt)>1200 || sys_ht[1]+Sum$(leps_pt)>1200 || ht+Sum$(leps_pt)>1200) && (sys_mj12[0]>500 || sys_mj12[1]>500 || mj12>500) && (sys_njets[0]>=3 || sys_njets[1]>=3 || njets>=3) && nleps==2";
+  }
 
-	if(doskim) {
-		TChain ch("tree");
-		ch.Add(inputfile);
+  else if(skim=="ht1000") {
+    skimcut="ht>1000";
+  }
+  else {
+    cout << "enter a correct skim!" << endl;
+  }
+  
+  // make output file
+  vector<TString> files; files.clear();
+  files = getFileListFromFile(Form("flist/processed/%s/flist_%s.txt", year.Data(), process.Data()));
 
-		TObjArray *tokens = inputfile.Tokenize("/"); 
-		TString outputfile = (dynamic_cast<TObjString*>(tokens->At(tokens->GetEntries()-1)))->GetString();
-		outputfile.ReplaceAll(".root", Form("_%s.root", skim.Data()));
+  for(int i=0; i<files.size(); i++) {
 
-		TFile *newfile= new TFile(outputfile,"recreate");
-		TTree *ctree = ch.CopyTree(skimcut);
-		newfile->cd();
-		if(ctree) ctree->Write();
-		newfile->Close();
+    TChain *ch = new TChain("tree");
+    ch->Add(files.at(i));
 
-		cout << "copying " << outputfile << " to " << outputdir << endl; 
-		gSystem->Exec(Form("mv %s %s", outputfile.Data(), outputdir.Data()));  
-	} 
+    // name output file
+    TObjArray *tokens = files.at(i).Tokenize("/");
+    TString filename = (dynamic_cast<TObjString*>(tokens->At(tokens->GetEntries()-1)))->GetString();
+    filename.ReplaceAll(".root", Form("_%s.root", "skimmed"));
+
+    TFile *outputfile = new TFile("Running/"+filename, "recreate");
+    TTree *ctree = ch->CopyTree(skimcut);
+    outputfile->cd();
+    if(ctree) ctree->Write();
+    outputfile->Close();
+
+    // move and remove files
+    cout << "... transferring output file" << endl;
+    cout << Form("... cp Running/%s /data3/nanoprocessing/skimmed_230902/%s/%s", filename.Data(), year.Data(), process.Data()) << endl;
+    gSystem->Exec(Form("cp Running/%s /data3/nanoprocessing/skimmed_230902/%s/%s", filename.Data(), year.Data(), process.Data()));
+    cout << Form("rm Running/%s", filename.Data()) << endl;
+    gSystem->Exec(Form("rm Running/%s", filename.Data()));
+
+    delete outputfile;
+    cout << i << "th file is skimmed" << endl;
+
+  }
 }
 
 
@@ -116,50 +136,30 @@ int main(int argc, char **argv)
 //int main()
 {
   int nthreads = 16;
-  ROOT::EnableImplicitMT(nthreads);
-  TString inputdir, outputdir, skim; 
-	int file_selector=-1; 
+//  ROOT::EnableImplicitMT(nthreads);
+
+  TString year, process, skim;
+  year	  = argv[1];
+  process = argv[2];
+  skim	  = argv[3];
 
   if(argc<4)
   {
     cout << " Please provide proper arguments" << endl;
     cout << "" << endl;
-    cout << "   ./process.exe [input dir] [skim] [file selector]" << endl; 
+    cout << "   ./skim.exe [year] [process] [skim]" << endl; 
     cout << "" << endl;
-    cout << " where skim = rpvfit, trig, rpvfitnbge0, ht1000" << endl;
-    cout << "       file selector = 0,1,2,...,9" << endl;
+    cout << " skim = rpvfitnbge0, dy" << endl;
     return 0;
   }
   else 
   {
-    inputdir      = argv[1];
-    skim          = argv[2];
-    file_selector = atoi(argv[3]);
-
-    outputdir = inputdir;
-    outputdir.ReplaceAll("processed_0317", Form("skim_%s_0317", skim.Data()));
-
-    cout << " input   dir  		: " << inputdir << endl;
-    cout << " output  dir  		: " << outputdir << endl;
-    cout << " skim        	  : " << skim << endl;
-    cout << " file_selector   : " << file_selector << endl;
+    cout << " year 	 		: " << year << endl;
+    cout << " process   		: " << process << endl;
+    cout << " skim	   		: " << skim << endl;
   }
 
-  // make skim directory
-  gSystem->mkdir(outputdir.Data());
-
-  // get list of files in a directory
-  vector<TString> files = globVector(Form("%s/*.root", inputdir.Data())); 
-
-	cout << "skimming " << files.size() << " files" << endl;
-	
-  for(int i=0; i<files.size(); i++)
-  {
-    if(file_selector!=-1 && i%5!=file_selector) continue;
-		// 
-    cout << "skimming: " << files.at(i) << endl; 
-    skimonefile(files.at(i), outputdir, skim); 
-  }
+  skimfile(year, process, skim); 
 
   return 0;
 }
