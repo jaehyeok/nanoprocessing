@@ -109,23 +109,55 @@ void skimfile(TString year, TString process, TString skim)
     // name output file
     TObjArray *tokens = files.at(i).Tokenize("/");
     TString filename = (dynamic_cast<TObjString*>(tokens->At(tokens->GetEntries()-1)))->GetString();
-    filename.ReplaceAll(".root", Form("_%s.root", "skimmed"));
+    filename.ReplaceAll(".root", Form("_%s_%s.root", "skimmed", skim.Data()));
 
     TFile *outputfile = new TFile("Running/"+filename, "recreate");
     TTree *ctree = ch->CopyTree(skimcut);
     outputfile->cd();
+    int p = ctree->GetEntries();
+    if(p==0) {
+      cout << "GetEntries() = 0" << endl;
+      continue;
+    }
     if(ctree) ctree->Write();
     outputfile->Close();
 
     // move and remove files
-    cout << "... transferring output file" << endl;
-    cout << Form("... cp Running/%s /data3/nanoprocessing/skimmed_230902/%s/%s", filename.Data(), year.Data(), process.Data()) << endl;
-    gSystem->Exec(Form("cp Running/%s /data3/nanoprocessing/skimmed_230902/%s/%s", filename.Data(), year.Data(), process.Data()));
-    cout << Form("rm Running/%s", filename.Data()) << endl;
-    gSystem->Exec(Form("rm Running/%s", filename.Data()));
+    if(skim=="rpvfitnbge0") {
+      if(process.Contains("Run")) { // data
+        cout << "... transferring output file" << endl;
+        cout << Form("... cp Running/%s /data3/nanoprocessing/skimmed_230903_rpvfitnbge0_data/%s/%s", filename.Data(), year.Data(), process.Data()) << endl;
+        gSystem->Exec(Form("cp Running/%s /data3/nanoprocessing/skimmed_230903_rpvfitnbge0_data/%s/%s", filename.Data(), year.Data(), process.Data()));
+        cout << Form("rm Running/%s", filename.Data()) << endl;
+        gSystem->Exec(Form("rm Running/%s", filename.Data()));
+      }
+      else { // mc
+        cout << "... transferring output file" << endl;
+        cout << Form("... cp Running/%s /data3/nanoprocessing/skimmed_230903_rpvfitnbge0/%s/%s", filename.Data(), year.Data(), process.Data()) << endl;
+        gSystem->Exec(Form("cp Running/%s /data3/nanoprocessing/skimmed_230903_rpvfitnbge0/%s/%s", filename.Data(), year.Data(), process.Data()));
+        cout << Form("rm Running/%s", filename.Data()) << endl;
+        gSystem->Exec(Form("rm Running/%s", filename.Data()));
+      }
+    }
+    else if(skim=="dy"){
+      if(process.Contains("Run")) { // data
+        cout << "... transferring output file" << endl;
+        cout << Form("... cp Running/%s /data3/nanoprocessing/skimmed_230903_dy_data/%s/%s", filename.Data(), year.Data(), process.Data()) << endl;
+        gSystem->Exec(Form("cp Running/%s /data3/nanoprocessing/skimmed_230903_dy_data/%s/%s", filename.Data(), year.Data(), process.Data()));
+        cout << Form("rm Running/%s", filename.Data()) << endl;
+        gSystem->Exec(Form("rm Running/%s", filename.Data()));
+      }
+      else { // mc
+        cout << "... transferring output file" << endl;
+        cout << Form("... cp Running/%s /data3/nanoprocessing/skimmed_230903_dy/%s/%s", filename.Data(), year.Data(), process.Data()) << endl;
+        gSystem->Exec(Form("cp Running/%s /data3/nanoprocessing/skimmed_230903_dy/%s/%s", filename.Data(), year.Data(), process.Data()));
+        cout << Form("rm Running/%s", filename.Data()) << endl;
+        gSystem->Exec(Form("rm Running/%s", filename.Data()));
+      }
 
-    delete outputfile;
-    cout << i << "th file is skimmed" << endl;
+    }
+      delete outputfile;
+      cout << i << "th file is skimmed" << endl;
 
   }
 }
