@@ -114,9 +114,15 @@ void skimfile(TString year, TString process, TString skim)
     TFile *outputfile = new TFile("Running/"+filename, "recreate");
     TTree *ctree = ch->CopyTree(skimcut);
     outputfile->cd();
+
+    // do not make output file if entry of output file is zero
     int p = ctree->GetEntries();
     if(p==0) {
       cout << "GetEntries() = 0" << endl;
+      outputfile->Close();
+      cout << Form("rm Running/%s", filename.Data()) << endl;
+      gSystem->Exec(Form("rm Running/%s", filename.Data()));
+
       continue;
     }
     if(ctree) ctree->Write();
