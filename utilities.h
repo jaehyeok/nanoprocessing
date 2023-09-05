@@ -22,14 +22,13 @@ std::vector<TString> globVector(const TString& pattern){
 }
 
 //get Lepton Scale Factor
-//elmu is true for electron, false for muon.
-//
-std::vector<int> getLepSFBin(TH2F *hist, const bool elmu, const float pt, const float eta){
+//elmu: true for electron, false for muon.
+std::vector<int> getLepSFBin(TH2F *hist, const bool elmu, const float pt, const float eta, TString year){
   vector<int> ret;
   int binx(0), biny(0);
   float pt_ = (float)pt;
   float eta_ = (float)eta;
-  if(elmu){
+  if(elmu){                                   // elmu: true(electron), false(muon)
     pt_ = min(pt,(const float)499.999);
     eta_ = min(eta, (const float)2.499);
     binx = hist->GetXaxis()->FindBin(eta_);
@@ -38,42 +37,91 @@ std::vector<int> getLepSFBin(TH2F *hist, const bool elmu, const float pt, const 
   else{
     pt_ = min(pt,(const float)119.999);
     eta_ = min(eta, (const float)2.399);
-    binx = hist->GetXaxis()->FindBin(pt_);
-    biny = hist->GetYaxis()->FindBin(abs(eta_));
+    if(year=="2016"||year=="2017"||year=="2018"){
+      binx = hist->GetXaxis()->FindBin(pt_);
+      biny = hist->GetYaxis()->FindBin(abs(eta_));
+    // binx: electron(eta), muon(pt) , biny: electron(pt), muon(abs(eta))
+    // it is because each root file for SF has different configuration for pt and eta
+    }
+    else if(year=="UL2016_preVFP"||year=="UL2016"||year=="UL2017"||year=="UL2018"){
+      binx = hist->GetXaxis()->FindBin(eta_);
+      biny = hist->GetYaxis()->FindBin(pt_);
+    // In UL, the configuration is the same as electron's
+    }
   }
   ret.push_back(binx);
   ret.push_back(biny);
   return ret;
 }
 
-std::vector<float> getLepSF(TFile *f, const bool elmu, const float pt, const float eta){
+std::vector<float> getLepSF(TFile *f, const bool elmu, const float pt, const float eta, const TString year){
   vector<float> ret;
 
   float ret_SF(0);
   float ret_err(0);
+  float w_iso(0), w_id(0), err_iso(0), err_id(0);
 
-  if(elmu){    
-    vector<int> bin_iso;
-    vector<int> bin_id;
-    TH2F *SFiso = (TH2F*)f->Get("Run2016_CutBasedMediumNoIso94XV2");
-    TH2F *SFid  = (TH2F*)f->Get("Run2016_Mini");
-    bin_iso     = getLepSFBin(SFiso,elmu,pt,eta); 
-    bin_id      = getLepSFBin(SFid,elmu,pt,eta); 
-
-    float w_iso   = SFiso->GetBinContent(bin_iso.at(0), bin_iso.at(1));
-    float w_id    = SFid->GetBinContent(bin_id.at(0), bin_id.at(1));
-    float err_iso = SFiso->GetBinError(bin_iso.at(0), bin_iso.at(1));
-    float err_id  = SFid->GetBinError(bin_id.at(0), bin_id.at(1));
-
-    ret_SF        = w_iso*w_id;
-    ret_err       = w_iso*w_id*sqrt(pow((err_iso/w_iso),2)+pow((err_id/w_id),2));
+  if(elmu){
+    //electron
+    vector<int> bin, bin_iso, bin_id;
+    TH2F *SFiso, *SFid, *SF;
+    if(year=="2016"||year=="2017"||year=="2018"){ 
+      if(year=="2016"){ 
+        SFiso = (TH2F*)f->Get("Run2016_CutBasedMediumNoIso94XV2");
+        SFid  = (TH2F*)f->Get("Run2016_Mini");
+      }
+      else if(year=="2017"){
+        SFiso = (TH2F*)f->Get("Run2017_CutBasedMediumNoIso94XV2");
+        SFid  = (TH2F*)f->Get("Run2017_MVAVLooseTightIP2DMini");
+      }
+      else if(year=="2018"){
+        SFiso = (TH2F*)f->Get("Run2018_CutBasedMediumNoIso94XV2");
+        SFid  = (TH2F*)f->Get("Run2018_Mini");
+      }
+      bin_iso     = getLepSFBin(SFiso,elmu,pt,eta,year); 
+      bin_id      = getLepSFBin(SFid,elmu,pt,eta,year); 
+      w_iso   = SFiso->GetBinContent(bin_iso.at(0), bin_iso.at(1));
+      w_id    = SFid->GetBinContent(bin_id.at(0), bin_id.at(1));
+      err_iso = SFiso->GetBinError(bin_iso.at(0), bin_iso.at(1));
+      err_id  = SFid->GetBinError(bin_id.at(0), bin_id.at(1));
+      ret_SF        = w_iso*w_id;
+      ret_err       = w_iso*w_id*sqrt(pow((err_iso/w_iso),2)+pow((err_id/w_id),2));
+    }
+    else if(year=="UL2016_preVFP"||year=="UL2016"||year=="UL2017"||year=="UL2018"){
+      SF = (TH2F*)f->Get("EGamma_SF2D");
+      bin = getLepSFBin(SF,elmu,pt,eta,year);
+      ret_SF = SF->GetBinContent(bin.at(0),bin.at(1));
+      ret_err = SF->GetBinError(bin.at(0),bin.at(1));
+    }
   }
   else{
-    vector<int> bin;
-    TH2F *SF      = (TH2F*)f->Get("SF");
-    bin           = getLepSFBin(SF,elmu,pt,eta);
-    ret_SF        = SF->GetBinContent(bin.at(0),bin.at(1));
-    ret_err       = 0.03;
+    //muon
+    vector<int> bin, bin_iso, bin_id;
+    TH2F *SFiso, *SFid, *SF;
+    if(year=="2016"){
+      SF = (TH2F*)f->Get("SF");
+      bin           = getLepSFBin(SF,elmu,pt,eta,year);
+      ret_SF        = SF->GetBinContent(bin.at(0),bin.at(1));
+      ret_err       = 0.03;
+    }
+    else if(year=="2017"||year=="2018"){
+      SF = (TH2F*)f->Get("TnP_MC_NUM_MiniIso02Cut_DEN_MediumID_PAR_pt_eta");
+      bin           = getLepSFBin(SF,elmu,pt,eta,year);
+      ret_SF        = SF->GetBinContent(bin.at(0),bin.at(1));
+      ret_err       = SF->GetBinError(bin.at(0),bin.at(1));
+    }
+    else if(year=="UL2016_preVFP"||year=="UL2016"||year=="UL2017"||year=="UL2018"){
+      SFiso = (TH2F*)f->Get("NUM_TightRelIso_DEN_MediumID_abseta_pt");
+      SFid = (TH2F*)f->Get("NUM_MediumID_DEN_TrackerMuons_abseta_pt");
+      bin_iso = getLepSFBin(SFiso,elmu,pt,eta,year);
+      bin_id = getLepSFBin(SFid,elmu,pt,eta,year);
+      w_iso   = SFiso->GetBinContent(bin_iso.at(0), bin_iso.at(1));
+      w_id    = SFid->GetBinContent(bin_id.at(0), bin_id.at(1));
+      err_iso = SFiso->GetBinError(bin_iso.at(0), bin_iso.at(1));
+      err_id  = SFid->GetBinError(bin_id.at(0), bin_id.at(1));
+      ret_SF        = w_iso*w_id;
+      ret_err       = w_iso*w_id*sqrt(pow((err_iso/w_iso),2)+pow((err_id/w_id),2));
+    }
   }
   ret.push_back(ret_SF);
   ret.push_back(ret_err);

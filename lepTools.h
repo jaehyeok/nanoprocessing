@@ -1,6 +1,8 @@
 using namespace std; 
 
 //https://github.com/richstu/nano2pico/blob/master/src/el_producer.cpp#L85-L105
+//https://cms-talk.web.cern.ch/t/nanoaod-v9-bitmap/24831/3
+//https://twiki.cern.ch/twiki/bin/viewauth/CMS/SWGuideCMSDataAnalysisSchoolCERN2020EgammaShortExercise#Section_3_Selecting_and_Identify
 bool idElectron_noIso(int bitmap, int level){
 	// decision for each cut represented by 3 bits (0:fail, 1:veto, 2:loose, 3:medium, 4:tight)
 	// Electron_vidNestedWPBitmap 
@@ -23,3 +25,11 @@ bool idElectron_noIso(int bitmap, int level){
 	return pass;
 }
 
+bool idElectron_cutBased(int Electron_cutBased, int wp) {
+
+	bool pass = true;
+	if(Electron_cutBased < wp) pass = false;
+
+	return pass;
+
+}
