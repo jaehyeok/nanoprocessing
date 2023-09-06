@@ -57,18 +57,19 @@ const bool DEBUG = false;
 // JEC  
 FactorizedJetCorrector *JetCorrector;
 JetCorrectionUncertainty *JecUnc;
-TFile *electronSF;
-TFile *muonSF;
+//TFile *electronSF;
+//TFile *muonSF;
 
-void process_nano(TString inputfile, TString outputdir, float sumWeights, TString samplename, int nfiles, int &filenumber) 
+void process_nano(TString inputfile, TString outputdir, float sumWeights, TString samplename, int nfiles, int &filenumber, TString year) 
 {
   // 
   filenumber++; 
 
   //
-  int year    = 0;
+//  int year    = 0;
   char First_ = '/'; 
-  Int_t idxLast  = inputfile.Index("_13TeV");
+  Int_t idxLast  = inputfile.Index("_13TeV");        // before making b-tag eff file
+//  Int_t idxLast  = inputfile.Index("/NANO");         // after making b-tag eff file
   Int_t idxRemov = inputfile.Index("RunII");
   TString temp_ = inputfile.Copy();
   TString tag   = temp_.Remove(idxLast);
@@ -78,17 +79,12 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   
   cout<< "TAG             : " <<tag<< endl;
 
-  if(inputfile.Contains("RunIISummer16")) year = 2016;
-  else if(inputfile.Contains("RunIIFall17")) year = 2017;
-  else if(inputfile.Contains("RunIIAutumn18")) year = 2018;
-  if(inputfile.Contains("Run2016")) year = 2016;
-  else if(inputfile.Contains("Run2017")) year = 2017;
-  else if(inputfile.Contains("Run2018")) year = 2018;
   cout << " year: " << year << endl;
   bool isData = false;
   if(inputfile.Contains("JetHT") || samplename.Contains("JetHT"))            isData = true;
   if(inputfile.Contains("SingleMuon") || samplename.Contains("SingleMuon"))  isData = true;
   cout << " is data?: " << isData << endl;
+
   // size of fat jets
   float Rparam = 1.2;
   
@@ -99,18 +95,28 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   // set up btag sf
   // ------------------------------------------------------------------
   // setup calibration + reader
-  // string csvfile = "data/DeepCSV_2016LegacySF_V1.csv"; //for loose cuts only 
-  // string csvfile = "data/DeepCSV_2016LegacySF_V1_TuneCP5.csv"; 
   TFile *f_btef;
   if(!isData){
-    if(year==2016)f_btef = new TFile("btagEfficiency/btagEfficiency_"+tag+"_2016.root","READ");
-    if(year==2017)f_btef = new TFile("btagEfficiency/btagEfficiency_"+tag+"_2017.root","READ");
-    if(year==2018)f_btef = new TFile("btagEfficiency/btagEfficiency_"+tag+"_2018.root","READ");
+    if(year=="2016")f_btef = new TFile("btagEfficiency/230613/"+year+"/btagEfficiency_"+tag+"_2016.root","READ");
+    else if(year=="2017")f_btef = new TFile("btagEfficiency/230613/"+year+"/btagEfficiency_"+tag+"_2017.root","READ");
+    else if(year=="2018")f_btef = new TFile("btagEfficiency/230613/"+year+"/btagEfficiency_"+tag+"_2018.root","READ");
+    else if(year=="UL2016_preVFP")f_btef = new TFile("btagEfficiency/ultralegacy/"+year+"/btagEfficiency_"+samplename+"_"+year+".root","READ");
+    else if(year=="UL2016")f_btef = new TFile("btagEfficiency/ultralegacy/"+year+"/btagEfficiency_"+samplename+"_"+year+".root","READ");
+    else if(year=="UL2017")f_btef = new TFile("btagEfficiency/ultralegacy/"+year+"/btagEfficiency_"+samplename+"_"+year+".root","READ");
+    else if(year=="UL2018")f_btef = new TFile("btagEfficiency/ultralegacy/"+year+"/btagEfficiency_"+samplename+"_"+year+".root","READ");
+    cout << "btagEfficiency file: " << f_btef->GetName() << endl;
   }
 
-  string csvfile = "data/DeepCSV_2016LegacySF_V1.csv"; //for loose cuts only 
-  if(year==2017) csvfile = "data/DeepCSV_94XSF_V4_B_F.csv";
-  if(year==2018) csvfile = "data/DeepCSV_102XSF_V1.csv";
+  string csvfile;
+  if(year=="2016") csvfile = "data/prelegacy/DeepCSV_2016LegacySF_V1.csv"; //for loose cuts only 
+  //else if(year=="2017") csvfile = "data/prelegacy/DeepCSV_94XSF_V5_B_F.csv"; // V5 is the same as V4 except for iterative fit. Since we don't use iterative fit, we can use V4 instead of V5. It seems that ROOT can not read formula of V5.
+  //else if(year=="2018") csvfile = "data/prelegacy/DeepCSV_102XSF_V2.csv"; // S/A
+  else if(year=="2017") csvfile = "data/prelegacy/DeepCSV_94XSF_V4_B_F.csv";
+  else if(year=="2018") csvfile = "data/prelegacy/DeepCSV_102XSF_V1.csv";
+  else if(year=="UL2016_preVFP") csvfile = "data/ultralegacy/wp_deepCSV_UL2016_preVFP.csv";
+  else if(year=="UL2016") csvfile = "data/ultralegacy/wp_deepCSV_UL2016.csv";
+  else if(year=="UL2017") csvfile = "data/ultralegacy/wp_deepCSV_UL2017.csv";
+  else if(year=="UL2018") csvfile = "data/ultralegacy/wp_deepCSV_UL2018.csv";
   cout << " btag sf file: " << csvfile << endl;  
   BTagCalibration calib("DeepCSV", csvfile);
   /*
@@ -128,18 +134,29 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   calibreader.load(calib, BTagEntry::FLAV_C,     "comb");
   calibreader.load(calib, BTagEntry::FLAV_UDSG,  "incl"); 
 
-
-	// Lepton SF files
-  /*TFile *electronSF;
-  if(year==2016) electronSF = new TFile("data/ElectronScaleFactors_Run2016.root","read");
-  else if(year==2017) electronSF = new TFile("data/ElectronScaleFactors_Run2017.root","read");
-  else if(year==2018) electronSF = new TFile("data/ElectronScaleFactors_Run2018.root","read");*/
-  electronSF = new TFile("data/ElectronScaleFactors_Run2016.root","read");
+  // Lepton SF files
+  TFile *electronSF;
+  if(year=="2016") electronSF = new TFile("data/prelegacy/ElectronScaleFactors_Run2016.root","read");
+  else if(year=="2017") electronSF = new TFile("data/prelegacy/ElectronScaleFactors_Run2017.root","read");
+  else if(year=="2018") electronSF = new TFile("data/prelegacy/ElectronScaleFactors_Run2018.root","read");
+  else if(year=="UL2016_preVFP") electronSF = new TFile("data/ultralegacy/Ele_Medium_UL2016_preVFP_EGM2D.root","read");
+  else if(year=="UL2016") electronSF = new TFile("data/ultralegacy/Ele_Medium_UL2016_EGM2D.root","read");
+  else if(year=="UL2017") electronSF = new TFile("data/ultralegacy/Ele_Medium_UL2017_EGM2D.root","read");
+  else if(year=="UL2018") electronSF = new TFile("data/ultralegacy/Ele_Medium_UL2018_EGM2D.root","read");
+  cout << "DEBUG1" << endl;
     
-	/*TFile *muonSF;
-  if(year==2016)muonSF = new TFile("data/TnP_NUM_MiniIsoTight_DENOM_LooseID_VAR_map_pt_eta.root","read");
-  else if(year>=2017)muonSF = new TFile("data/2017MiniIso0.2AndMediumID_SF.root","read");// */
-  muonSF = new TFile("data/TnP_NUM_MiniIsoTight_DENOM_LooseID_VAR_map_pt_eta.root","read");
+  TFile *muonSF;
+  if(year=="2016")muonSF = new TFile("data/prelegacy/TnP_NUM_MiniIsoTight_DENOM_MediumID_VAR_map_pt_eta.root","read");
+  else if(year=="2017"||year=="2018")muonSF = new TFile("data/prelegacy/2017MiniIso0.2AndMediumID_SF.root","read");
+  else if(year=="UL2016_preVFP")muonSF = new TFile("data/ultralegacy/Efficiencies_muon_generalTracks_Z_Run2016_UL_HIPM_IDISO.root","read");
+  else if(year=="UL2016")muonSF = new TFile("data/ultralegacy/Efficiencies_muon_generalTracks_Z_Run2016_UL_IDISO.root","read");
+  else if(year=="UL2017")muonSF = new TFile("data/ultralegacy/Efficiencies_muon_generalTracks_Z_Run2017_UL_IDISO.root","read");
+  else if(year=="UL2018")muonSF = new TFile("data/ultralegacy/Efficiencies_muon_generalTracks_Z_Run2018_UL_IDISO.root","read");
+  cout << "DEBUG2" << endl;
+
+  // PU reweight file
+  TFile *f_pu_weight = new TFile("data/ultralegacy/pileup/weight/"+year+"/pu_weight_"+samplename+"_"+year+".root","READ");
+
 
   // ------------------------------------------------------------------ 
   // json for DATA 
@@ -148,30 +165,21 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   if(isData) 
   {
     string jsonfile;
-    if(year==2016) 
-    {
-      jsonfile = "data/golden_Cert_271036-284044_13TeV_23Sep2016ReReco_Collisions16.json";
-    }
-    else if(year==2017)
-    { 
-      jsonfile = "data/golden_Cert_294927-306462_13TeV_EOY2017ReReco_Collisions17.json";
-    } 
-    else if(year==2018)
-    {
-      jsonfile = "data/golden_Cert_314472-325175_13TeV_PromptReco_Collisions18.json";
-    } 
-    else
-    {
+    if(year=="2016") jsonfile = "data/prelegacy/golden_Cert_271036-284044_13TeV_23Sep2016ReReco_Collisions16.json";
+    else if(year=="2017") jsonfile = "data/prelegacy/golden_Cert_294927-306462_13TeV_EOY2017ReReco_Collisions17.json";
+    else if(year=="2018") jsonfile = "data/prelegacy/golden_Cert_314472-325175_13TeV_PromptReco_Collisions18.json";
+    else if(year=="UL2016_preVFP"||year=="UL2016") jsonfile = "data/ultralegacy/Cert_271036-284044_13TeV_Legacy2016_Collisions16_JSON.txt";
+    else if(year=="UL2017") jsonfile = "data/ultralegacy/Cert_294927-306462_13TeV_UL2017_Collisions17_GoldenJSON.txt";
+    else if(year=="UL2018") jsonfile = "data/ultralegacy/Cert_314472-325175_13TeV_Legacy2018_Collisions18_JSON.txt";
+    else {
       cout << "[Error] No proper choice of JSON files!!" << endl;
       return ;
     }
     VRunLumi = MakeVRunLumi(jsonfile); 
     cout << "json file : " << jsonfile << endl;       
   } 
-  else 
-  {
-    cout << "[MJ Analysis] No JSON files applied because it is MC" << endl;
-  }
+  else cout << "[MJ Analysis] No JSON files applied because it is MC" << endl;
+
 
   // ------------------------------------------------------------------ 
   // Get tree from a nanoaod file 
@@ -202,6 +210,14 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   Float_t     L1PreFiringWeight_Dn = 1;
   Float_t     L1PreFiringWeight_Nom = 1;
   Float_t     L1PreFiringWeight_Up = 1;
+  Float_t     L1PreFiringWeight_ECAL_Dn = 1;
+  Float_t     L1PreFiringWeight_ECAL_Nom = 1;
+  Float_t     L1PreFiringWeight_ECAL_Up = 1;
+  Float_t     L1PreFiringWeight_Muon_StatDn = 1;
+  Float_t     L1PreFiringWeight_Muon_StatUp = 1;
+  Float_t     L1PreFiringWeight_Muon_SystDn = 1;
+  Float_t     L1PreFiringWeight_Muon_SystUp = 1;
+  Float_t     L1PreFiringWeight_Muon_Nom = 1;
   //LHE Scale Weight
   Float_t     LHEScaleWeight[9];
   // MC 
@@ -214,29 +230,29 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   Int_t   GenPart_pdgId[500]; 
   Int_t   GenPart_status[500];
   Int_t   GenPart_statusFlags[500];
-  // leptons 
+  // leptons   // 25 -> 100 for testing
   UInt_t  nElectron=0;  
-  Float_t Electron_pt[25]; 
-  Float_t Electron_eta[25];  
-  Float_t Electron_phi[25]; 
-  Float_t Electron_mass[25]; 
-  Int_t   Electron_cutBased[25];  // cut-based ID Fall17 V2: susy recommendation, use medium(https://github.com/richstu/babymaker/blob/master/bmaker/src/lepton_tools.cc#L289)
-  //Int_t   Electron_cutBased_Spring15[25];  // Spring15 ID to compare with AN-2016/187 (1L MJ 2016 data)  
-  Int_t   Electron_jetIdx[25];    // index of the associated jet (-1 if none)  
-  Int_t   Electron_pdgId[25];   
-  Float_t   Electron_miniPFRelIso_all[25];   
-  Float_t   Electron_pfRelIso03_all[25];   
-  Int_t   Electron_vidNestedWPBitmap[25];   
-  //Int_t   Electron_vidNestedWPBitmapSpring15[25];   
+  Float_t Electron_pt[100];         
+  Float_t Electron_eta[100];  
+  Float_t Electron_phi[100]; 
+  Float_t Electron_mass[100]; 
+  Int_t   Electron_cutBased[100];  // cut-based ID Fall17 V2: susy recommendation, use medium(https://github.com/richstu/babymaker/blob/master/bmaker/src/lepton_tools.cc#L289)
+  //Int_t   Electron_cutBased_Spring15[100];  // Spring15 ID to compare with AN-2016/187 (1L MJ 2016 data)  
+  Int_t   Electron_jetIdx[100];    // index of the associated jet (-1 if none)  
+  Int_t   Electron_pdgId[100];   
+  Float_t   Electron_miniPFRelIso_all[100];   
+  Float_t   Electron_pfRelIso03_all[100];   
+  Int_t   Electron_vidNestedWPBitmap[100];   
+  //Int_t   Electron_vidNestedWPBitmapSpring15[100];   
   UInt_t  nMuon=0;  
-  Float_t Muon_pt[25]; 
-  Float_t Muon_eta[25];  
-  Float_t Muon_phi[25]; 
-  Float_t Muon_mass[25]; 
-  Bool_t   Muon_mediumId[25];  // medium id taken from babymaker: https://github.com/richstu/babymaker/blob/master/bmaker/src/lepton_tools.cc#L190  
-  Int_t   Muon_jetIdx[25];    // index of the associated jet (-1 if none)  
-  Int_t   Muon_pdgId[25];   
-  Float_t   Muon_miniPFRelIso_all[25];   
+  Float_t Muon_pt[100]; 
+  Float_t Muon_eta[100];  
+  Float_t Muon_phi[100]; 
+  Float_t Muon_mass[100]; 
+  Bool_t   Muon_mediumId[100];  // medium id taken from babymaker: https://github.com/richstu/babymaker/blob/master/bmaker/src/lepton_tools.cc#L190  
+  Int_t   Muon_jetIdx[100];    // index of the associated jet (-1 if none)  
+  Int_t   Muon_pdgId[100];   
+  Float_t   Muon_miniPFRelIso_all[100];   
   // jets
   UInt_t     nJet=0;  
   Float_t    Jet_pt[100];
@@ -245,7 +261,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   Float_t    Jet_m[100];
   Float_t    Jet_btagCSVV2[100];
   Float_t    Jet_btagDeepB[100];
-  Float_t    Jet_btagDeepC[100];
+//  Float_t    Jet_btagDeepC[100];
   Float_t    Jet_rawFactor[100];
   Float_t    Jet_area[100];
   Float_t    Jet_qgl[100];
@@ -264,7 +280,9 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   Bool_t Flag_HBHENoiseIsoFilter=true;
   Bool_t Flag_EcalDeadCellTriggerPrimitiveFilter=true;
   Bool_t Flag_BadPFMuonFilter=true;
+  Bool_t Flag_BadPFMuonDzFilter=true;
   Bool_t Flag_eeBadScFilter=true;
+  Bool_t Flag_ecalBadCalibFilter=true;
   // trigger 
   Bool_t HLT_PFJet450=true;
   Bool_t HLT_PFHT900=true;
@@ -281,10 +299,18 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   tree->SetBranchAddress("fixedGridRhoFastjetAll",          &fixedGridRhoFastjetAll);
   //LHE HT incoming
   //PreFiring weight
-  if(!isData && (year==2016 || year==2017)){
+  if(!isData && (year=="2016" || year=="2017" || year=="UL2016_preVFP" || year=="UL2016" || year=="UL2017")){
     tree->SetBranchAddress("L1PreFiringWeight_Dn",  &L1PreFiringWeight_Dn);
     tree->SetBranchAddress("L1PreFiringWeight_Nom",  &L1PreFiringWeight_Nom);
     tree->SetBranchAddress("L1PreFiringWeight_Up",  &L1PreFiringWeight_Up);
+    tree->SetBranchAddress("L1PreFiringWeight_ECAL_Dn",  &L1PreFiringWeight_ECAL_Dn);
+    tree->SetBranchAddress("L1PreFiringWeight_ECAL_Nom",  &L1PreFiringWeight_ECAL_Nom);
+    tree->SetBranchAddress("L1PreFiringWeight_ECAL_Up",  &L1PreFiringWeight_ECAL_Up);
+    tree->SetBranchAddress("L1PreFiringWeight_Muon_StatDn",  &L1PreFiringWeight_Muon_StatDn);
+    tree->SetBranchAddress("L1PreFiringWeight_Muon_StatUp",  &L1PreFiringWeight_Muon_StatUp);
+    tree->SetBranchAddress("L1PreFiringWeight_Muon_SystDn",  &L1PreFiringWeight_Muon_SystDn);
+    tree->SetBranchAddress("L1PreFiringWeight_Muon_SystUp",  &L1PreFiringWeight_Muon_SystUp);
+    tree->SetBranchAddress("L1PreFiringWeight_Muon_Nom",  &L1PreFiringWeight_Muon_Nom);
   }
   if(!isData){
     tree->SetBranchAddress("LHEScaleWeight",  &LHEScaleWeight);
@@ -348,7 +374,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   tree->SetBranchAddress("Jet_mass",            &Jet_m); 
   tree->SetBranchAddress("Jet_btagCSVV2",       &Jet_btagCSVV2); 
   tree->SetBranchAddress("Jet_btagDeepB",       &Jet_btagDeepB); 
-  tree->SetBranchAddress("Jet_btagDeepC",       &Jet_btagDeepC);
+//  tree->SetBranchAddress("Jet_btagDeepC",       &Jet_btagDeepC);
   tree->SetBranchAddress("Jet_qgl",		&Jet_qgl);
   tree->SetBranchAddress("Jet_pt_jerUp",	&Jet_pt_jerUp);
   tree->SetBranchAddress("Jet_pt_jerDown",	&Jet_pt_jerDown);
@@ -368,14 +394,16 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   tree->SetBranchAddress("Flag_HBHENoiseIsoFilter",                 &Flag_HBHENoiseIsoFilter);
   tree->SetBranchAddress("Flag_EcalDeadCellTriggerPrimitiveFilter", &Flag_EcalDeadCellTriggerPrimitiveFilter);
   tree->SetBranchAddress("Flag_BadPFMuonFilter",                    &Flag_BadPFMuonFilter);
+  tree->SetBranchAddress("Flag_BadPFMuonDzFilter",                  &Flag_BadPFMuonDzFilter);
   tree->SetBranchAddress("Flag_eeBadScFilter",                      &Flag_eeBadScFilter);
+  tree->SetBranchAddress("Flag_ecalBadCalibFilter",                 &Flag_ecalBadCalibFilter);
   // trigger
-  if(year==2016)
+  if(year=="2016"||year=="UL2016_preVFP"||year=="UL2016")
   {
     tree->SetBranchAddress("HLT_PFHT900",     &HLT_PFHT900);
     tree->SetBranchAddress("HLT_PFJet450",    &HLT_PFJet450);
   }
-  if(year>2016)
+  else if(year=="2017"||year=="2018"||year=="UL2017"||year=="UL2018")
   {
     tree->SetBranchAddress("HLT_PFHT1050",    &HLT_PFHT1050);
   }
@@ -501,7 +529,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   std::vector<float> jets_m;
   std::vector<float> jets_csv;
   std::vector<float> jets_dcsvb;
-  std::vector<float> jets_dcsvc;
+//  std::vector<float> jets_dcsvc;
   std::vector<float> jets_qgl;
   std::vector<bool>  jets_id;
   std::vector<bool>  jets_islep;
@@ -567,6 +595,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   babyTree_->Branch("ht",                &ht);
   babyTree_->Branch("met",               &met);
   babyTree_->Branch("ntrupv",            &ntrupv);
+  babyTree_->Branch("ntrupv_mean",       &ntrupv_mean);
   babyTree_->Branch("met_phi",           &met_phi);
   babyTree_->Branch("lhe_ht",            &lhe_ht);
   babyTree_->Branch("l1pre_nom", 	 &l1pre_nom);
@@ -617,7 +646,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   babyTree_->Branch("jets_m",            &jets_m);    
   babyTree_->Branch("jets_csv",          &jets_csv);    
   babyTree_->Branch("jets_dcsvb",        &jets_dcsvb);    
-  babyTree_->Branch("jets_dcsvc",        &jets_dcsvc);
+//  babyTree_->Branch("jets_dcsvc",        &jets_dcsvc);
   babyTree_->Branch("jets_qgl",		 &jets_qgl);
   babyTree_->Branch("jets_id",           &jets_id);    
   babyTree_->Branch("jets_islep",        &jets_islep);    
@@ -682,10 +711,9 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   // 
   Int_t nentries = (Int_t)tree->GetEntries();
   if(DEBUG) nentries = 1;
-  cout<<"The number of entries in thie file is: "<<nentries<<endl;
+  cout<<"The number of entries in this file is: "<<nentries<<endl;
 
   // main event loop
-  //for(int ievt = 0; ievt<nentries; ievt++) {
  for(int ievt = 0; ievt<nentries; ievt++) {
 
     // Counting to see progress
@@ -755,7 +783,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
     jets_m.clear();        
     jets_csv.clear();      
     jets_dcsvb.clear();      
-    jets_dcsvc.clear();
+//    jets_dcsvc.clear();
     jets_qgl.clear();
     jets_id.clear();      
     jets_islep.clear();     
@@ -798,6 +826,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
     sys_isr.clear();
     sys_bctag.clear();
     sys_udsgtag.clear();
+    sys_pass.clear();
     //
     trig_jet450=true;
     trig_ht900=true;
@@ -822,20 +851,20 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
     ntrupv_mean  = Pileup_nTrueInt;
     lhe_ht = LHE_HTIncoming;
 
-    if(!isData && (year==2016 || year==2017)){
+    if(!isData && (year=="2016" || year=="2017" || year=="UL2016_preVFP" || year=="UL2016" || year=="UL2017")){
       l1pre_nom = L1PreFiringWeight_Nom;
       l1pre_dn = L1PreFiringWeight_Dn;
       l1pre_up = L1PreFiringWeight_Up;
     }
-    else if(!isData && year == 2018){
+    else if(!isData && year == "2018" || year=="UL2018"){
       l1pre_nom = 1;
       l1pre_dn = 1;
       l1pre_up = 1;
     }
 
     bool pnf = true;
-    pnf = ProblematicEvent(inputfile, event);
-    if(!pnf) continue;
+//    pnf = ProblematicEvent(inputfile, event);
+//    if(!pnf) continue;
 
     //
     // get electrons
@@ -851,15 +880,16 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
       els_pt.push_back(Electron_pt[iE]); 
       els_eta.push_back(Electron_eta[iE]); 
       els_phi.push_back(Electron_phi[iE]); 
-      els_sigid.push_back(idElectron_noIso(Electron_vidNestedWPBitmap[iE], 3)); // 3 = medium 
-      //els_spr15_sigid.push_back(idElectron_noIso(Electron_vidNestedWPBitmapSpring15[iE], 3));  // 3 = medium 
+//      els_sigid.push_back(idElectron_noIso(Electron_vidNestedWPBitmap[iE], 3)); // 3 = medium 
+      els_sigid.push_back(idElectron_cutBased(Electron_cutBased[iE], 3));	  // 3 = medium 
       els_miniso.push_back(Electron_miniPFRelIso_all[iE]); 
       els_reliso.push_back(Electron_pfRelIso03_all[iE]); 
       if(Electron_pt[iE]<20)  continue;           
       if(abs(Electron_eta[iE])>2.5)  continue;           
-      if(!idElectron_noIso(Electron_vidNestedWPBitmap[iE], 3)) continue;           // medium WP
+//      if(!idElectron_noIso(Electron_vidNestedWPBitmap[iE], 3)) continue;           // medium WP
+      if(Electron_cutBased[iE]<3) continue;    // medium WP
       if(Electron_miniPFRelIso_all[iE]>0.1) continue; // miniso
-      els_SFner    =  getLepSF(electronSF, true, Electron_pt[iE], Electron_eta[iE]); // error point in 2017 year FIXME
+      els_SFner    =  getLepSF(electronSF, true, Electron_pt[iE], Electron_eta[iE], year);
       w_lep        *= els_SFner.at(0);
       sys_lep_up   *= (els_SFner.at(0)+els_SFner.at(1));
       sys_lep_down *= (els_SFner.at(0)-els_SFner.at(1));
@@ -895,7 +925,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
       if(!Muon_mediumId[iM]) continue;                // medium WP
       if(Muon_miniPFRelIso_all[iM]>0.2) continue;     // miniso 
       
-      mus_SFner    =  getLepSF(muonSF, false, Muon_pt[iM], Muon_eta[iM]);
+      mus_SFner    =  getLepSF(muonSF, false, Muon_pt[iM], Muon_eta[iM], year);
       w_lep        *= mus_SFner.at(0);
       sys_lep_up   *= (mus_SFner.at(0)+mus_SFner.at(1));
       sys_lep_down *= (mus_SFner.at(0)-mus_SFner.at(1));
@@ -907,7 +937,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
       leps_pt.push_back(Muon_pt[iM]); 
       leps_eta.push_back(Muon_eta[iM]); 
       leps_phi.push_back(Muon_phi[iM]); 
-      leps_phi.push_back(Muon_mass[iM]); 
+//      leps_phi.push_back(Muon_mass[iM]); 
       leps_pdgid.push_back(Muon_pdgId[iM]);
       leps_miniso.push_back(Muon_miniPFRelIso_all[iM]); 
       nleps++;
@@ -949,21 +979,19 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
     float sys_udsgtag_up = 1;
     float sys_udsgtag_down = 1;
     bool hem_tf;
+    // ref of HEM issue: https://twiki.cern.ch/twiki/bin/viewauth/CMS/SUSRecommendationsRun2UltraLegacy#HEM_issue_in_2018
     for(int iJ = 0; iJ < nJet; iJ++) 
     {
       hem_tf = false;
-
-      if(year==2018){//HEM effect in 2018 year
+      if(year=="2018"||year=="UL2018"){//HEM effect in 2018 year
         if(isData && run>=319077 && Jet_eta[iJ]>-3.0 && Jet_eta[iJ]<-1.3 && Jet_phi[iJ]>-1.57 && Jet_phi[iJ]<-0.87) hem_tf = true;
-
         if(!isData && (event%10>=0 && event%10<=5) && Jet_eta[iJ]>-3.0 && Jet_eta[iJ]<-1.3 && Jet_phi[iJ]>-1.57 && Jet_phi[iJ]<-0.87) hem_tf = true;
       }
-
       if(abs(Jet_eta[iJ])>6 || iJ > 50){//FIXME
-        cout<< "-- "<< Jet_pt[iJ] << " : " << Jet_eta[iJ] << " : " << Jet_phi[iJ] << " : " << Jet_m[iJ] << " : " << Jet_hadronFlavour[iJ] << " : " << Jet_btagCSVV2[iJ] << " : " << Jet_btagDeepB[iJ] << " : " << Jet_btagDeepC[iJ] << " : " << event << " --" << nJet << endl;
+//        cout<< "-- "<< Jet_pt[iJ] << " : " << Jet_eta[iJ] << " : " << Jet_phi[iJ] << " : " << Jet_m[iJ] << " : " << Jet_hadronFlavour[iJ] << " : " << Jet_btagCSVV2[iJ] << " : " << Jet_btagDeepB[iJ] << " : " << Jet_btagDeepC[iJ] << " : " << event << " --" << nJet << endl;
+        cout<< "-- "<< Jet_pt[iJ] << " : " << Jet_eta[iJ] << " : " << Jet_phi[iJ] << " : " << Jet_m[iJ] << " : " << Jet_hadronFlavour[iJ] << " : " << Jet_btagCSVV2[iJ] << " : " << Jet_btagDeepB[iJ] << " : " <<  event << " --" << nJet << endl;
 
       }
-
       jets_pt.push_back(Jet_pt[iJ]); 
       jets_eta.push_back(Jet_eta[iJ]);
       jets_phi.push_back(Jet_phi[iJ]); 
@@ -972,7 +1000,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
       jets_csv.push_back(Jet_btagCSVV2[iJ]); 
       jets_dcsvb.push_back(Jet_btagDeepB[iJ]); 
       jets_qgl.push_back(Jet_qgl[iJ]);
-      jets_dcsvc.push_back(Jet_btagDeepC[iJ]);
+//      jets_dcsvc.push_back(Jet_btagDeepC[iJ]);
       jets_hem.push_back(hem_tf);
 
       sys_jets_pt_jerUp.push_back(Jet_pt_jerUp[iJ]);
@@ -981,8 +1009,8 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
       jets_pt_jerDown.push_back(Jet_pt_jerDown[iJ]);
 
       bool jetid = true;
-      if(year==2016 && Jet_jetId[iJ]<3 ) jetid=false; // tight Id    
-      if(year>=2017 && Jet_jetId[iJ]<2 ) jetid=false; // tight Id 
+      if(year=="2016" && Jet_jetId[iJ]<3 ) jetid=false; // tight Id  #FIXME 230321: when we start using UL, it(3->2) must be changed!!  (ref: https://twiki.cern.ch/twiki/bin/view/CMSPublic/WorkBookNanoAOD#Jets)
+      if((year=="2017"||year=="2018"||year=="UL2016_preVFP"||year=="UL2016"||year=="UL2017"||year=="UL2018") && Jet_jetId[iJ]<2 ) jetid=false; // tight Id 
       jets_id.push_back(jetid);
 
       bool jetislep = false;
@@ -1016,9 +1044,14 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
       if(jets_hem.at(iJ))	continue;
 
       // deepCSV  cuts
-      float csv_cut = 0.6321; 
-      if(year==2017) csv_cut = 0.4941;
-      if(year==2018) csv_cut = 0.4184;
+      float csv_cut;
+      if(year=="2016") csv_cut = 0.6321; 
+      else if(year=="2017") csv_cut = 0.4941;
+      else if(year=="2018") csv_cut = 0.4184;
+      else if(year=="UL2016_preVFP") csv_cut = 0.6001;
+      else if(year=="UL2016") csv_cut = 0.5847;
+      else if(year=="UL2017") csv_cut = 0.4506;
+      else if(year=="UL2018") csv_cut = 0.4168;
       
 //cout<<iJ<<" , " << jets_pt.size()<<endl;
       // nominal 
@@ -1105,7 +1138,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
     // ---------------------------------------
 
     // Loop over R=0.5 jets, form into PseudoJets vector
-    vector<fastjet::PseudoJet> input_particles;
+    vector<fastjet::PseudoJet> input_particles; input_particles.clear();
     double FatjetConstituent_px_tmp, FatjetConstituent_py_tmp, FatjetConstituent_pz_tmp, FatjetConstituent_energy_tmp;
 
     for(int iJ = 0; iJ < jets_pt.size(); iJ++) { 
@@ -1150,9 +1183,11 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
     //
     //RH
     double ptmin = 0.0; // could use 3.0 here, instead of applying later 
-    vector<fastjet::PseudoJet> inclusive_jets = clust_seq.inclusive_jets(ptmin);
+    vector<fastjet::PseudoJet> inclusive_jets; inclusive_jets.clear();
+    inclusive_jets = clust_seq.inclusive_jets(ptmin);
     //Sort by pt
-    vector<fastjet::PseudoJet> sorted_jets = sorted_by_pt(inclusive_jets);
+    vector<fastjet::PseudoJet> sorted_jets; sorted_jets.clear();
+    sorted_jets = sorted_by_pt(inclusive_jets);
     //fill fastjet output into vectors, continue as original code
     for(int isortjets = 0; isortjets< (int)sorted_jets.size(); isortjets++){
       //store only if pt >3 GeV to match CMS jets
@@ -1209,6 +1244,18 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
             << endl; 
         }
       }
+
+//    if(sys_jets_pt_up[isortjets]<0 || sys_jets_pt_up[isortjets]>1000000) {
+//      cout << "--------------------------------------------------------------------------" << endl;
+//      cout << "--------------------------------------------------------------------------" << endl;
+//      cout << "sys_jets_pt_up["<<isortjets<<"]: "<<sys_jets_pt_up[isortjets] << endl;
+//      cout << "sys_jets_pt_down["<<isortjets<<"]: "<<sys_jets_pt_down[isortjets] << endl;
+//      cout << "sys_jets_pt_jerUp["<<isortjets<<"]: "<<sys_jets_pt_jerUp[isortjets] << endl;
+//      cout << "sys_jets_pt_jerDown["<<isortjets<<"]: "<<sys_jets_pt_jerDown[isortjets] << endl;
+//      cout << "--------------------------------------------------------------------------" << endl;
+//      cout << "--------------------------------------------------------------------------" << endl;
+//    }
+
     } 
 
 		//
@@ -1222,6 +1269,20 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
 
     sys_mj12_jerUp   =  getMJ(sys_jets_pt_jerUp, jets_eta, jets_phi, jets_m, jets_id);
     sys_mj12_jerDown =  getMJ(sys_jets_pt_jerDown, jets_eta, jets_phi, jets_m, jets_id);
+
+
+//    cout << "sys_jets_pt_up[0]: " << sys_jets_pt_up[0] << endl;
+//    cout << "sys_jets_pt_up[1]: " << sys_jets_pt_up[1] << endl;
+//    cout << "sys_jets_pt_up[2]: " << sys_jets_pt_up[2] << endl;
+//    cout << "sys_jets_pt_up[3]: " << sys_jets_pt_up[3] << endl;
+//    cout << "sys_jets_pt_down: " << sys_jets_pt_down << endl;
+//    cout << "sys_jets_pt_jerUp: " << sys_jets_pt_jerUp << endl;
+//    cout << "sys_jets_pt_jerDown: " << sys_jets_pt_jerDown << endl;
+//    cout << "--------------------------------------------------------------------------" << endl;
+//    cout << "sys_mj12_up: " << sys_mj12_up << endl;
+//    cout << "sys_mj12_down: " << sys_mj12_down << endl;
+//    cout << "sys_mj12_jerUp: " << sys_mj12_jerUp << endl;
+//    cout << "sys_mj12_jerDown: " << sys_mj12_jerDown << endl;
 
 		  // fill jec syst branches: vec.at(0) is up and vec.at(1) is down 
     sys_njets.push_back(sys_njets_up);	sys_njets.push_back(sys_njets_down);	
@@ -1284,25 +1345,31 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
       }
     }
 
-    if(year==2016){
-      if(nisr_==0)       isr_wgt = 1.; 
-      else if(nisr_==1)  isr_wgt = 0.920; 
-      else if(nisr_==2)  isr_wgt = 0.821; 
-      else if(nisr_==3)  isr_wgt = 0.715; 
-      else if(nisr_==4)  isr_wgt = 0.662; 
-      else if(nisr_==5)  isr_wgt = 0.561; 
-      else if(nisr_>=6)  isr_wgt = 0.511; 
-    }
+    if(nisr_==0)       isr_wgt = 1.; 
+    else if(nisr_==1)  isr_wgt = 0.920; 
+    else if(nisr_==2)  isr_wgt = 0.821; 
+    else if(nisr_==3)  isr_wgt = 0.715; 
+    else if(nisr_==4)  isr_wgt = 0.662; 
+    else if(nisr_==5)  isr_wgt = 0.561; 
+    else if(nisr_>=6)  isr_wgt = 0.511; 
 
     //w_isr = isr_wgt*isr_norm;
-    w_isr = isr_wgt;
-    if(year==2016){
+    if(year=="2016"){
+      w_isr = isr_wgt;
       sys_isr.push_back(w_isr+((1-w_isr)/2));
       sys_isr.push_back(w_isr-((1-w_isr)/2));
     }
-    if(year>=2017){
-      sys_isr.push_back(+0);
-      sys_isr.push_back(-0);
+    if(year=="2017"||year=="2018"||year=="UL2016_preVFP"||year=="UL2016"||year=="UL2017"||year=="UL2018"){
+      if(inputfile.Contains("SMS-T1tbs_RPV")){     // Tune version of signal sample is CP2. ISR corrections derived for samples with TuneCP2 are similar to the ones for 2016-TuneCUETP8M1. So it is recommended to use 2016 corrections.
+        w_isr = isr_wgt;
+        sys_isr.push_back(w_isr+((1-w_isr)/2));
+        sys_isr.push_back(w_isr-((1-w_isr)/2));
+      }
+      else{
+	w_isr = 1;
+        sys_isr.push_back(+0);
+        sys_isr.push_back(-0);
+      }
     }
     nisr = nisr_;
   }
@@ -1329,32 +1396,36 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
     {
       w_btag_csv = btagWeight_CSVV2;
       w_lumi     = xsec*genWeight/sumWeights;//getXsec(samplename)*genWeight/sumWeights; // cross section in fb
-      w_pu       = getPUweight(samplename, year, ntrupv_mean, 0); // syst=-1 0 1 (down nominal up)
-      sys_pu.push_back(getPUweight(samplename, year, ntrupv_mean, 1));
-      sys_pu.push_back(getPUweight(samplename, year, ntrupv_mean, -1));
+      w_pu       = getPUweight(f_pu_weight, year, ntrupv_mean, 0); // syst=-1 0 1 (down nominal up)
+      sys_pu.push_back(getPUweight(f_pu_weight, year, ntrupv_mean, 1));
+      sys_pu.push_back(getPUweight(f_pu_weight, year, ntrupv_mean, -1));
+//      w_pu       = getPUweight(samplename, year, ntrupv_mean, 0); // syst=-1 0 1 (down nominal up)
+//      sys_pu.push_back(getPUweight(samplename, year, ntrupv_mean, 1));
+//      sys_pu.push_back(getPUweight(samplename, year, ntrupv_mean, -1));
     }
 
+    if(inputfile.Contains("SMS-T1tbs_RPV") || inputfile.Contains("TTJets_")){  //FIXME Why it includes "TTJets"? -> Cuz in PL, TTbar and Signal samples are only needed to be applied ISR correction
+      if(year=="2016" || year=="2017" || year=="UL2016_preVFP"||year=="UL2016"||year=="UL2017") weight = w_btag_dcsv * w_lumi * w_pu * w_isr * l1pre_nom;
+      else weight = w_btag_dcsv * w_lumi * w_pu * w_isr;
+    }
+    else {
+      if(year=="2016" || year=="2017"||year=="UL2016_preVFP"||year=="UL2016"||year=="UL2017") weight = w_btag_dcsv * w_lumi * w_pu * l1pre_nom;
+      else weight = w_btag_dcsv * w_lumi * w_pu;
+      w_isr = 1;
+    }
     if(isData) 
     {
       w_btag_csv  = 1;
       w_btag_dcsv = 1;
       w_lumi      = 1;
       w_pu        = 1;
-    }
-    if(inputfile.Contains("SMS-T1tbs_RPV") || inputfile.Contains("TTJets_")){
-      if(year==2016 || year==2017) weight = w_btag_dcsv * w_lumi * w_pu * w_isr * l1pre_nom;
-      else weight = w_btag_dcsv * w_lumi * w_pu * w_isr;
-    }
-    else {
-      if(year==2016 || year==2017) weight = w_btag_dcsv * w_lumi * w_pu * l1pre_nom;
-      else weight = w_btag_dcsv * w_lumi * w_pu;
-      w_isr = 1;
+      weight = 1;
     }
     if((inputfile.Contains("TTJets_Tune")) && lhe_ht>600) stitch_ht = false;
 
     // filters and triggers 
     //https://twiki.cern.ch/twiki/bin/viewauth/CMS/MissingETOptionalFiltersRun2
-    if(year==2016)
+    if(year=="2016")
     {
       pass = Flag_goodVertices*
         Flag_globalSuperTightHalo2016Filter*
@@ -1362,11 +1433,12 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
         Flag_HBHENoiseIsoFilter*
         Flag_EcalDeadCellTriggerPrimitiveFilter*
         Flag_BadPFMuonFilter;
+
       // triggers 
       trig_ht900  = HLT_PFHT900;
       trig_jet450 = HLT_PFJet450;
     } 
-    else
+    else if(year=="2017"||year=="2018")
     {
       pass = Flag_goodVertices*
         Flag_globalSuperTightHalo2016Filter*
@@ -1375,9 +1447,41 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
         Flag_EcalDeadCellTriggerPrimitiveFilter*
         Flag_BadPFMuonFilter*
         Flag_eeBadScFilter;
+        
       // triggers 
       trig_ht1050 = HLT_PFHT1050;
     }
+    else if(year=="UL2016_preVFP"||year=="UL2016")
+    {
+      pass = Flag_goodVertices*
+        Flag_globalSuperTightHalo2016Filter*
+        Flag_HBHENoiseFilter*
+        Flag_HBHENoiseIsoFilter*
+        Flag_EcalDeadCellTriggerPrimitiveFilter*
+        Flag_BadPFMuonFilter*
+	Flag_BadPFMuonDzFilter*
+	Flag_eeBadScFilter;
+
+      // triggers
+      trig_ht900  = HLT_PFHT900;
+      trig_jet450 = HLT_PFJet450;
+    }
+    else if(year=="UL2017"||year=="UL2018")
+    {
+      pass = Flag_goodVertices*
+        Flag_globalSuperTightHalo2016Filter*
+        Flag_HBHENoiseFilter*
+        Flag_HBHENoiseIsoFilter*
+        Flag_EcalDeadCellTriggerPrimitiveFilter*
+        Flag_BadPFMuonFilter*
+        Flag_BadPFMuonDzFilter*
+        Flag_eeBadScFilter*
+        Flag_ecalBadCalibFilter;
+
+      // triggers
+      trig_ht1050 = HLT_PFHT1050;
+    }
+
    trig_isomu24  = HLT_IsoMu24;
    trig_isomu27  = HLT_IsoMu27;
    pass_hbheiso = Flag_HBHENoiseIsoFilter;
@@ -1412,9 +1516,11 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
             run, ls, event, Rparam));
       h2->Reset(); 
       for(int imc=0; imc<(int)fjets_eta.size(); imc++) delete cone[imc];
+      delete c;
     } 
 //if(ievt>=400000)cout<<event<<": !!!"<<endl;//FIXME
-  } // event loop
+//  cout << "ievt: " << ievt << endl;
+  }// event loop termination
 
 
   //
@@ -1436,7 +1542,11 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   //
   // cleanup
   //
-  delete f;
+  delete f_btef;
+  delete electronSF;
+  delete muonSF;
+  delete f_pu_weight;
+//  delete h2;
 
   // copy output file to outputdir
   cout << "... transferring output file" << endl;
@@ -1445,8 +1555,21 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   cout << Form("... cp Running/%s %s", outputfile.Data(), outputdir.Data()) << endl;  // for KoreaUniv server
   gSystem->Exec(Form("cp Running/%s %s", outputfile.Data(), outputdir.Data()));  // for KoreaUniv server
   cout << Form("rm Running/%s", outputfile.Data()) << endl;  
+  cout << "outputfile.Data(): " << outputfile.Data() << endl;
   gSystem->Exec(Form("rm Running/%s", outputfile.Data()));  
+
+//  delete babyTree_;
+//  delete babyFile_;
+  delete f;
+  cout << "process_nano function is done" << endl;
 }
+
+
+
+
+
+
+
 
 
 # ifndef __CINT__  // the following code will be invisible for the interpreter
@@ -1454,29 +1577,33 @@ int main(int argc, char **argv)
 {
   int nthreads = 16;
   ROOT::EnableImplicitMT(nthreads);
-  bool useCondor = true;
-  TString inputdir, outputdir, process, list_processed; 
+  bool useCondor = false;
+  TString inputdir, outputdir, process, list_processed, year; 
   
-  if(argc<5)
+  if(argc<6)
   {
     cout << " Please provide proper arguments" << endl;
     cout << "" << endl;
-    cout << "   ./process_nano.exe [input dir] [output dir] [process] [list of processed files]" << endl; 
+    cout << "   ./process_nano.exe [input dir] [output dir] [process] [list of processed files] [year]" << endl; 
+    cout << "   year:   [PreLegacy] 2016, 2017, 2018   [UltraLegacy] UL2016_preVFP, UL2016, UL2017, UL2018" << endl;
     cout << "" << endl;
     return 0;
   }
   else 
   {
-    inputdir    = argv[1];
-    outputdir   = argv[2];
-    process     = argv[3];
-    list_processed    = argv[4];
+    inputdir    	= argv[1];
+    outputdir   	= argv[2];
+    process     	= argv[3];
+    list_processed    	= argv[4];
+    year		= argv[5];
+
     
     cout << "-----------------------------------------------------------------------" << endl;
     cout << " input   dir                  : " << inputdir << endl;
     cout << " output  dir                  : " << outputdir << endl;
     cout << " process                      : " << process << endl;
     cout << " list of processed files      : " << list_processed << endl;
+    cout << " year      : " << year << endl;
     cout << "-----------------------------------------------------------------------" << endl;
   }
 
@@ -1487,13 +1614,13 @@ int main(int argc, char **argv)
   if(inputdir.Contains("SingleMuon") || process.Contains("SingleMuon"))  isData = true;
  
   // year
-  int year    = 0;
-  if(inputdir.Contains("RunIISummer16")) year = 2016;
-  else if(inputdir.Contains("RunIIFall17")) year = 2017;
-  else if(inputdir.Contains("RunIIAutumn18")) year = 2018;
-  if(inputdir.Contains("Run2016")) year = 2016;
-  else if(inputdir.Contains("Run2017")) year = 2017;
-  else if(inputdir.Contains("Run2018")) year = 2018;
+//  int year    = 0;
+//  if(inputdir.Contains("RunIISummer16")) year = 2016;
+//  else if(inputdir.Contains("RunIIFall17")) year = 2017;
+//  else if(inputdir.Contains("RunIIAutumn18")) year = 2018;
+//  if(inputdir.Contains("Run2016")) year = 2016;
+//  else if(inputdir.Contains("Run2017")) year = 2017;
+//  else if(inputdir.Contains("Run2018")) year = 2018;
   cout << " year: " << year << endl;
   
   // JECs
@@ -1504,44 +1631,86 @@ int main(int argc, char **argv)
     JetCorrectorParameters *L3JetPar;
     JetCorrectorParameters *ResJetPar;
 
-    if(year==2016){
-      L1JetPar  = new JetCorrectorParameters("data/jec/Summer16_07Aug2017_V11_MC_L1FastJet_AK4PFchs.txt","");
-      L2JetPar  = new JetCorrectorParameters("data/jec/Summer16_07Aug2017_V11_MC_L2Relative_AK4PFchs.txt");
-      L3JetPar  = new JetCorrectorParameters("data/jec/Summer16_07Aug2017_V11_MC_L3Absolute_AK4PFchs.txt");
-      ResJetPar = new JetCorrectorParameters("data/jec/Summer16_07Aug2017_V11_MC_L2L3Residual_AK4PFchs.txt");
+    if(year=="2016"){
+      L1JetPar  = new JetCorrectorParameters("data/prelegacy/jec/Summer16_07Aug2017_V11_MC_L1FastJet_AK4PFchs.txt","");
+      L2JetPar  = new JetCorrectorParameters("data/prelegacy/jec/Summer16_07Aug2017_V11_MC_L2Relative_AK4PFchs.txt");
+      L3JetPar  = new JetCorrectorParameters("data/prelegacy/jec/Summer16_07Aug2017_V11_MC_L3Absolute_AK4PFchs.txt");
+      ResJetPar = new JetCorrectorParameters("data/prelegacy/jec/Summer16_07Aug2017_V11_MC_L2L3Residual_AK4PFchs.txt");
     }
-    if(year==2017){
-      L1JetPar  = new JetCorrectorParameters("data/jec/Fall17_17Nov2017_V32_MC_L1FastJet_AK4PFchs.txt","");
-      L2JetPar  = new JetCorrectorParameters("data/jec/Fall17_17Nov2017_V32_MC_L2Relative_AK4PFchs.txt","");
-      L3JetPar  = new JetCorrectorParameters("data/jec/Fall17_17Nov2017_V32_MC_L3Absolute_AK4PFchs.txt","");
-      ResJetPar = new JetCorrectorParameters("data/jec/Fall17_17Nov2017_V32_MC_L2L3Residual_AK4PFchs.txt","");
+    else if(year=="2017"){
+      L1JetPar  = new JetCorrectorParameters("data/prelegacy/jec/Fall17_17Nov2017_V32_MC_L1FastJet_AK4PFchs.txt","");
+      L2JetPar  = new JetCorrectorParameters("data/prelegacy/jec/Fall17_17Nov2017_V32_MC_L2Relative_AK4PFchs.txt","");
+      L3JetPar  = new JetCorrectorParameters("data/prelegacy/jec/Fall17_17Nov2017_V32_MC_L3Absolute_AK4PFchs.txt","");
+      ResJetPar = new JetCorrectorParameters("data/prelegacy/jec/Fall17_17Nov2017_V32_MC_L2L3Residual_AK4PFchs.txt","");
     }
-    if(year==2018){
-      L1JetPar  = new JetCorrectorParameters("data/jec/Autumn18_V8_MC_L1FastJet_AK4PFchs.txt","");
-      L2JetPar  = new JetCorrectorParameters("data/jec/Autumn18_V8_MC_L2Relative_AK4PFchs.txt","");
-      L3JetPar  = new JetCorrectorParameters("data/jec/Autumn18_V8_MC_L3Absolute_AK4PFchs.txt","");
-      ResJetPar = new JetCorrectorParameters("data/jec/Autumn18_V8_MC_L2L3Residual_AK4PFchs.txt","");
+    else if(year=="2018"){
+      //L1JetPar  = new JetCorrectorParameters("data/prelegacy/jec/Autumn18_V8_MC_L1FastJet_AK4PFchs.txt","");
+      //L2JetPar  = new JetCorrectorParameters("data/prelegacy/jec/Autumn18_V8_MC_L2Relative_AK4PFchs.txt","");
+      //L3JetPar  = new JetCorrectorParameters("data/prelegacy/jec/Autumn18_V8_MC_L3Absolute_AK4PFchs.txt","");
+      //ResJetPar = new JetCorrectorParameters("data/prelegacy/jec/Autumn18_V8_MC_L2L3Residual_AK4PFchs.txt","");
+      L1JetPar  = new JetCorrectorParameters("data/prelegacy/jec/Autumn18_V19_MC_L1FastJet_AK4PFchs.txt","");
+      L2JetPar  = new JetCorrectorParameters("data/prelegacy/jec/Autumn18_V19_MC_L2Relative_AK4PFchs.txt","");
+      L3JetPar  = new JetCorrectorParameters("data/prelegacy/jec/Autumn18_V19_MC_L3Absolute_AK4PFchs.txt","");
+      ResJetPar = new JetCorrectorParameters("data/prelegacy/jec/Autumn18_V19_MC_L2L3Residual_AK4PFchs.txt","");
     }
+    else if(year=="UL2016_preVFP"){
+      L1JetPar  = new JetCorrectorParameters("data/ultralegacy/jec/Summer19UL16APV_V7_MC_L1FastJet_AK4PFchs.txt","");   // We can use Summer19 instead of Summer20. (ref: https://cms-talk.web.cern.ch/t/recommended-jec-jer-for-summer20ul-and-fastsim/1395)
+      L2JetPar  = new JetCorrectorParameters("data/ultralegacy/jec/Summer19UL16APV_V7_MC_L2Relative_AK4PFchs.txt","");
+      L3JetPar  = new JetCorrectorParameters("data/ultralegacy/jec/Summer19UL16APV_V7_MC_L3Absolute_AK4PFchs.txt","");
+      ResJetPar = new JetCorrectorParameters("data/ultralegacy/jec/Summer19UL16APV_V7_MC_L2L3Residual_AK4PFchs.txt","");
+    }
+    else if(year=="UL2016"){
+      L1JetPar  = new JetCorrectorParameters("data/ultralegacy/jec/Summer19UL16_V7_MC_L1FastJet_AK4PFchs.txt","");
+      L2JetPar  = new JetCorrectorParameters("data/ultralegacy/jec/Summer19UL16_V7_MC_L2Relative_AK4PFchs.txt","");
+      L3JetPar  = new JetCorrectorParameters("data/ultralegacy/jec/Summer19UL16_V7_MC_L3Absolute_AK4PFchs.txt","");
+      ResJetPar = new JetCorrectorParameters("data/ultralegacy/jec/Summer19UL16_V7_MC_L2L3Residual_AK4PFchs.txt","");
+    }
+    else if(year=="UL2017"){
+      L1JetPar  = new JetCorrectorParameters("data/ultralegacy/jec/Summer19UL17_V5_MC_L1FastJet_AK4PFchs.txt","");
+      L2JetPar  = new JetCorrectorParameters("data/ultralegacy/jec/Summer19UL17_V5_MC_L2Relative_AK4PFchs.txt","");
+      L3JetPar  = new JetCorrectorParameters("data/ultralegacy/jec/Summer19UL17_V5_MC_L3Absolute_AK4PFchs.txt","");
+      ResJetPar = new JetCorrectorParameters("data/ultralegacy/jec/Summer19UL17_V5_MC_L2L3Residual_AK4PFchs.txt","");
+    }
+    else if(year=="UL2018"){
+      L1JetPar  = new JetCorrectorParameters("data/ultralegacy/jec/Summer19UL18_V5_MC_L1FastJet_AK4PFchs.txt","");
+      L2JetPar  = new JetCorrectorParameters("data/ultralegacy/jec/Summer19UL18_V5_MC_L2Relative_AK4PFchs.txt","");
+      L3JetPar  = new JetCorrectorParameters("data/ultralegacy/jec/Summer19UL18_V5_MC_L3Absolute_AK4PFchs.txt","");
+      ResJetPar = new JetCorrectorParameters("data/ultralegacy/jec/Summer19UL18_V5_MC_L2L3Residual_AK4PFchs.txt","");
+    }
+
     //  Load the JetCorrectorParameter objects into a vector, IMPORTANT: THE ORDER MATTERS HERE !!!! 
-    vector<JetCorrectorParameters> vPar;
+    vector<JetCorrectorParameters> vPar; vPar.clear();
     vPar.push_back(*L1JetPar);
     vPar.push_back(*L2JetPar);
     vPar.push_back(*L3JetPar);
     vPar.push_back(*ResJetPar);
     static FactorizedJetCorrector *jetCorrector = 0; 
     JetCorrector = new FactorizedJetCorrector(vPar);
+
+    delete L1JetPar;
+    delete L2JetPar;
+    delete L3JetPar;
+    delete ResJetPar;
   }
   // JEC systs
-  if(year==2016) JecUnc  = new JetCorrectionUncertainty("data/jec/Summer16_07Aug2017_V11_MC_Uncertainty_AK4PFchs.txt");
-  if(year==2017) JecUnc  = new JetCorrectionUncertainty("data/jec/Fall17_17Nov2017_V32_MC_Uncertainty_AK4PFchs.txt");
-  if(year==2018) JecUnc  = new JetCorrectionUncertainty("data/jec/Autumn18_V8_MC_Uncertainty_AK4PFchs.txt");
+  if(year=="2016") JecUnc  = new JetCorrectionUncertainty("data/prelegacy/jec/Summer16_07Aug2017_V11_MC_Uncertainty_AK4PFchs.txt");
+  else if(year=="2017") JecUnc  = new JetCorrectionUncertainty("data/prelegacy/jec/Fall17_17Nov2017_V32_MC_Uncertainty_AK4PFchs.txt");
+  else if(year=="2018") JecUnc  = new JetCorrectionUncertainty("data/prelegacy/jec/Autumn18_V19_MC_Uncertainty_AK4PFchs.txt");
+  else if(year=="UL2016_preVFP") JecUnc  = new JetCorrectionUncertainty("data/ultralegacy/jec/Summer19UL16APV_V7_MC_Uncertainty_AK4PFchs.txt");
+  else if(year=="UL2016") JecUnc  = new JetCorrectionUncertainty("data/ultralegacy/jec/Summer19UL16_V7_MC_Uncertainty_AK4PFchs.txt");
+  else if(year=="UL2017") JecUnc  = new JetCorrectionUncertainty("data/ultralegacy/jec/Summer19UL17_V5_MC_Uncertainty_AK4PFchs.txt");
+  else if(year=="UL2018") JecUnc  = new JetCorrectionUncertainty("data/ultralegacy/jec/Summer19UL18_V5_MC_Uncertainty_AK4PFchs.txt");
+
+//  JecUnc = new JetCorrectionUncertainty(Sample_Year::JECUncertFile);
 
   // get list of files in a directory to calculate w_lumi
   // w_lumi = xsec[fb] * genWeight / sum(genWeights)
   // => https://twiki.cern.ch/twiki/bin/view/Main/CMGMonojetAnalysisTools
   //vector<TString> files = globVector(Form("/xrootd/%s/*/*.root", inputdir.Data())); 
-  vector<TString> files = getFileListFromFile(Form("flist/%d/flist_%s.txt", year, process.Data()));
-  vector<TString> files_original = files; 
+  vector<TString> files; files.clear();
+  files = getFileListFromFile(Form("flist/%s/flist_%s.txt", year.Data(), process.Data()));
+  vector<TString> files_original; files_original.clear();
+  files_original = files; 
   for(int ifile=0; ifile<files.size(); ifile++)
   {
     cout << files.at(ifile) << endl;
@@ -1555,21 +1724,27 @@ int main(int argc, char **argv)
   cout << " Total number of files: " << files.size() << endl; 
   if(!isData)
   {
-    TChain ch("Events");
+    TChain *ch = new TChain("Events");
+//    TChain ch("Events");
     for(int ifile=0; ifile<files.size(); ifile++)
     {
-      ch.Add(files.at(ifile));
+//      ch.Add(files.at(ifile));
+      ch->Add(files.at(ifile));
     }
     //nfiles = ch.GetListOfFiles()->GetEntries(); 
     TH1D *h = new TH1D("h","h",1,-1,1);
-    ch.Draw("0>>h", "genWeight","goff"); 
+//    ch.Draw("0>>h", "genWeight","goff"); 
+    ch->Draw("0>>h", "genWeight","goff"); 
     sumWeights = h->Integral();
     cout << " sumWeights: " << sumWeights << endl; 
     cout << "-----------------------------------------------------------------------" << endl;
     delete h;
+    delete ch;
   }
   // 
-  vector<TString> files_processed = getFileListFromFile(Form("flist/%s", list_processed.Data())); 
+//  vector<TString> files_processed = getFileListFromFile(Form("flist/%s", list_processed.Data())); 
+  vector<TString> files_processed; files_processed.clear();
+  files_processed = getFileListFromFile(Form("flist/%s/%s", year.Data(), list_processed.Data())); 
   for(int i=0; i<files.size(); i++)
   {
     // check if a file is already there in the output directory
@@ -1589,9 +1764,12 @@ int main(int argc, char **argv)
       cout << "skip it!" << endl;
       continue;
     }
-    cout << "procesing " << files.at(i) << endl; 
-    process_nano(files.at(i), outputdir, sumWeights, process, nfiles, filenumber); 
+    cout << "processing " << files.at(i) << endl; 
+    process_nano(files.at(i), outputdir, sumWeights, process, nfiles, filenumber, year); 
+    cout << i << "th file is processed." << endl;
   }
+  //delete JetCorrector;
+  //delete JecUnc;
 
   return 0;
 }
