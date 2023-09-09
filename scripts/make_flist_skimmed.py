@@ -50,7 +50,7 @@ for process in process_incl:
   proc = process.split("/")[-2]
   print(proc)
 
-  flist = open("/home/"+username+"/nanoprocessing/flist/skimmed/"+year+"/flist_"+proc+".txt","w")
+  flist = open("/home/"+username+"/nanoprocessing/flist/skimmed/"+year+"/flist_"+proc+"_"+skim+".txt","w")
 
 ############ make flist ############
   for file in file_incl:
