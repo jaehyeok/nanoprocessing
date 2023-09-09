@@ -165,7 +165,7 @@ void copy_onefile(TString inputfile)
   newfile->Close();
 }
 
-void norm_onefile(TString inputfile, TString year, TString process)
+void norm_onefile(TString inputfile, TString year, TString process, TString skim)
 {
 
   TObjArray *tokens = inputfile.Tokenize("/"); 
@@ -244,6 +244,9 @@ void norm_onefile(TString inputfile, TString year, TString process)
     
     // redefine weight
     weight = w_btag_dcsv * w_pu * w_lep * w_isr * vec_w_lumi.at(entry) * vec_l1pre_nom.at(entry);
+    if(w_btag_dcsv==0 || w_pu==0 || w_lep==0 || w_isr==0 || 
+       vec_w_lumi.at(entry)==0 || vec_l1pre_nom.at(entry)==0 ||
+       isnan(w_btag_dcsv)==true || isnan(w_pu)==true || isnan(w_lep)==true || isnan(w_isr)==true) weight=0;
 
     if(year == "2016" || year == "UL2016") frac1718 = 1;              //FIXME
     else if(year == "2017") frac1718 = 41.5/(41.5+59.7);
@@ -305,14 +308,26 @@ void norm_onefile(TString inputfile, TString year, TString process)
   cout << "... transferring output file" << endl;
 
   if(process.Contains("Run")) { // data
-    cout << Form("... cp Running/%s /data3/nanoprocessing/norm_230904_rpvfitnbge0_data/%s/%s", filename.Data(), year.Data(), process.Data()) << endl;  
-    gSystem->Exec(Form("cp Running/%s /data3/nanoprocessing/norm_230904_rpvfitnbge0_data/%s/%s", filename.Data(), year.Data(), process.Data()));
+    if(skim=="rpvfitnbge0") {
+      cout << Form("... cp Running/%s /data3/nanoprocessing/norm_230904_rpvfitnbge0_data/%s/%s", filename.Data(), year.Data(), process.Data()) << endl;  
+      gSystem->Exec(Form("cp Running/%s /data3/nanoprocessing/norm_230904_rpvfitnbge0_data/%s/%s", filename.Data(), year.Data(), process.Data()));
+    }
+    else if(skim=="dy") {
+      cout << Form("... cp Running/%s /data3/nanoprocessing/norm_230904_dy_data/%s/%s", filename.Data(), year.Data(), process.Data()) << endl;  
+      gSystem->Exec(Form("cp Running/%s /data3/nanoprocessing/norm_230904_dy_data/%s/%s", filename.Data(), year.Data(), process.Data()));
+    }
     cout << Form("rm Running/%s", filename.Data()) << endl;
     gSystem->Exec(Form("rm Running/%s", filename.Data()));
   }
   else { // mc
-    cout << Form("... cp Running/%s /data3/nanoprocessing/norm_230904_rpvfitnbge0/%s/%s", filename.Data(), year.Data(), process.Data()) << endl;  
-    gSystem->Exec(Form("cp Running/%s /data3/nanoprocessing/norm_230904_rpvfitnbge0/%s/%s", filename.Data(), year.Data(), process.Data()));
+    if(skim=="rpvfitnbge0") {
+      cout << Form("... cp Running/%s /data3/nanoprocessing/norm_230904_rpvfitnbge0/%s/%s", filename.Data(), year.Data(), process.Data()) << endl;  
+      gSystem->Exec(Form("cp Running/%s /data3/nanoprocessing/norm_230904_rpvfitnbge0/%s/%s", filename.Data(), year.Data(), process.Data()));
+    }
+    else if(skim=="dy") {
+      cout << Form("... cp Running/%s /data3/nanoprocessing/norm_230904_dy/%s/%s", filename.Data(), year.Data(), process.Data()) << endl;  
+      gSystem->Exec(Form("cp Running/%s /data3/nanoprocessing/norm_230904_dy/%s/%s", filename.Data(), year.Data(), process.Data()));
+    }
     cout << Form("rm Running/%s", filename.Data()) << endl;
     gSystem->Exec(Form("rm Running/%s", filename.Data()));
   }
@@ -325,24 +340,32 @@ int main(int argc, char **argv)
 //  ROOT::EnableImplicitMT(8);
   bool useCondor = false;
   
-  TString year, process;
+  TString year, process, skim;
   year    = argv[1];
   process = argv[2];
+  skim    = argv[3];
 
-  if(argc<3) {
+  if(argc<4) {
     cout << " Please provide proper arguments" << endl;
     cout << "" << endl;
     cout << "   ./norm_weights.exe [year] [process]" << endl; 
     cout << "" << endl;
     cout << "   [year]: UL2016_preVFP, UL2016, UL2017, UL2018" << endl;
+    cout << "   [skim]: rpvfitnbge0, dy" << endl;
     return 0;
   }
   
   cout << " year         : " << year << endl;
   cout << " process      : " << process << endl;
+  cout << " skim         : " << skim << endl;
   
   vector<TString> prenorm_files; prenorm_files.clear();
-  prenorm_files = getFileListFromFile(Form("flist/skimmed/%s/flist_%s.txt", year.Data(), process.Data()));
+  if(skim=="rpvfitnbge0") prenorm_files = getFileListFromFile(Form("flist/skimmed/%s/flist_%s_rpvfitnbge0.txt", year.Data(), process.Data()));
+  else if(skim=="dy") prenorm_files = getFileListFromFile(Form("flist/skimmed/%s/flist_%s_dy.txt", year.Data(), process.Data()));
+  else {
+    cout << "please provide proper argument for skim" << endl;
+    return 0;
+  }
 
 
   // get mean
@@ -491,7 +514,7 @@ int main(int argc, char **argv)
         cout << "save_weights is finished" << endl;
     copy_onefile(prenorm_files.at(i)); 
 	cout << "copy_onefile is finished" << endl;
-    norm_onefile(prenorm_files.at(i), year, process); 
+    norm_onefile(prenorm_files.at(i), year, process, skim); 
 	cout << "norm_onefile is finished" << endl;
   }
   return 0;
