@@ -60,7 +60,7 @@ vector<float> vec_w_btag_dcsv;
 vector<float> vec_w_isr; 
 vector<float> vec_w_lumi; 
 vector<float> vec_l1pre_nom; 
-vector<float> vec_weight; 
+//vector<float> vec_weight; 
 vector<float> vec_w_lep;
 vector<float> vec_w_pu;
 
@@ -82,7 +82,7 @@ void save_weights(TString inputfile)
   float w_isr_ =1;
   float w_lumi_ =1;
   float l1pre_nom_ =1;
-  float weight_ =1;
+//  float weight_ =1;
   float w_lep_ =1;
   float w_pu_ =1;
   vector<float> *sys_isr_=new vector<float>;
@@ -100,7 +100,7 @@ void save_weights(TString inputfile)
   ch.SetBranchAddress("w_pu",   		&w_pu_);
   ch.SetBranchAddress("w_lumi",   		&w_lumi_);
   ch.SetBranchAddress("l1pre_nom",   		&l1pre_nom_);
-  ch.SetBranchAddress("weight",   		&weight_);
+//  ch.SetBranchAddress("weight",   		&weight_);
 
   ch.SetBranchAddress("sys_isr",   		&sys_isr_);
   ch.SetBranchAddress("sys_mur",   		&sys_mur_);
@@ -118,7 +118,7 @@ void save_weights(TString inputfile)
     vec_w_isr.push_back(w_isr_);
     vec_w_lumi.push_back(w_lumi_);
     vec_l1pre_nom.push_back(l1pre_nom_);
-    vec_weight.push_back(weight_);
+//    vec_weight.push_back(weight_);
     vec_w_lep.push_back(w_lep_);
     vec_w_pu.push_back(w_pu_);
 
@@ -146,7 +146,7 @@ void copy_onefile(TString inputfile)
   // remove branches
   ch.SetBranchStatus("w_btag_dcsv", 0);
   ch.SetBranchStatus("w_isr", 	    0);
-  ch.SetBranchStatus("weight", 	    0);
+//  ch.SetBranchStatus("weight", 	    0);
   ch.SetBranchStatus("w_lep", 	    0);
   ch.SetBranchStatus("w_pu", 	    0);
 
@@ -186,15 +186,15 @@ void norm_onefile(TString inputfile, TString year, TString process, TString skim
   vector<float> sys_pu;
   vector<float> sys_lep;
 
-  float w_btag_dcsv=1., w_isr=1., weight=1., w_lep=1., frac1718=1., w_pu=1.;
+  float w_btag_dcsv=1., w_isr=1., /*weight=1.,*/ w_lep=1., frac1718=1., w_pu=1.;
 
-  TBranch *b_frac1718, *b_w_btag_dcsv, *b_w_isr, *b_weight, *b_w_lep, *b_w_pu;
+  TBranch *b_frac1718, *b_w_btag_dcsv, *b_w_isr, /**b_weight,*/ *b_w_lep, *b_w_pu;
   TBranch *b_sys_isr, *b_sys_mur, *b_sys_muf, *b_sys_murf, *b_sys_bctag, *b_sys_udsgtag, *b_sys_pu, *b_sys_lep;
 
   b_frac1718 	= tree_new->Branch("frac1718",&frac1718);
   b_w_btag_dcsv = tree_new->Branch("w_btag_dcsv", &w_btag_dcsv);
   b_w_isr 	= tree_new->Branch("w_isr", &w_isr);
-  b_weight 	= tree_new->Branch("weight", &weight);
+//  b_weight 	= tree_new->Branch("weight", &weight);
   b_w_lep 	= tree_new->Branch("w_lep", &w_lep);
   b_w_pu 	= tree_new->Branch("w_pu", &w_pu);
 
@@ -241,12 +241,14 @@ void norm_onefile(TString inputfile, TString year, TString process, TString skim
       sys_isr.push_back(1);
       sys_isr.push_back(1);
     }
-    
+   
+    /* 
     // redefine weight
     weight = w_btag_dcsv * w_pu * w_lep * w_isr * vec_w_lumi.at(entry) * vec_l1pre_nom.at(entry);
     if(w_btag_dcsv==0 || w_pu==0 || w_lep==0 || w_isr==0 || 
        vec_w_lumi.at(entry)==0 || vec_l1pre_nom.at(entry)==0 ||
        isnan(w_btag_dcsv)==true || isnan(w_pu)==true || isnan(w_lep)==true || isnan(w_isr)==true) weight=0;
+    */
 
     if(year == "2016" || year == "UL2016") frac1718 = 1;              //FIXME
     else if(year == "2017") frac1718 = 41.5/(41.5+59.7);
@@ -258,7 +260,7 @@ void norm_onefile(TString inputfile, TString year, TString process, TString skim
 
     b_w_btag_dcsv->Fill(); 
     b_w_isr->Fill(); 
-    b_weight->Fill(); 
+//    b_weight->Fill(); 
     b_w_lep->Fill(); 
     b_w_pu->Fill(); 
 
@@ -286,7 +288,7 @@ void norm_onefile(TString inputfile, TString year, TString process, TString skim
   vec_w_btag_dcsv.clear(); 
   vec_w_isr.clear(); 
   vec_w_lumi.clear(); 
-  vec_weight.clear(); 
+//  vec_weight.clear(); 
   vec_w_lep.clear(); 
   vec_w_pu.clear(); 
 
