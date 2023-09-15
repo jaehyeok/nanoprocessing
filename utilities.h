@@ -44,9 +44,8 @@ std::vector<int> getLepSFBin(TH2F *hist, const bool elmu, const float pt, const 
     // it is because each root file for SF has different configuration for pt and eta
     }
     else if(year=="UL2016_preVFP"||year=="UL2016"||year=="UL2017"||year=="UL2018"){
-      binx = hist->GetXaxis()->FindBin(eta_);
+      binx = hist->GetXaxis()->FindBin(abs(eta_));
       biny = hist->GetYaxis()->FindBin(pt_);
-    // In UL, the configuration is the same as electron's
     }
   }
   ret.push_back(binx);
