@@ -587,6 +587,8 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   bool trig_isomu24=true; 
   bool trig_isomu27=true; 
   bool pass_hbheiso=true;
+  // weight
+  float gen_weight = 1;
 
   // global
   babyTree_->Branch("run",               &run);    
@@ -698,6 +700,8 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   babyTree_->Branch("trig_isomu24",      &trig_isomu24);    
   babyTree_->Branch("trig_isomu27",      &trig_isomu27);    
   babyTree_->Branch("pass_hbheiso",      &pass_hbheiso);    
+  // weight
+  babyTree_->Branch("gen_weight",         &gen_weight);    
 
 
   // 
@@ -834,6 +838,8 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
     trig_isomu24=true;
     trig_isomu27=true;
     pass_hbheiso=true;
+    //
+    gen_weight=999;
 
     // apply json in data
     if(isData && !inJSON(VRunLumi,run,ls)) continue;
@@ -1405,12 +1411,12 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
     }
 
     if(inputfile.Contains("SMS-T1tbs_RPV") || inputfile.Contains("TTJets_")){  //FIXME Why it includes "TTJets"? -> Cuz in PL, TTbar and Signal samples are only needed to be applied ISR correction
-      if(year=="2016" || year=="2017" || year=="UL2016_preVFP"||year=="UL2016"||year=="UL2017") weight = w_btag_dcsv * w_lumi * w_pu * w_isr * l1pre_nom;
-      else weight = w_btag_dcsv * w_lumi * w_pu * w_isr;
+      if(year=="2016" || year=="2017" || year=="UL2016_preVFP"||year=="UL2016"||year=="UL2017") weight = w_btag_dcsv * w_lumi * w_pu * w_isr * l1pre_nom * w_lep;
+      else weight = w_btag_dcsv * w_lumi * w_pu * w_isr * w_lep;
     }
     else {
-      if(year=="2016" || year=="2017"||year=="UL2016_preVFP"||year=="UL2016"||year=="UL2017") weight = w_btag_dcsv * w_lumi * w_pu * l1pre_nom;
-      else weight = w_btag_dcsv * w_lumi * w_pu;
+      if(year=="2016" || year=="2017"||year=="UL2016_preVFP"||year=="UL2016"||year=="UL2017") weight = w_btag_dcsv * w_lumi * w_pu * l1pre_nom * w_lep;
+      else weight = w_btag_dcsv * w_lumi * w_pu * w_lep;
       w_isr = 1;
     }
     if(isData) 
@@ -1482,9 +1488,12 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
       trig_ht1050 = HLT_PFHT1050;
     }
 
-   trig_isomu24  = HLT_IsoMu24;
-   trig_isomu27  = HLT_IsoMu27;
-   pass_hbheiso = Flag_HBHENoiseIsoFilter;
+    trig_isomu24  = HLT_IsoMu24;
+    trig_isomu27  = HLT_IsoMu27;
+    pass_hbheiso = Flag_HBHENoiseIsoFilter;
+
+      // weight
+    gen_weight = genWeight;
 
    
     // Fill the branches 
