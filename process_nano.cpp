@@ -417,7 +417,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   TString outputfile = (dynamic_cast<TObjString*>(tokens->At(tokens->GetEntries()-1)))->GetString();
   outputfile.ReplaceAll(".root", Form("_fatjetbaby_%s.root", samplename.Data()));
 
-  TFile *babyFile_ = new TFile("Running/"+outputfile, "RECREATE");
+  TFile *babyFile_ = new TFile("/data3/nanoprocessing/Running/"+outputfile, "RECREATE");
   babyFile_->cd();
   TTree *babyTree_ = new TTree("tree", "baby ntuple from nanoaod");
 
@@ -1561,11 +1561,11 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   cout << "... transferring output file" << endl;
   //cout << Form("... xrdcp %s %s", outputfile.Data(), outputdir.Data()) << endl;  //for KISTI server
   //gSystem->Exec(Form("xrdcp %s %s", outputfile.Data(), outputdir.Data()));  // for KISTI server
-  cout << Form("... cp Running/%s %s", outputfile.Data(), outputdir.Data()) << endl;  // for KoreaUniv server
-  gSystem->Exec(Form("cp Running/%s %s", outputfile.Data(), outputdir.Data()));  // for KoreaUniv server
-  cout << Form("rm Running/%s", outputfile.Data()) << endl;  
+  cout << Form("... cp /data3/nanoprocessing/Running/%s %s", outputfile.Data(), outputdir.Data()) << endl;  // for KoreaUniv server
+  gSystem->Exec(Form("cp /data3/nanoprocessing/Running/%s %s", outputfile.Data(), outputdir.Data()));  // for KoreaUniv server
+  cout << Form("rm /data3/nanoprocessing/Running/%s", outputfile.Data()) << endl;  
   cout << "outputfile.Data(): " << outputfile.Data() << endl;
-  gSystem->Exec(Form("rm Running/%s", outputfile.Data()));  
+  gSystem->Exec(Form("rm /data3/nanoprocessing/Running/%s", outputfile.Data()));  
 
 //  delete babyTree_;
 //  delete babyFile_;
@@ -1584,8 +1584,8 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
 # ifndef __CINT__  // the following code will be invisible for the interpreter
 int main(int argc, char **argv)
 {
-  int nthreads = 16;
-  ROOT::EnableImplicitMT(nthreads);
+  int nthreads = 1;
+//  ROOT::EnableImplicitMT(nthreads);
   bool useCondor = false;
   TString inputdir, outputdir, process, list_processed, year; 
   
