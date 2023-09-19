@@ -92,7 +92,7 @@ void get_puweights(TString year, TString process)
   TCanvas *c1 = new TCanvas("c1","c1",1200,600);
   TCanvas *c2 = new TCanvas("c2","c2",1200,600);
   // Draw pileup distributions of data and MC
-  c1->SetLogy();
+//  c1->SetLogy();
   c1->cd();
   c1->SetName(process+"_"+year);
   pu_data_nominal->SetLineColor(kBlack);
@@ -121,6 +121,16 @@ void get_puweights(TString year, TString process)
 
   c1->Print("data/ultralegacy/pileup/"+year+"/pdf/pu_distribution_"+process+"_"+year+".pdf");
   c2->Print("data/ultralegacy/pileup/"+year+"/pdf/pu_weight_"+process+"_"+year+".pdf");
+
+  // Save pileup reweight root file
+  TFile *f_pu_mc;
+  f_pu_mc = new TFile("data/ultralegacy/pileup/weight/"+year+"/pu_weight_"+process+"_"+year+".root","recreate");
+  f_pu_mc->cd();
+  w_pu_down->Write();
+  w_pu_nominal->Write();
+  w_pu_up->Write();
+
+  f_pu_mc->Close();
 }
 
 int main(int argc, char **argv)
