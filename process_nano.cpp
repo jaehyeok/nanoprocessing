@@ -1118,9 +1118,34 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
     // [7] is mur=2 muf=1 ; 
     // [8] is mur=2 muf=2 *
     // 2 is up, 0.5 is down
-    sys_mur.push_back(LHEScaleWeight[7]);	sys_mur.push_back(LHEScaleWeight[1]);	
-    sys_muf.push_back(LHEScaleWeight[5]);	sys_muf.push_back(LHEScaleWeight[3]);
-    sys_murf.push_back(LHEScaleWeight[8]);	sys_murf.push_back(LHEScaleWeight[0]);
+
+    // These samples have a different definition from the one above for LHEScaleWeight
+    if(samplename.Contains("ST_s-channel_4f_hadronicDecays_" || "TTJets_TuneCP5_")) {
+      sys_mur.push_back(LHEScaleWeight[6]);
+      sys_mur.push_back(LHEScaleWeight[1]);	
+      sys_muf.push_back(LHEScaleWeight[4]);
+      sys_muf.push_back(LHEScaleWeight[3]);
+      sys_murf.push_back(LHEScaleWeight[7]);
+      sys_murf.push_back(LHEScaleWeight[0]);
+    }
+    // These samples do not have a branch \"LHEScaleWeight\"
+    else if(samplename.Contains("WW_TuneCP5_13TeV-pythia8" || "WZ_TuneCP5_13TeV-pythia8" || "ZZ_TuneCP5_13TeV-pythia8")) {
+      sys_mur.push_back(1);
+      sys_mur.push_back(1);	
+      sys_muf.push_back(1);
+      sys_muf.push_back(1);
+      sys_murf.push_back(1);
+      sys_murf.push_back(1);
+    }
+    else {
+      sys_mur.push_back(LHEScaleWeight[7]);
+      sys_mur.push_back(LHEScaleWeight[1]);	
+      sys_muf.push_back(LHEScaleWeight[5]);
+      sys_muf.push_back(LHEScaleWeight[3]);
+      sys_murf.push_back(LHEScaleWeight[8]);
+      sys_murf.push_back(LHEScaleWeight[0]);
+    }
+
 
     for(int iGen = 0; iGen < nGenPart; iGen++)
     {
@@ -1584,8 +1609,8 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
 # ifndef __CINT__  // the following code will be invisible for the interpreter
 int main(int argc, char **argv)
 {
-  int nthreads = 1;
-//  ROOT::EnableImplicitMT(nthreads);
+  int nthreads = 10;
+  ROOT::EnableImplicitMT(nthreads);
   bool useCondor = false;
   TString inputdir, outputdir, process, list_processed, year; 
   
