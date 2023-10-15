@@ -1120,7 +1120,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
     // 2 is up, 0.5 is down
 
     // These samples have a different definition from the one above for LHEScaleWeight
-    if(samplename.Contains("ST_s-channel_4f_hadronicDecays_" || "TTJets_TuneCP5_")) {
+    if(samplename.Contains("ST_s-channel_4f_hadronicDecays_") || samplename.Contains("TTJets_TuneCP5_")) {
       sys_mur.push_back(LHEScaleWeight[6]);
       sys_mur.push_back(LHEScaleWeight[1]);	
       sys_muf.push_back(LHEScaleWeight[4]);
@@ -1129,7 +1129,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
       sys_murf.push_back(LHEScaleWeight[0]);
     }
     // These samples do not have a branch \"LHEScaleWeight\"
-    else if(samplename.Contains("WW_TuneCP5_13TeV-pythia8" || "WZ_TuneCP5_13TeV-pythia8" || "ZZ_TuneCP5_13TeV-pythia8")) {
+    else if(samplename.Contains("WW_TuneCP5_13TeV-pythia8") || samplename.Contains("WZ_TuneCP5_13TeV-pythia8") || samplename.Contains("ZZ_TuneCP5_13TeV-pythia8")) {
       sys_mur.push_back(1);
       sys_mur.push_back(1);	
       sys_muf.push_back(1);
