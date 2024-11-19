@@ -60,7 +60,7 @@ float getBtagWeight(TFile *f, BTagCalibrationReader calibreader, float jet_pt, f
     hist_max = 1000 - 0.001;
     pt = TMath::Min((float)jet_pt,hist_max);  
 
-    SF = calibreader.eval_auto_bounds(syst, BTagEntry::FLAV_B, jet_abseta, jet_pt, csv);
+    SF = calibreader.eval_auto_bounds(syst, BTagEntry::FLAV_B, jet_abseta, jet_pt, csv);  // providing access to all loaded sys.types and automatically increasing the uncertainty by a factor of two, if the pt value is outside the provided range. Eta values outside -2.4~2.4, the function will return 1. (ref:https://twiki.cern.ch/twiki/bin/viewauth/CMS/BTagCalibration)
     binx = btag_eff->GetXaxis()->FindBin(jet_abseta);
     biny = btag_eff->GetYaxis()->FindBin(pt);
     binz = btag_eff->GetZaxis()->FindBin(jet_hflavor);
@@ -123,8 +123,15 @@ float getBtagWeight(TFile *f, BTagCalibrationReader calibreader, float jet_pt, f
     }
     eff         = btag_eff->GetBinContent(binx,biny,binz);
   }
-//  cout<<syst<<endl;
-//  cout<<SF<<endl;
+//  cout << "syst            : " << syst << endl;
+//  cout << "SF              : " << SF << endl;
+//  cout << "jet flavor      : " << jet_hflavor << endl;
+//  cout << "jet pt          : " << jet_pt << endl;
+//  cout << "jet eta         : " << jet_eta << endl;
+//  cout << "csv             : " << csv << endl;
+//  cout << "btag_eff_NbinsX : " << btag_eff->GetXaxis()->GetNbins() << endl;
+//  cout << "btag_eff_NbinsY : " << btag_eff->GetYaxis()->GetNbins() << endl;
+//  cout << "eff             : " << eff << endl;
   if(csv>csv_cut){
     P_data      = SF;
     P_mc        = 1;
@@ -152,11 +159,11 @@ bool jetIsLepton(float jets_eta, float jets_phi, vector<float> leps_eta, vector<
   return islep;
 }
 
-float getMJ(vector<float> jets_pt, vector<float> jets_eta, vector<float> jets_phi, vector<float> jets_m, vector<bool> jets_id)
+float getMJ(vector<float> jets_pt, vector<float> jets_eta, vector<float> jets_phi, vector<float> jets_m, vector<bool> jets_id, vector<bool> jets_hem)
 { 
   float Rparam = 1.2;
 	
-	float mj12;
+	float mj12=0;
     
 	// Loop over R=0.5 jets, form into PseudoJets vector
 	vector<fastjet::PseudoJet> input_particles;
@@ -170,6 +177,7 @@ float getMJ(vector<float> jets_pt, vector<float> jets_eta, vector<float> jets_ph
 		if(jets_pt.at(iJ)<30)           continue;
 		if(abs(jets_eta.at(iJ))>2.4)    continue;
 		if(jets_id.at(iJ)==false)       continue;
+		if(jets_hem.at(iJ)==true)       continue;
 
 		input_particles.push_back(fastjet::PseudoJet(JetLV.Px(), JetLV.Py(), JetLV.Pz(), JetLV.E()));
 	}
@@ -188,13 +196,17 @@ float getMJ(vector<float> jets_pt, vector<float> jets_eta, vector<float> jets_ph
 	//Sort by pt
 	vector<fastjet::PseudoJet> sorted_jets = sorted_by_pt(inclusive_jets);
 	//fill fastjet output into vectors, continue as original code
+//	cout << "sorted_jets.size(): " << sorted_jets.size() << endl;
 	for(int isortjets = 0; isortjets< (int)sorted_jets.size(); isortjets++)
 	{
 		//store only if pt >3 GeV to match CMS jets
 		if(TMath::Sqrt( sorted_jets[isortjets].px()*sorted_jets[isortjets].px()
 					+sorted_jets[isortjets].py()*sorted_jets[isortjets].py())>3) 
 		{
+//	cout << "before sum: mj12(" << isortjets << "): " << mj12 << endl;
         mj12 += sorted_jets[isortjets].m(); 
+//	cout << "sorted_jets(" << isortjets << "): " << sorted_jets[isortjets].m() << endl;
+//	cout << "after  sum: mj12(" << isortjets << "): " << mj12 << endl;
 		}
 	}
 

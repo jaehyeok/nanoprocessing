@@ -143,7 +143,6 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   else if(year=="UL2016") electronSF = new TFile("data/ultralegacy/Ele_Medium_UL2016_EGM2D.root","read");
   else if(year=="UL2017") electronSF = new TFile("data/ultralegacy/Ele_Medium_UL2017_EGM2D.root","read");
   else if(year=="UL2018") electronSF = new TFile("data/ultralegacy/Ele_Medium_UL2018_EGM2D.root","read");
-  cout << "DEBUG1" << endl;
     
   TFile *muonSF;
   if(year=="2016")muonSF = new TFile("data/prelegacy/TnP_NUM_MiniIsoTight_DENOM_MediumID_VAR_map_pt_eta.root","read");
@@ -152,7 +151,6 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   else if(year=="UL2016")muonSF = new TFile("data/ultralegacy/Efficiencies_muon_generalTracks_Z_Run2016_UL_IDISO.root","read");
   else if(year=="UL2017")muonSF = new TFile("data/ultralegacy/Efficiencies_muon_generalTracks_Z_Run2017_UL_IDISO.root","read");
   else if(year=="UL2018")muonSF = new TFile("data/ultralegacy/Efficiencies_muon_generalTracks_Z_Run2018_UL_IDISO.root","read");
-  cout << "DEBUG2" << endl;
 
   // PU reweight file
   TFile *f_pu_weight = new TFile("data/ultralegacy/pileup/weight/"+year+"/pu_weight_"+samplename+"_"+year+".root","READ");
@@ -991,6 +989,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
       hem_tf = false;
       if(year=="2018"||year=="UL2018"){//HEM effect in 2018 year
         if(isData && run>=319077 && Jet_eta[iJ]>-3.0 && Jet_eta[iJ]<-1.3 && Jet_phi[iJ]>-1.57 && Jet_phi[iJ]<-0.87) hem_tf = true;
+//        if(isData /*&& run>=319077*/ && Jet_eta[iJ]>-3.0 && Jet_eta[iJ]<-1.3 && Jet_phi[iJ]>-1.57 && Jet_phi[iJ]<-0.87) hem_tf = true; // for HEM study
         if(!isData && (event%10>=0 && event%10<=5) && Jet_eta[iJ]>-3.0 && Jet_eta[iJ]<-1.3 && Jet_phi[iJ]>-1.57 && Jet_phi[iJ]<-0.87) hem_tf = true;
       }
       if(abs(Jet_eta[iJ])>6 || iJ > 50){//FIXME
@@ -1119,7 +1118,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
     // [8] is mur=2 muf=2 *
     // 2 is up, 0.5 is down
 
-    // These samples have a different definition from the one above for LHEScaleWeight
+    // These samples have a different definition of LHEScaleWeight compared to other samples
     if(samplename.Contains("ST_s-channel_4f_hadronicDecays_") || samplename.Contains("TTJets_TuneCP5_")) {
       sys_mur.push_back(LHEScaleWeight[6]);
       sys_mur.push_back(LHEScaleWeight[1]);	
@@ -1129,6 +1128,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
       sys_murf.push_back(LHEScaleWeight[0]);
     }
     // These samples do not have a branch \"LHEScaleWeight\"
+    // Systs. for mur/muf/murf in these samples are obtained using make_other_mu_syst.cxx in RPV analysis code
     else if(samplename.Contains("WW_TuneCP5_13TeV-pythia8") || samplename.Contains("WZ_TuneCP5_13TeV-pythia8") || samplename.Contains("ZZ_TuneCP5_13TeV-pythia8")) {
       sys_mur.push_back(1);
       sys_mur.push_back(1);	
@@ -1181,7 +1181,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
       if(jets_pt.at(iJ)<30)           continue;
       if(abs(jets_eta.at(iJ))>2.4)    continue;
       if(jets_id.at(iJ)==false)       continue;
-      if(jets_hem.at(iJ)) continue; 
+      if(jets_hem.at(iJ)) continue;                    // jetislep is not applied in order to cluster MJ with lepton
 
       input_particles.push_back(fastjet::PseudoJet(JetLV.Px(), JetLV.Py(), JetLV.Pz(), JetLV.E()));
       h2->Fill(JetLV.Eta(), JetLV.Phi(), JetLV.E());
@@ -1295,27 +1295,15 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
 
     if(!isData){
 		// JEC systematics (fill only for MC)
-    sys_mj12_up   =  getMJ(sys_jets_pt_up, jets_eta, jets_phi, jets_m, jets_id);
-    sys_mj12_down =  getMJ(sys_jets_pt_down, jets_eta, jets_phi, jets_m, jets_id);
+    sys_mj12_up   =  getMJ(sys_jets_pt_up, jets_eta, jets_phi, jets_m, jets_id, jets_hem);
+    sys_mj12_down =  getMJ(sys_jets_pt_down, jets_eta, jets_phi, jets_m, jets_id, jets_hem);
 
-    sys_mj12_jerUp   =  getMJ(sys_jets_pt_jerUp, jets_eta, jets_phi, jets_m, jets_id);
-    sys_mj12_jerDown =  getMJ(sys_jets_pt_jerDown, jets_eta, jets_phi, jets_m, jets_id);
+    sys_mj12_jerUp   =  getMJ(sys_jets_pt_jerUp, jets_eta, jets_phi, jets_m, jets_id, jets_hem);
+    sys_mj12_jerDown =  getMJ(sys_jets_pt_jerDown, jets_eta, jets_phi, jets_m, jets_id, jets_hem);
 
 
-//    cout << "sys_jets_pt_up[0]: " << sys_jets_pt_up[0] << endl;
-//    cout << "sys_jets_pt_up[1]: " << sys_jets_pt_up[1] << endl;
-//    cout << "sys_jets_pt_up[2]: " << sys_jets_pt_up[2] << endl;
-//    cout << "sys_jets_pt_up[3]: " << sys_jets_pt_up[3] << endl;
-//    cout << "sys_jets_pt_down: " << sys_jets_pt_down << endl;
-//    cout << "sys_jets_pt_jerUp: " << sys_jets_pt_jerUp << endl;
-//    cout << "sys_jets_pt_jerDown: " << sys_jets_pt_jerDown << endl;
-//    cout << "--------------------------------------------------------------------------" << endl;
-//    cout << "sys_mj12_up: " << sys_mj12_up << endl;
-//    cout << "sys_mj12_down: " << sys_mj12_down << endl;
-//    cout << "sys_mj12_jerUp: " << sys_mj12_jerUp << endl;
-//    cout << "sys_mj12_jerDown: " << sys_mj12_jerDown << endl;
-
-		  // fill jec syst branches: vec.at(0) is up and vec.at(1) is down 
+    // fill jec syst branches: vec.at(0) is up and vec.at(1) is down 
+    // fill jer syst branches: vec.at(2) is up and vec.at(3) is down
     sys_njets.push_back(sys_njets_up);	sys_njets.push_back(sys_njets_down);	
     sys_njets.push_back(sys_njets_jerUp); sys_njets.push_back(sys_njets_jerDown);	
     sys_nbm.push_back(sys_nbm_up);	sys_nbm.push_back(sys_nbm_down);	
@@ -1325,100 +1313,109 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
     sys_mj12.push_back(sys_mj12_up);	sys_mj12.push_back(sys_mj12_down);	
     sys_mj12.push_back(sys_mj12_jerUp);	sys_mj12.push_back(sys_mj12_jerDown);	
 
-		  // btagging
+    // btagging
     sys_bctag.push_back(sys_bctag_up);	sys_bctag.push_back(sys_bctag_down);	
     sys_udsgtag.push_back(sys_udsgtag_up);	sys_udsgtag.push_back(sys_udsgtag_down);	
     }
 
-    if(!isData){//number of ISR-->TTbar_Madgraph, signal.
-    int nisr_(0);
-    TLorentzVector JetLV_, GenLV_; 
-    for(size_t ijet(0); ijet<jets_pt.size(); ijet++){
-      bool matched_ = false;
-      if(jets_pt.at(ijet)<30) continue;
-      if(abs(jets_eta.at(ijet))>2.4) continue;
-      if(jets_id.at(ijet)==0) continue;
-      if(jets_islep.at(ijet)==1) continue;
+    if(!isData){
+      // Since UL samples use CP5 tune, there is no need for ISR systematics
+      int nisr_(0);
+      TLorentzVector JetLV_, GenLV_; 
+      for(size_t ijet(0); ijet<jets_pt.size(); ijet++){
+        bool matched_ = false;
+        if(jets_pt.at(ijet)<30) continue;
+        if(abs(jets_eta.at(ijet))>2.4) continue;
+        if(jets_id.at(ijet)==0) continue;
+        if(jets_islep.at(ijet)==1) continue;
+	if(jets_hem.at(ijet)==1) continue;
 
-      JetLV_.SetPtEtaPhiM(jets_pt.at(ijet), jets_eta.at(ijet), jets_phi.at(ijet), jets_m.at(ijet));
+        JetLV_.SetPtEtaPhiM(jets_pt.at(ijet), jets_eta.at(ijet), jets_phi.at(ijet), jets_m.at(ijet));
 
-      for(size_t imc(0); imc < gen_pt.size(); imc++){
+        for(size_t imc(0); imc < gen_pt.size(); imc++){
+          if((gen_PartIdxMother.at(imc))==-1) continue;
+          int momid = abs(gen_pdgId.at(gen_PartIdxMother.at(imc)));
+ 
+          if(!((gen_statusFlags.at(imc)>>7)&1) || abs(gen_pdgId.at(imc))>5) continue;
+ 
+          if(!(momid==6 || momid==23 || momid==24 || momid==25 || momid>1e6)) continue;//6: top, 23: Z boson, 24: W boson, 25: Higgs, 1e6<: SUSY particle ---> matching condition is final state Jets.
+          GenLV_.SetPtEtaPhiM(gen_pt.at(imc), gen_eta.at(imc), gen_phi.at(imc), gen_m.at(imc));
+          float dR = JetLV_.DeltaR(GenLV_);//dR=sqrt(dphi^2+deta^2)
+          if(dR<0.3){
+            matched_ = true;
+            matched = matched_;
+          }
+        }
+        if(matched_==false) nisr_++;//--> not matched with final state.
+      }
+
+      TLorentzVector jets_1, jets_2;
+      for(size_t imc(0); imc<gen_pt.size(); imc++){
+        //cout<<"gen_idxMother: "<<gen_PartIdxMother.at(imc)<<endl;
         if((gen_PartIdxMother.at(imc))==-1) continue;
         int momid = abs(gen_pdgId.at(gen_PartIdxMother.at(imc)));
- 
-        if(!((gen_statusFlags.at(imc)>>7)&1) || abs(gen_pdgId.at(imc))>5) continue;
- 
-        if(!(momid==6 || momid==23 || momid==24 || momid==25 || momid>1e6)) continue;//6: top, 23: Z boson, 24: W boson, 25: Higgs, 1e6<: SUSY particle ---> matching condition is final state Jets.
-        GenLV_.SetPtEtaPhiM(gen_pt.at(imc), gen_eta.at(imc), gen_phi.at(imc), gen_m.at(imc));
-        float dR = JetLV_.DeltaR(GenLV_);//dR=sqrt(dphi^2+deta^2)
-        if(dR<0.3){
-          matched_ = true;
-          matched = matched_;
+
+        if(!((momid >= 1000022 && momid <= 1000025) || momid==1000035 || momid==1000037)) continue; //neutralino
+        if(!(abs(gen_pdgId.at(imc))==3 || abs(gen_pdgId.at(imc))==5 || abs(gen_pdgId.at(imc))==6)) continue;//tbs
+        jets_1.SetPtEtaPhiM(gen_pt.at(imc), gen_eta.at(imc), gen_phi.at(imc), gen_m.at(imc));
+
+        for(size_t igen(0); igen<gen_pt.size(); igen++){
+	  jets_2.SetPtEtaPhiM(gen_pt.at(igen), gen_eta.at(igen), gen_phi.at(igen), gen_m.at(igen));
+	  if(jets_1!=jets_2) llp_dR=jets_1.DeltaR(jets_2);
+	  //cout<<"deltaR: "<<llp_dR<<endl;
         }
       }
-      if(matched_==false) nisr_++;//--> not matched with final state.
-    }
 
-    TLorentzVector jets_1, jets_2;
-    for(size_t imc(0); imc<gen_pt.size(); imc++){
-      //cout<<"gen_idxMother: "<<gen_PartIdxMother.at(imc)<<endl;
-      if((gen_PartIdxMother.at(imc))==-1) continue;
-      int momid = abs(gen_pdgId.at(gen_PartIdxMother.at(imc)));
+      if(nisr_==0)       isr_wgt = 1.; 
+      else if(nisr_==1)  isr_wgt = 0.920; 
+      else if(nisr_==2)  isr_wgt = 0.821; 
+      else if(nisr_==3)  isr_wgt = 0.715; 
+      else if(nisr_==4)  isr_wgt = 0.662; 
+      else if(nisr_==5)  isr_wgt = 0.561; 
+      else if(nisr_>=6)  isr_wgt = 0.511; 
 
-      if(!((momid >= 1000022 && momid <= 1000025) || momid==1000035 || momid==1000037)) continue; //neutralino
-      if(!(abs(gen_pdgId.at(imc))==3 || abs(gen_pdgId.at(imc))==5 || abs(gen_pdgId.at(imc))==6)) continue;//tbs
-      jets_1.SetPtEtaPhiM(gen_pt.at(imc), gen_eta.at(imc), gen_phi.at(imc), gen_m.at(imc));
-
-      for(size_t igen(0); igen<gen_pt.size(); igen++){
-	jets_2.SetPtEtaPhiM(gen_pt.at(igen), gen_eta.at(igen), gen_phi.at(igen), gen_m.at(igen));
-	if(jets_1!=jets_2) llp_dR=jets_1.DeltaR(jets_2);
-	//cout<<"deltaR: "<<llp_dR<<endl;
-      }
-    }
-
-    if(nisr_==0)       isr_wgt = 1.; 
-    else if(nisr_==1)  isr_wgt = 0.920; 
-    else if(nisr_==2)  isr_wgt = 0.821; 
-    else if(nisr_==3)  isr_wgt = 0.715; 
-    else if(nisr_==4)  isr_wgt = 0.662; 
-    else if(nisr_==5)  isr_wgt = 0.561; 
-    else if(nisr_>=6)  isr_wgt = 0.511; 
-
-    //w_isr = isr_wgt*isr_norm;
-    if(year=="2016"){
-      w_isr = isr_wgt;
-      sys_isr.push_back(w_isr+((1-w_isr)/2));
-      sys_isr.push_back(w_isr-((1-w_isr)/2));
-    }
-    if(year=="2017"||year=="2018"||year=="UL2016_preVFP"||year=="UL2016"||year=="UL2017"||year=="UL2018"){
-      if(inputfile.Contains("SMS-T1tbs_RPV")){     // Tune version of signal sample is CP2. ISR corrections derived for samples with TuneCP2 are similar to the ones for 2016-TuneCUETP8M1. So it is recommended to use 2016 corrections.
+      //w_isr = isr_wgt*isr_norm;
+      if(year=="2016"){
         w_isr = isr_wgt;
         sys_isr.push_back(w_isr+((1-w_isr)/2));
         sys_isr.push_back(w_isr-((1-w_isr)/2));
       }
-      else{
-	w_isr = 1;
+      if(year=="2017"||year=="2018"||year=="UL2016_preVFP"||year=="UL2016"||year=="UL2017"||year=="UL2018"){
+        // Since UL samples use CP5 tune, there is no need for ISR systematics
+        w_isr = 1;
         sys_isr.push_back(+0);
         sys_isr.push_back(-0);
+        /*    // Now, Tune version of signal sample is CP5 (241029).
+        if(inputfile.Contains("SMS-T1tbs_RPV")){     // Tune version of signal sample is CP2. ISR corrections derived for samples with TuneCP2 are similar to the ones for 2016-TuneCUETP8M1. So it is recommended to use 2016 corrections.
+          w_isr = isr_wgt;
+          sys_isr.push_back(w_isr+((1-w_isr)/2));
+          sys_isr.push_back(w_isr-((1-w_isr)/2));
+        }
+        else{
+	  w_isr = 1;
+          sys_isr.push_back(+0);
+          sys_isr.push_back(-0);
+        }
+        */
+
+      }
+      nisr = nisr_;
+    }
+
+    if(!isData){
+      for(int imc(0); imc<ngen; imc++){
+        if(gen_PartIdxMother.at(imc)==-1) continue;//exclude incoming particle
+  	int momid = abs(gen_pdgId.at(gen_PartIdxMother.at(imc)));
+  	int momstat = gen_status.at(gen_PartIdxMother.at(imc));
+  	int genId = abs(gen_pdgId.at(imc));
+  
+  	if(gen_PartIdxMother.at(imc)!=0 && (momstat<=21 || momstat>=29) && momid!=4 && momid!=5){ // momid 4 and 5 is come from hard process
+  	  if(momid==21 && (genId==5 || genId==4)){
+  	    fromGS = true;//gluon split to b quark
+  	  }
+        }
       }
     }
-    nisr = nisr_;
-  }
-
-  if(!isData){
-    for(int imc(0); imc<ngen; imc++){
-      if(gen_PartIdxMother.at(imc)==-1) continue;//exclude incoming particle
-	int momid = abs(gen_pdgId.at(gen_PartIdxMother.at(imc)));
-	int momstat = gen_status.at(gen_PartIdxMother.at(imc));
-	int genId = abs(gen_pdgId.at(imc));
-
-	if(gen_PartIdxMother.at(imc)!=0 && (momstat<=21 || momstat>=29) && momid!=4 && momid!=5){ // momid 4 and 5 is come from hard process
-	  if(momid==21 && (genId==5 || genId==4)){
-	    fromGS = true;//gluon split to b quark
-	}
-      }
-    }
-  }
 
     // 
     // weights 
@@ -1435,7 +1432,8 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
 //      sys_pu.push_back(getPUweight(samplename, year, ntrupv_mean, -1));
     }
 
-    if(inputfile.Contains("SMS-T1tbs_RPV") || inputfile.Contains("TTJets_")){  //FIXME Why it includes "TTJets"? -> Cuz in PL, TTbar and Signal samples are only needed to be applied ISR correction
+    if(inputfile.Contains("TTJets_")){ // Now, Tune version of signal sample is CP5 (241029). 
+//    if(inputfile.Contains("SMS-T1tbs_RPV") || inputfile.Contains("TTJets_")){  //FIXME Why it includes "TTJets"? -> Cuz in PL, TTbar and Signal samples are only needed to be applied ISR correction
       if(year=="2016" || year=="2017" || year=="UL2016_preVFP"||year=="UL2016"||year=="UL2017") weight = w_btag_dcsv * w_lumi * w_pu * w_isr * l1pre_nom * w_lep;
       else weight = w_btag_dcsv * w_lumi * w_pu * w_isr * w_lep;
     }
@@ -1609,7 +1607,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
 # ifndef __CINT__  // the following code will be invisible for the interpreter
 int main(int argc, char **argv)
 {
-  int nthreads = 10;
+  int nthreads = 16;
   ROOT::EnableImplicitMT(nthreads);
   bool useCondor = false;
   TString inputdir, outputdir, process, list_processed, year; 
