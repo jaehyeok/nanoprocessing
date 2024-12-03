@@ -22,41 +22,23 @@
 
 float getBtagWeight(TFile *f, BTagCalibrationReader calibreader, float jet_pt, float jet_eta, float jet_hflavor, float csv, float csv_cut, const char* syst="central")
 {
-  //
   float btag_weight = 1;
   float eff(0), SF(0);
   float P_data(0), P_mc(0);
 
   TH3D *btag_eff;
-  
 
   // absolute eta
   float jet_abseta = jet_eta;
   if(jet_eta<0) jet_abseta = -1*jet_eta;
   
-/*
-  SF_b = 1;
-  SF_l = 1;
-  SF_c = 1; */
-
-  // ** FIXME : add effeciency ** //
-
-  //cout<<jet_hflavor<<endl;
-  //cout<<syst<<endl;
-
   float hist_max(0), pt(0);
   int binx, biny, binz;
-	if(jet_hflavor==21)cout<<"jet_hflavor : " << jet_hflavor <<endl;
-  if (abs(jet_hflavor) == 5 ){    //HF		 
-    if(syst=="up_hf"||syst=="down_hf"){
-      btag_eff = (TH3D*)f->Get("btagEfficiency_medium_comb");
-      if(syst=="up_hf") syst="up";
-      if(syst=="down_hf") syst="down";
-    }
-    else{
-      syst="central";
-      btag_eff = (TH3D*)f->Get("btagEfficiency_medium_comb_central");
-    }
+  if(jet_hflavor==21)cout<<"jet_hflavor : " << jet_hflavor <<endl;
+
+  btag_eff = (TH3D*)f->Get("btagEfficiency_medium");
+  // HF
+  if (abs(jet_hflavor) == 5 ){
     hist_max = 1000 - 0.001;
     pt = TMath::Min((float)jet_pt,hist_max);  
 
@@ -68,42 +50,22 @@ float getBtagWeight(TFile *f, BTagCalibrationReader calibreader, float jet_pt, f
     eff         = btag_eff->GetBinContent(binx,biny,binz);
   }
   else if( abs(jet_hflavor) == 4 ){  //C
-    if(syst=="up_hf"||syst=="down_hf"){
-      btag_eff = (TH3D*)f->Get("btagEfficiency_medium_comb");
-      if(syst=="up_hf") syst="up";
-      if(syst=="down_hf") syst="down";
-    }
-    else{
-      syst="central";
-      btag_eff = (TH3D*)f->Get("btagEfficiency_medium_comb_central");
-    }
-    
     hist_max = 1000 - 0.001;
     pt = TMath::Min((float)jet_pt,hist_max);  
-
 
     SF = calibreader.eval_auto_bounds(syst, BTagEntry::FLAV_C, jet_abseta, jet_pt, csv);
     binx = btag_eff->GetXaxis()->FindBin(jet_abseta);
     biny = btag_eff->GetYaxis()->FindBin(pt);
     binz = btag_eff->GetZaxis()->FindBin(jet_hflavor);
-    binz = max(min(binz,3),1);
+    binz = max(min(binz,3),1);     // to address the infinite loop problem by Changwhan (https://github.com/jaehyeok/nanoprocessing/commit/e5ed595b0b3eceaddbf694492cf893bce4ab191b)
 
     eff         = btag_eff->GetBinContent(binx,biny,binz);
   }
   else { //LF
-    if(syst=="up_lf"||syst=="down_lf"){
-      if(syst=="up_lf") syst="up";
-      if(syst=="down_lf") syst="down";
-    }
-    else{
-      syst="central";
-    }
-
     hist_max = 1000 - 0.001;
     pt = TMath::Min((float)jet_pt,hist_max);  
 
     SF = calibreader.eval_auto_bounds(syst, BTagEntry::FLAV_UDSG, jet_abseta, jet_pt, csv);
-    btag_eff = (TH3D*)f->Get("btagEfficiency_medium_incl");
     binx = btag_eff->GetXaxis()->FindBin(jet_abseta);
     biny = btag_eff->GetYaxis()->FindBin(pt);
     binz = btag_eff->GetZaxis()->FindBin(jet_hflavor);
@@ -123,15 +85,7 @@ float getBtagWeight(TFile *f, BTagCalibrationReader calibreader, float jet_pt, f
     }
     eff         = btag_eff->GetBinContent(binx,biny,binz);
   }
-//  cout << "syst            : " << syst << endl;
-//  cout << "SF              : " << SF << endl;
-//  cout << "jet flavor      : " << jet_hflavor << endl;
-//  cout << "jet pt          : " << jet_pt << endl;
-//  cout << "jet eta         : " << jet_eta << endl;
-//  cout << "csv             : " << csv << endl;
-//  cout << "btag_eff_NbinsX : " << btag_eff->GetXaxis()->GetNbins() << endl;
-//  cout << "btag_eff_NbinsY : " << btag_eff->GetYaxis()->GetNbins() << endl;
-//  cout << "eff             : " << eff << endl;
+
   if(csv>csv_cut){
     P_data      = SF;
     P_mc        = 1;
@@ -142,9 +96,7 @@ float getBtagWeight(TFile *f, BTagCalibrationReader calibreader, float jet_pt, f
   }
  
   btag_weight = P_data/P_mc;
-//  cout<<hist_max<<endl;
-//  cout<<binx<<","<<biny<<","<<binz<<endl;
-//  cout<<eff<<endl;
+
   if(btag_weight==0) return 1; 
   else return btag_weight; 
 }
