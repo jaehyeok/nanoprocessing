@@ -100,10 +100,10 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
     if(year=="2016")f_btef = new TFile("btagEfficiency/230613/"+year+"/btagEfficiency_"+tag+"_2016.root","READ");
     else if(year=="2017")f_btef = new TFile("btagEfficiency/230613/"+year+"/btagEfficiency_"+tag+"_2017.root","READ");
     else if(year=="2018")f_btef = new TFile("btagEfficiency/230613/"+year+"/btagEfficiency_"+tag+"_2018.root","READ");
-    else if(year=="UL2016_preVFP")f_btef = new TFile("btagEfficiency/ultralegacy/"+year+"/btagEfficiency_"+samplename+"_"+year+".root","READ");
-    else if(year=="UL2016")f_btef = new TFile("btagEfficiency/ultralegacy/"+year+"/btagEfficiency_"+samplename+"_"+year+".root","READ");
-    else if(year=="UL2017")f_btef = new TFile("btagEfficiency/ultralegacy/"+year+"/btagEfficiency_"+samplename+"_"+year+".root","READ");
-    else if(year=="UL2018")f_btef = new TFile("btagEfficiency/ultralegacy/"+year+"/btagEfficiency_"+samplename+"_"+year+".root","READ");
+    else if(year=="UL2016_preVFP")f_btef = new TFile("btagEfficiency/ultralegacy/ptetabinned/"+year+"/btagEfficiency_"+samplename+"_"+year+".root","READ");
+    else if(year=="UL2016")f_btef = new TFile("btagEfficiency/ultralegacy/ptetabinned/"+year+"/btagEfficiency_"+samplename+"_"+year+".root","READ");
+    else if(year=="UL2017")f_btef = new TFile("btagEfficiency/ultralegacy/ptetabinned/"+year+"/btagEfficiency_"+samplename+"_"+year+".root","READ");
+    else if(year=="UL2018")f_btef = new TFile("btagEfficiency/ultralegacy/ptetabinned/"+year+"/btagEfficiency_"+samplename+"_"+year+".root","READ");
     cout << "btagEfficiency file: " << f_btef->GetName() << endl;
   }
 
@@ -129,7 +129,8 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   // */
   BTagCalibrationReader calibreader(BTagEntry::OP_MEDIUM,  // operating point
       "central",                                              // central sys type
-      {"up", "down"});                                // other sys types
+//      {"up", "down"});                                // other sys types
+      {"up_uncorrelated", "down_uncorrelated", "up_correlated", "down_correlated"});                                // other sys types
   calibreader.load(calib, BTagEntry::FLAV_B,     "comb");
   calibreader.load(calib, BTagEntry::FLAV_C,     "comb");
   calibreader.load(calib, BTagEntry::FLAV_UDSG,  "incl"); 
@@ -139,18 +140,18 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   if(year=="2016") electronSF = new TFile("data/prelegacy/ElectronScaleFactors_Run2016.root","read");
   else if(year=="2017") electronSF = new TFile("data/prelegacy/ElectronScaleFactors_Run2017.root","read");
   else if(year=="2018") electronSF = new TFile("data/prelegacy/ElectronScaleFactors_Run2018.root","read");
-  else if(year=="UL2016_preVFP") electronSF = new TFile("data/ultralegacy/Ele_Medium_UL2016_preVFP_EGM2D.root","read");
-  else if(year=="UL2016") electronSF = new TFile("data/ultralegacy/Ele_Medium_UL2016_EGM2D.root","read");
-  else if(year=="UL2017") electronSF = new TFile("data/ultralegacy/Ele_Medium_UL2017_EGM2D.root","read");
-  else if(year=="UL2018") electronSF = new TFile("data/ultralegacy/Ele_Medium_UL2018_EGM2D.root","read");
+  else if(year=="UL2016_preVFP") electronSF = new TFile("data/ultralegacy/fullsim_electron_isolated_UL2016_preVFP.root","read");
+  else if(year=="UL2016") electronSF = new TFile("data/ultralegacy/fullsim_electron_isolated_UL2016_postVFP.root","read");
+  else if(year=="UL2017") electronSF = new TFile("data/ultralegacy/fullsim_electron_isolated_UL2017.root","read");
+  else if(year=="UL2018") electronSF = new TFile("data/ultralegacy/fullsim_electron_isolated_UL2018.root","read");
     
   TFile *muonSF;
   if(year=="2016")muonSF = new TFile("data/prelegacy/TnP_NUM_MiniIsoTight_DENOM_MediumID_VAR_map_pt_eta.root","read");
   else if(year=="2017"||year=="2018")muonSF = new TFile("data/prelegacy/2017MiniIso0.2AndMediumID_SF.root","read");
-  else if(year=="UL2016_preVFP")muonSF = new TFile("data/ultralegacy/Efficiencies_muon_generalTracks_Z_Run2016_UL_HIPM_IDISO.root","read");
-  else if(year=="UL2016")muonSF = new TFile("data/ultralegacy/Efficiencies_muon_generalTracks_Z_Run2016_UL_IDISO.root","read");
-  else if(year=="UL2017")muonSF = new TFile("data/ultralegacy/Efficiencies_muon_generalTracks_Z_Run2017_UL_IDISO.root","read");
-  else if(year=="UL2018")muonSF = new TFile("data/ultralegacy/Efficiencies_muon_generalTracks_Z_Run2018_UL_IDISO.root","read");
+  else if(year=="UL2016_preVFP")muonSF = new TFile("data/ultralegacy/fullsim_muon_isolated_UL2016_preVFP.root","read");
+  else if(year=="UL2016")muonSF = new TFile("data/ultralegacy/fullsim_muon_isolated_UL2016_postVFP.root","read");
+  else if(year=="UL2017")muonSF = new TFile("data/ultralegacy/fullsim_muon_isolated_UL2017.root","read");
+  else if(year=="UL2018")muonSF = new TFile("data/ultralegacy/fullsim_muon_isolated_UL2018.root","read");
 
   // PU reweight file
   TFile *f_pu_weight = new TFile("data/ultralegacy/pileup/weight/"+year+"/pu_weight_"+samplename+"_"+year+".root","READ");
@@ -234,8 +235,11 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   Float_t Electron_eta[100];  
   Float_t Electron_phi[100]; 
   Float_t Electron_mass[100]; 
+  Float_t Electron_dz[100];
+  Float_t Electron_dxy[100];
   Int_t   Electron_cutBased[100];  // cut-based ID Fall17 V2: susy recommendation, use medium(https://github.com/richstu/babymaker/blob/master/bmaker/src/lepton_tools.cc#L289)
   //Int_t   Electron_cutBased_Spring15[100];  // Spring15 ID to compare with AN-2016/187 (1L MJ 2016 data)  
+  Bool_t  Electron_mvaFall17V2noIso_WP90[100];
   Int_t   Electron_jetIdx[100];    // index of the associated jet (-1 if none)  
   Int_t   Electron_pdgId[100];   
   Float_t   Electron_miniPFRelIso_all[100];   
@@ -247,7 +251,10 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   Float_t Muon_eta[100];  
   Float_t Muon_phi[100]; 
   Float_t Muon_mass[100]; 
-  Bool_t   Muon_mediumId[100];  // medium id taken from babymaker: https://github.com/richstu/babymaker/blob/master/bmaker/src/lepton_tools.cc#L190  
+  Float_t Muon_dz[100]; 
+  Float_t Muon_dxy[100]; 
+  Bool_t  Muon_mediumId[100];  // medium id taken from babymaker: https://github.com/richstu/babymaker/blob/master/bmaker/src/lepton_tools.cc#L190  
+  Bool_t  Muon_mediumPromptId[100];
   Int_t   Muon_jetIdx[100];    // index of the associated jet (-1 if none)  
   Int_t   Muon_pdgId[100];   
   Float_t   Muon_miniPFRelIso_all[100];   
@@ -347,8 +354,11 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   tree->SetBranchAddress("Electron_eta",        &Electron_eta);
   tree->SetBranchAddress("Electron_phi",        &Electron_phi);
   tree->SetBranchAddress("Electron_mass",       &Electron_mass);
+  tree->SetBranchAddress("Electron_dxy",        &Electron_dxy);
+  tree->SetBranchAddress("Electron_dz",         &Electron_dz);
   tree->SetBranchAddress("Electron_cutBased",   &Electron_cutBased);
   //tree->SetBranchAddress("Electron_cutBased_Spring15",   &Electron_cutBased_Spring15);
+  tree->SetBranchAddress("Electron_mvaFall17V2noIso_WP90",   &Electron_mvaFall17V2noIso_WP90);
   tree->SetBranchAddress("Electron_jetIdx",     &Electron_jetIdx);
   tree->SetBranchAddress("Electron_pdgId",      &Electron_pdgId);
   tree->SetBranchAddress("Electron_miniPFRelIso_all", &Electron_miniPFRelIso_all);
@@ -360,7 +370,10 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   tree->SetBranchAddress("Muon_eta",            &Muon_eta);
   tree->SetBranchAddress("Muon_phi",            &Muon_phi);
   tree->SetBranchAddress("Muon_mass",           &Muon_mass);
+  tree->SetBranchAddress("Muon_dxy",            &Muon_dxy);
+  tree->SetBranchAddress("Muon_dz",             &Muon_dz);
   tree->SetBranchAddress("Muon_mediumId",       &Muon_mediumId);
+  tree->SetBranchAddress("Muon_mediumPromptId", &Muon_mediumPromptId);
   tree->SetBranchAddress("Muon_jetIdx",         &Muon_jetIdx);
   tree->SetBranchAddress("Muon_pdgId",          &Muon_pdgId);
   tree->SetBranchAddress("Muon_miniPFRelIso_all",    &Muon_miniPFRelIso_all);
@@ -496,10 +509,10 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   std::vector<float> mus_pt;
   std::vector<float> mus_eta;
   std::vector<float> mus_phi;
-  std::vector<bool> mus_sigid;
+  std::vector<bool>  mus_sigid;
   std::vector<float> mus_miniso;
-  //std::vector<float> mus_d0;
-  //std::vector<float> mus_dz;
+  std::vector<float> mus_d0;
+  std::vector<float> mus_dz;
   //std::vector<int> mus_charge;
 
   int nels;
@@ -508,13 +521,13 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   std::vector<float> els_eta;
   //std::vector<float> els_sceta;
   std::vector<float> els_phi;
-  std::vector<bool> els_sigid;
-  std::vector<bool> els_spr15_sigid;
+  std::vector<bool>  els_sigid;
+  std::vector<bool>  els_spr15_sigid;
   std::vector<float> els_miniso;
   std::vector<float> els_reliso;
   //std::vector<bool> els_ispf;
-  //std::vector<float> els_d0;
-  //std::vector<float> els_dz;
+  std::vector<float> els_d0;
+  std::vector<float> els_dz;
   //std::vector<int> els_charge;
 
   //Jets   
@@ -565,8 +578,10 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   //    std::vector<float> fjets_poscsv;
   //    std::vector<int> fjets_btags;
   //syst   
-  std::vector<float> sys_bctag;
-  std::vector<float> sys_udsgtag;
+  std::vector<float> sys_bctag_uncor;
+  std::vector<float> sys_bctag_cor;
+  std::vector<float> sys_udsgtag_uncor;
+  std::vector<float> sys_udsgtag_cor;
   std::vector<float> sys_pu;
   std::vector<float> sys_lep;
   std::vector<float> sys_mur;
@@ -629,6 +644,8 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   babyTree_->Branch("mus_phi",           &mus_phi);    
   babyTree_->Branch("mus_sigid",         &mus_sigid);    
   babyTree_->Branch("mus_miniso",        &mus_miniso);    
+  babyTree_->Branch("mus_d0",            &mus_d0);    
+  babyTree_->Branch("mus_dz",            &mus_dz);    
   babyTree_->Branch("nels",              &nels);    
   babyTree_->Branch("els_pt",            &els_pt);    
   babyTree_->Branch("els_eta",           &els_eta);    
@@ -637,6 +654,8 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   babyTree_->Branch("els_spr15_sigid",   &els_spr15_sigid);    
   babyTree_->Branch("els_miniso",        &els_miniso);    
   babyTree_->Branch("els_reliso",        &els_reliso);    
+  babyTree_->Branch("els_d0",            &els_d0);    
+  babyTree_->Branch("els_dz",            &els_dz);    
   // jets 
   babyTree_->Branch("njets",             &njets);
   babyTree_->Branch("nbm",               &nbm);    
@@ -689,8 +708,10 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   babyTree_->Branch("sys_muf",           &sys_muf);    
   babyTree_->Branch("sys_murf",          &sys_murf);    
   babyTree_->Branch("sys_isr",           &sys_isr);    
-  babyTree_->Branch("sys_bctag",         &sys_bctag);    
-  babyTree_->Branch("sys_udsgtag",       &sys_udsgtag);    
+  babyTree_->Branch("sys_bctag_uncor",   &sys_bctag_uncor);    
+  babyTree_->Branch("sys_bctag_cor",     &sys_bctag_cor);    
+  babyTree_->Branch("sys_udsgtag_uncor",    &sys_udsgtag_uncor);    
+  babyTree_->Branch("sys_udsgtag_cor",      &sys_udsgtag_cor);    
   // triggers 
   babyTree_->Branch("trig_jet450",       &trig_jet450);    
   babyTree_->Branch("trig_ht900",        &trig_ht900);    
@@ -768,6 +789,8 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
     mus_phi.clear();          
     mus_sigid.clear();          
     mus_miniso.clear();          
+    mus_d0.clear();
+    mus_dz.clear();
     nels       =   0;           
     els_pt.clear();         
     els_eta.clear();          
@@ -776,6 +799,8 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
     els_spr15_sigid.clear();          
     els_miniso.clear();          
     els_reliso.clear();          
+    els_d0.clear();
+    els_dz.clear();
     // jets 
     njets      =   0;        
     nbm        =   0;          
@@ -826,8 +851,10 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
     sys_muf.clear();
     sys_murf.clear();
     sys_isr.clear();
-    sys_bctag.clear();
-    sys_udsgtag.clear();
+    sys_bctag_uncor.clear();
+    sys_bctag_cor.clear();
+    sys_udsgtag_uncor.clear();
+    sys_udsgtag_cor.clear();
     sys_pass.clear();
     //
     trig_jet450=true;
@@ -884,15 +911,20 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
       els_pt.push_back(Electron_pt[iE]); 
       els_eta.push_back(Electron_eta[iE]); 
       els_phi.push_back(Electron_phi[iE]); 
-//      els_sigid.push_back(idElectron_noIso(Electron_vidNestedWPBitmap[iE], 3)); // 3 = medium 
-      els_sigid.push_back(idElectron_cutBased(Electron_cutBased[iE], 3));	  // 3 = medium 
+      els_dz.push_back(Electron_dz[iE]);
+      els_d0.push_back(Electron_dxy[iE]);
+//      els_sigid.push_back(idElectron_cutBased(Electron_cutBased[iE], 3));	  // 3 = medium 
+      els_sigid.push_back(Electron_mvaFall17V2noIso_WP90[iE]);
       els_miniso.push_back(Electron_miniPFRelIso_all[iE]); 
       els_reliso.push_back(Electron_pfRelIso03_all[iE]); 
       if(Electron_pt[iE]<20)  continue;           
       if(abs(Electron_eta[iE])>2.5)  continue;           
-//      if(!idElectron_noIso(Electron_vidNestedWPBitmap[iE], 3)) continue;           // medium WP
-      if(Electron_cutBased[iE]<3) continue;    // medium WP
+      if((abs(Electron_eta[iE])>1.442) && (abs(Electron_eta[iE])<1.556)) continue;
+      //if(Electron_cutBased[iE]<3) continue;    // medium WP
+      if(!Electron_mvaFall17V2noIso_WP90[iE]) continue;
       if(Electron_miniPFRelIso_all[iE]>0.1) continue; // miniso
+      if(Electron_dz[iE]>0.05) continue;
+      if(Electron_dxy[iE]>0.1) continue;
       els_SFner    =  getLepSF(electronSF, true, Electron_pt[iE], Electron_eta[iE], year);
       w_lep        *= els_SFner.at(0);
       sys_lep_up   *= (els_SFner.at(0)+els_SFner.at(1));
@@ -922,12 +954,18 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
       mus_pt.push_back(Muon_pt[iM]); 
       mus_eta.push_back(Muon_eta[iM]); 
       mus_phi.push_back(Muon_phi[iM]); 
-      mus_sigid.push_back(Muon_mediumId[iM]); 
+      //mus_sigid.push_back(Muon_mediumId[iM]); 
+      mus_sigid.push_back(Muon_mediumPromptId[iM]); 
       mus_miniso.push_back(Muon_miniPFRelIso_all[iM]); 
+      mus_d0.push_back(Muon_dz[iM]);
+      mus_dz.push_back(Muon_dxy[iM]);
       if(Muon_pt[iM]<20)  continue;           
       if(abs(Muon_eta[iM])>2.4)  continue;           
-      if(!Muon_mediumId[iM]) continue;                // medium WP
+      //if(!Muon_mediumId[iM]) continue;                // medium WP
+      if(!Muon_mediumPromptId[iM]) continue;                // medium WP
       if(Muon_miniPFRelIso_all[iM]>0.2) continue;     // miniso 
+      if(Muon_dz[iM]>0.05) continue;
+      if(Muon_dxy[iM]>0.1) continue;
       
       mus_SFner    =  getLepSF(muonSF, false, Muon_pt[iM], Muon_eta[iM], year);
       w_lep        *= mus_SFner.at(0);
@@ -978,10 +1016,14 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
     float sys_mj12_down = 0;
     float sys_mj12_jerUp = 0;
     float sys_mj12_jerDown = 0;
-    float sys_bctag_up = 1;
-    float sys_bctag_down = 1;
-    float sys_udsgtag_up = 1;
-    float sys_udsgtag_down = 1;
+    float sys_bctag_uncor_up = 1;
+    float sys_bctag_uncor_down = 1;
+    float sys_bctag_cor_up = 1;
+    float sys_bctag_cor_down = 1;
+    float sys_udsgtag_uncor_up = 1;
+    float sys_udsgtag_uncor_down = 1;
+    float sys_udsgtag_cor_up = 1;
+    float sys_udsgtag_cor_down = 1;
     bool hem_tf;
     // ref of HEM issue: https://twiki.cern.ch/twiki/bin/viewauth/CMS/SUSRecommendationsRun2UltraLegacy#HEM_issue_in_2018
     for(int iJ = 0; iJ < nJet; iJ++) 
@@ -1067,11 +1109,15 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
         if(Jet_btagDeepB[iJ]>csv_cut) nbm++; 
         if(!isData)
 	{
-	  w_btag_dcsv *= getBtagWeight(f_btef,calibreader, Jet_pt[iJ], Jet_eta[iJ], Jet_hadronFlavour[iJ], Jet_btagDeepB[iJ], csv_cut);
-	  sys_bctag_up *= getBtagWeight(f_btef,calibreader, Jet_pt[iJ], Jet_eta[iJ], Jet_hadronFlavour[iJ], Jet_btagDeepB[iJ], csv_cut, "up_hf");
-	  sys_bctag_down *= getBtagWeight(f_btef,calibreader, Jet_pt[iJ], Jet_eta[iJ], Jet_hadronFlavour[iJ], Jet_btagDeepB[iJ], csv_cut, "down_hf");
-	  sys_udsgtag_up *= getBtagWeight(f_btef,calibreader, Jet_pt[iJ], Jet_eta[iJ], Jet_hadronFlavour[iJ], Jet_btagDeepB[iJ], csv_cut, "up_lf");
-	  sys_udsgtag_down *= getBtagWeight(f_btef,calibreader, Jet_pt[iJ], Jet_eta[iJ], Jet_hadronFlavour[iJ], Jet_btagDeepB[iJ], csv_cut, "down_lf");
+	  w_btag_dcsv            *= getBtagWeight(f_btef,calibreader, Jet_pt[iJ], Jet_eta[iJ], Jet_hadronFlavour[iJ], Jet_btagDeepB[iJ], csv_cut, "central");
+	  sys_bctag_uncor_up     *= getBtagWeight(f_btef,calibreader, Jet_pt[iJ], Jet_eta[iJ], Jet_hadronFlavour[iJ], Jet_btagDeepB[iJ], csv_cut, "up_uncorrelated");
+	  sys_bctag_uncor_down   *= getBtagWeight(f_btef,calibreader, Jet_pt[iJ], Jet_eta[iJ], Jet_hadronFlavour[iJ], Jet_btagDeepB[iJ], csv_cut, "down_uncorrelated");
+	  sys_bctag_cor_up       *= getBtagWeight(f_btef,calibreader, Jet_pt[iJ], Jet_eta[iJ], Jet_hadronFlavour[iJ], Jet_btagDeepB[iJ], csv_cut, "up_correlated");
+	  sys_bctag_cor_down     *= getBtagWeight(f_btef,calibreader, Jet_pt[iJ], Jet_eta[iJ], Jet_hadronFlavour[iJ], Jet_btagDeepB[iJ], csv_cut, "down_correlated");
+	  sys_udsgtag_uncor_up   *= getBtagWeight(f_btef,calibreader, Jet_pt[iJ], Jet_eta[iJ], Jet_hadronFlavour[iJ], Jet_btagDeepB[iJ], csv_cut, "up_uncorrelated");
+	  sys_udsgtag_uncor_down *= getBtagWeight(f_btef,calibreader, Jet_pt[iJ], Jet_eta[iJ], Jet_hadronFlavour[iJ], Jet_btagDeepB[iJ], csv_cut, "down_uncorrelated");
+	  sys_udsgtag_cor_up     *= getBtagWeight(f_btef,calibreader, Jet_pt[iJ], Jet_eta[iJ], Jet_hadronFlavour[iJ], Jet_btagDeepB[iJ], csv_cut, "up_correlated");
+	  sys_udsgtag_cor_down   *= getBtagWeight(f_btef,calibreader, Jet_pt[iJ], Jet_eta[iJ], Jet_hadronFlavour[iJ], Jet_btagDeepB[iJ], csv_cut, "down_correlated");
 	}
       }
       //      cout<<w_btag_dcsv<<endl;
@@ -1314,8 +1360,10 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
     sys_mj12.push_back(sys_mj12_jerUp);	sys_mj12.push_back(sys_mj12_jerDown);	
 
     // btagging
-    sys_bctag.push_back(sys_bctag_up);	sys_bctag.push_back(sys_bctag_down);	
-    sys_udsgtag.push_back(sys_udsgtag_up);	sys_udsgtag.push_back(sys_udsgtag_down);	
+    sys_bctag_uncor.push_back(sys_bctag_uncor_up);	sys_bctag_uncor.push_back(sys_bctag_uncor_down);	
+    sys_bctag_cor.push_back(sys_bctag_cor_up);	        sys_bctag_cor.push_back(sys_bctag_cor_down);	
+    sys_udsgtag_uncor.push_back(sys_udsgtag_uncor_up);	sys_udsgtag_uncor.push_back(sys_udsgtag_uncor_down);	
+    sys_udsgtag_cor.push_back(sys_udsgtag_cor_up);	sys_udsgtag_cor.push_back(sys_udsgtag_cor_down);	
     }
 
     if(!isData){
@@ -1608,7 +1656,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
 int main(int argc, char **argv)
 {
   int nthreads = 16;
-  ROOT::EnableImplicitMT(nthreads);
+//  ROOT::EnableImplicitMT(nthreads);
   bool useCondor = false;
   TString inputdir, outputdir, process, list_processed, year; 
   
