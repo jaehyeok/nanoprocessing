@@ -39,6 +39,11 @@ float getBtagWeight(TFile *f, BTagCalibrationReader calibreader, float jet_pt, f
   btag_eff = (TH3D*)f->Get("btagEfficiency_medium");
   // HF
   if (abs(jet_hflavor) == 5 ){
+    if(syst=="up_uncorrelated_hf") syst="up_uncorrelated";
+    else if(syst=="down_uncorrelated_hf") syst="down_uncorrelated";
+    else if(syst=="up_correlated_hf") syst="up_correlated";
+    else if(syst=="down_correlated_hf") syst="down_correlated";
+    else syst="central";
     hist_max = 1000 - 0.001;
     pt = TMath::Min((float)jet_pt,hist_max);  
 
@@ -50,6 +55,11 @@ float getBtagWeight(TFile *f, BTagCalibrationReader calibreader, float jet_pt, f
     eff         = btag_eff->GetBinContent(binx,biny,binz);
   }
   else if( abs(jet_hflavor) == 4 ){  //C
+    if(syst=="up_uncorrelated_hf") syst="up_uncorrelated";
+    else if(syst=="down_uncorrelated_hf") syst="down_uncorrelated";
+    else if(syst=="up_correlated_hf") syst="up_correlated";
+    else if(syst=="down_correlated_hf") syst="down_correlated";
+    else syst="central";
     hist_max = 1000 - 0.001;
     pt = TMath::Min((float)jet_pt,hist_max);  
 
@@ -57,11 +67,16 @@ float getBtagWeight(TFile *f, BTagCalibrationReader calibreader, float jet_pt, f
     binx = btag_eff->GetXaxis()->FindBin(jet_abseta);
     biny = btag_eff->GetYaxis()->FindBin(pt);
     binz = btag_eff->GetZaxis()->FindBin(jet_hflavor);
-    binz = max(min(binz,3),1);     // to address the infinite loop problem by Changwhan (https://github.com/jaehyeok/nanoprocessing/commit/e5ed595b0b3eceaddbf694492cf893bce4ab191b)
+    binz = max(min(binz,3),1);     // to address the infinite loop problem by Changhwan (https://github.com/jaehyeok/nanoprocessing/commit/e5ed595b0b3eceaddbf694492cf893bce4ab191b)
 
     eff         = btag_eff->GetBinContent(binx,biny,binz);
   }
   else { //LF
+    if(syst=="up_uncorrelated_lf") syst="up_uncorrelated";
+    else if(syst=="down_uncorrelated_lf") syst="down_uncorrelated";
+    else if(syst=="up_correlated_lf") syst="up_correlated";
+    else if(syst=="down_correlated_lf") syst="down_correlated";
+    else syst="central";
     hist_max = 1000 - 0.001;
     pt = TMath::Min((float)jet_pt,hist_max);  
 

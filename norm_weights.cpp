@@ -38,8 +38,10 @@ const bool DEBUG = false;
 
 // store mean here
 float w_btag_dcsv_mean;
-float sys_bctag_mean_0, sys_bctag_mean_1;
-float sys_udsgtag_mean_0, sys_udsgtag_mean_1;
+float sys_bctag_uncor_mean_0, sys_bctag_uncor_mean_1;
+float sys_bctag_cor_mean_0, sys_bctag_cor_mean_1;
+float sys_udsgtag_uncor_mean_0, sys_udsgtag_uncor_mean_1;
+float sys_udsgtag_cor_mean_0, sys_udsgtag_cor_mean_1;
 float sys_mur_mean_0, sys_mur_mean_1;
 float sys_muf_mean_0, sys_muf_mean_1;
 float sys_murf_mean_0, sys_murf_mean_1;
@@ -67,8 +69,10 @@ vector<float> vec_sys_isr;
 vector<float> vec_sys_mur;
 vector<float> vec_sys_muf;
 vector<float> vec_sys_murf;
-vector<float> vec_sys_bctag;
-vector<float> vec_sys_udsgtag;
+vector<float> vec_sys_bctag_uncor;
+vector<float> vec_sys_bctag_cor;
+vector<float> vec_sys_udsgtag_uncor;
+vector<float> vec_sys_udsgtag_cor;
 vector<float> vec_sys_pu;
 vector<float> vec_sys_lep;
 
@@ -88,8 +92,10 @@ void save_weights(TString inputfile)
   vector<float> *sys_mur_=new vector<float>;
   vector<float> *sys_muf_=new vector<float>;
   vector<float> *sys_murf_=new vector<float>;
-  vector<float> *sys_bctag_=new vector<float>;
-  vector<float> *sys_udsgtag_=new vector<float>;
+  vector<float> *sys_bctag_uncor_=new vector<float>;
+  vector<float> *sys_bctag_cor_=new vector<float>;
+  vector<float> *sys_udsgtag_uncor_=new vector<float>;
+  vector<float> *sys_udsgtag_cor_=new vector<float>;
   vector<float> *sys_pu_=new vector<float>;
   vector<float> *sys_lep_=new vector<float>;
 
@@ -105,8 +111,10 @@ void save_weights(TString inputfile)
   ch.SetBranchAddress("sys_mur",   		&sys_mur_);
   ch.SetBranchAddress("sys_muf",   		&sys_muf_);
   ch.SetBranchAddress("sys_murf",   		&sys_murf_);
-  ch.SetBranchAddress("sys_bctag",   		&sys_bctag_);
-  ch.SetBranchAddress("sys_udsgtag",   		&sys_udsgtag_);
+  ch.SetBranchAddress("sys_bctag_uncor",	&sys_bctag_uncor_);
+  ch.SetBranchAddress("sys_bctag_cor",		&sys_bctag_cor_);
+  ch.SetBranchAddress("sys_udsgtag_uncor",	&sys_udsgtag_uncor_);
+  ch.SetBranchAddress("sys_udsgtag_cor",	&sys_udsgtag_cor_);
   ch.SetBranchAddress("sys_pu",   		&sys_pu_);
   ch.SetBranchAddress("sys_lep",   		&sys_lep_);
 
@@ -124,8 +132,10 @@ void save_weights(TString inputfile)
     vec_sys_mur.insert(vec_sys_mur.end(), sys_mur_->begin(), sys_mur_->end());
     vec_sys_muf.insert(vec_sys_muf.end(), sys_muf_->begin(), sys_muf_->end());
     vec_sys_murf.insert(vec_sys_murf.end(), sys_murf_->begin(), sys_murf_->end());
-    vec_sys_bctag.insert(vec_sys_bctag.end(), sys_bctag_->begin(), sys_bctag_->end());
-    vec_sys_udsgtag.insert(vec_sys_udsgtag.end(), sys_udsgtag_->begin(), sys_udsgtag_->end());
+    vec_sys_bctag_uncor.insert(vec_sys_bctag_uncor.end(), sys_bctag_uncor_->begin(), sys_bctag_uncor_->end());
+    vec_sys_bctag_cor.insert(vec_sys_bctag_cor.end(), sys_bctag_cor_->begin(), sys_bctag_cor_->end());
+    vec_sys_udsgtag_uncor.insert(vec_sys_udsgtag_uncor.end(), sys_udsgtag_uncor_->begin(), sys_udsgtag_uncor_->end());
+    vec_sys_udsgtag_cor.insert(vec_sys_udsgtag_cor.end(), sys_udsgtag_cor_->begin(), sys_udsgtag_cor_->end());
     vec_sys_pu.insert(vec_sys_pu.end(), sys_pu_->begin(), sys_pu_->end());
     vec_sys_lep.insert(vec_sys_lep.end(), sys_lep_->begin(), sys_lep_->end());
   }
@@ -140,22 +150,24 @@ void copy_onefile(TString inputfile)
   TString filename = (dynamic_cast<TObjString*>(tokens->At(tokens->GetEntries()-1)))->GetString();
   filename.ReplaceAll(".root", "_norm.root");
 
-  TFile *newfile= new TFile("Running/"+filename, "recreate");
+  TFile *newfile= new TFile("/data3/nanoprocessing/Running/"+filename, "recreate");
   // remove branches
-  ch.SetBranchStatus("w_btag_dcsv", 0);
-  ch.SetBranchStatus("w_isr", 	    0);
-  ch.SetBranchStatus("weight", 	    0);
-  ch.SetBranchStatus("w_lep", 	    0);
-  ch.SetBranchStatus("w_pu", 	    0);
+  ch.SetBranchStatus("w_btag_dcsv", 		0);
+  ch.SetBranchStatus("w_isr", 	    		0);
+  ch.SetBranchStatus("weight", 	    		0);
+  ch.SetBranchStatus("w_lep", 	    		0);
+  ch.SetBranchStatus("w_pu", 	    		0);
 
-  ch.SetBranchStatus("sys_isr",		0);
-  ch.SetBranchStatus("sys_bctag",	0);
-  ch.SetBranchStatus("sys_udsgtag",	0);
-  ch.SetBranchStatus("sys_pu",		0);
-  ch.SetBranchStatus("sys_mur",		0);
-  ch.SetBranchStatus("sys_muf",		0);
-  ch.SetBranchStatus("sys_murf",	0);
-  ch.SetBranchStatus("sys_lep",		0);
+  ch.SetBranchStatus("sys_isr",			0);
+  ch.SetBranchStatus("sys_bctag_uncor",		0);
+  ch.SetBranchStatus("sys_bctag_cor",		0);
+  ch.SetBranchStatus("sys_udsgtag_uncor",	0);
+  ch.SetBranchStatus("sys_udsgtag_cor",		0);
+  ch.SetBranchStatus("sys_pu",			0);
+  ch.SetBranchStatus("sys_mur",			0);
+  ch.SetBranchStatus("sys_muf",			0);
+  ch.SetBranchStatus("sys_murf",		0);
+  ch.SetBranchStatus("sys_lep",			0);
 
   TTree *ctree = ch.CopyTree(""); 
   newfile->cd();
@@ -170,7 +182,7 @@ void norm_onefile(TString inputfile, TString year, TString process, TString skim
   TString filename = (dynamic_cast<TObjString*>(tokens->At(tokens->GetEntries()-1)))->GetString();
   filename.ReplaceAll(".root", "_norm.root");
 
-  TFile *file_new = new TFile("Running/"+filename, "update");
+  TFile *file_new = new TFile("/data3/nanoprocessing/Running/"+filename, "update");
   file_new->cd();
   TTree *tree_new = (TTree*)file_new->Get("tree");
 
@@ -178,8 +190,10 @@ void norm_onefile(TString inputfile, TString year, TString process, TString skim
   vector<float> sys_mur;
   vector<float> sys_muf;
   vector<float> sys_murf;
-  vector<float> sys_bctag;
-  vector<float> sys_udsgtag;
+  vector<float> sys_bctag_uncor;
+  vector<float> sys_bctag_cor;
+  vector<float> sys_udsgtag_uncor;
+  vector<float> sys_udsgtag_cor;
   vector<float> sys_isr;
   vector<float> sys_pu;
   vector<float> sys_lep;
@@ -187,24 +201,26 @@ void norm_onefile(TString inputfile, TString year, TString process, TString skim
   float w_btag_dcsv=1., w_isr=1., weight=1., w_lep=1., frac1718=1., w_pu=1., frac16=1.;
 
   TBranch *b_frac1718, *b_frac16, *b_w_btag_dcsv, *b_w_isr, *b_weight, *b_w_lep, *b_w_pu;
-  TBranch *b_sys_isr, *b_sys_mur, *b_sys_muf, *b_sys_murf, *b_sys_bctag, *b_sys_udsgtag, *b_sys_pu, *b_sys_lep;
+  TBranch *b_sys_isr, *b_sys_mur, *b_sys_muf, *b_sys_murf, *b_sys_bctag_uncor, *b_sys_bctag_cor, *b_sys_udsgtag_uncor, *b_sys_udsgtag_cor, *b_sys_pu, *b_sys_lep;
 
-  b_frac1718 	= tree_new->Branch("frac1718",&frac1718);
-  b_frac16 	= tree_new->Branch("frac16",&frac16);
-  b_w_btag_dcsv = tree_new->Branch("w_btag_dcsv", &w_btag_dcsv);
-  b_w_isr 	= tree_new->Branch("w_isr", &w_isr);
-  b_weight 	= tree_new->Branch("weight", &weight);
-  b_w_lep 	= tree_new->Branch("w_lep", &w_lep);
-  b_w_pu 	= tree_new->Branch("w_pu", &w_pu);
+  b_frac1718 		= tree_new->Branch("frac1718",&frac1718);
+  b_frac16 		= tree_new->Branch("frac16",&frac16);
+  b_w_btag_dcsv 	= tree_new->Branch("w_btag_dcsv", &w_btag_dcsv);
+  b_w_isr 		= tree_new->Branch("w_isr", &w_isr);
+  b_weight 		= tree_new->Branch("weight", &weight);
+  b_w_lep 		= tree_new->Branch("w_lep", &w_lep);
+  b_w_pu 		= tree_new->Branch("w_pu", &w_pu);
 
-  b_sys_isr 	= tree_new->Branch("sys_isr",&sys_isr);
-  b_sys_bctag 	= tree_new->Branch("sys_bctag",&sys_bctag);
-  b_sys_udsgtag = tree_new->Branch("sys_udsgtag",&sys_udsgtag);
-  b_sys_pu 	= tree_new->Branch("sys_pu",&sys_pu);
-  b_sys_mur 	= tree_new->Branch("sys_mur",&sys_mur);
-  b_sys_muf 	= tree_new->Branch("sys_muf",&sys_muf);
-  b_sys_murf 	= tree_new->Branch("sys_murf",&sys_murf);
-  b_sys_lep 	= tree_new->Branch("sys_lep",&sys_lep);
+  b_sys_isr 		= tree_new->Branch("sys_isr",&sys_isr);
+  b_sys_bctag_uncor 	= tree_new->Branch("sys_bctag_uncor",&sys_bctag_uncor);
+  b_sys_bctag_cor 	= tree_new->Branch("sys_bctag_cor",&sys_bctag_cor);
+  b_sys_udsgtag_uncor 	= tree_new->Branch("sys_udsgtag_uncor",&sys_udsgtag_uncor);
+  b_sys_udsgtag_cor 	= tree_new->Branch("sys_udsgtag_cor",&sys_udsgtag_cor);
+  b_sys_pu 		= tree_new->Branch("sys_pu",&sys_pu);
+  b_sys_mur 		= tree_new->Branch("sys_mur",&sys_mur);
+  b_sys_muf 		= tree_new->Branch("sys_muf",&sys_muf);
+  b_sys_murf 		= tree_new->Branch("sys_murf",&sys_murf);
+  b_sys_lep 		= tree_new->Branch("sys_lep",&sys_lep);
 
 
   for(Long64_t entry = 0; entry < tree_new->GetEntries(); ++entry)
@@ -222,10 +238,14 @@ void norm_onefile(TString inputfile, TString year, TString process, TString skim
     sys_murf.push_back(vec_sys_murf.at(2*entry)/sys_murf_mean_0);
     sys_murf.push_back(vec_sys_murf.at(2*entry+1)/sys_murf_mean_1);
 
-    sys_bctag.push_back(vec_sys_bctag.at(2*entry)/sys_bctag_mean_0);
-    sys_bctag.push_back(vec_sys_bctag.at(2*entry+1)/sys_bctag_mean_1);
-    sys_udsgtag.push_back(vec_sys_udsgtag.at(2*entry)/sys_udsgtag_mean_0);
-    sys_udsgtag.push_back(vec_sys_udsgtag.at(2*entry+1)/sys_udsgtag_mean_1);
+    sys_bctag_uncor.push_back(vec_sys_bctag_uncor.at(2*entry)/sys_bctag_uncor_mean_0);
+    sys_bctag_uncor.push_back(vec_sys_bctag_uncor.at(2*entry+1)/sys_bctag_uncor_mean_1);
+    sys_bctag_cor.push_back(vec_sys_bctag_cor.at(2*entry)/sys_bctag_cor_mean_0);
+    sys_bctag_cor.push_back(vec_sys_bctag_cor.at(2*entry+1)/sys_bctag_cor_mean_1);
+    sys_udsgtag_uncor.push_back(vec_sys_udsgtag_uncor.at(2*entry)/sys_udsgtag_uncor_mean_0);
+    sys_udsgtag_uncor.push_back(vec_sys_udsgtag_uncor.at(2*entry+1)/sys_udsgtag_uncor_mean_1);
+    sys_udsgtag_cor.push_back(vec_sys_udsgtag_cor.at(2*entry)/sys_udsgtag_cor_mean_0);
+    sys_udsgtag_cor.push_back(vec_sys_udsgtag_cor.at(2*entry+1)/sys_udsgtag_cor_mean_1);
     sys_pu.push_back(vec_sys_pu.at(2*entry)/sys_pu_mean_0);
     sys_pu.push_back(vec_sys_pu.at(2*entry+1)/sys_pu_mean_1);
     sys_lep.push_back(vec_sys_lep.at(2*entry)/sys_lep_mean_0);
@@ -244,7 +264,7 @@ void norm_onefile(TString inputfile, TString year, TString process, TString skim
     weight = w_btag_dcsv * w_pu * w_lep * w_isr * vec_w_lumi.at(entry) * vec_l1pre_nom.at(entry);
     if(w_btag_dcsv==0 || w_pu==0 || w_lep==0 || w_isr==0 || 
        vec_w_lumi.at(entry)==0 || vec_l1pre_nom.at(entry)==0 ||
-       isnan(w_btag_dcsv)==true || isnan(w_pu)==true || isnan(w_lep)==true || isnan(w_isr)==true) {
+       isnan(w_btag_dcsv)==true || isnan(w_pu)==true || isnan(w_lep)==true || isnan(w_isr)==true || w_btag_dcsv>10000000 || w_btag_dcsv<-10000000) {   //241218: There is an event with w_btag_dcsv=inf in WZ_TuneCP5 file in UL2016_postVFP. And there are events with w_btag_dcsv=-inf in QCD_HT500to700_TuneCP5_PSWeights_34.root file in UL2017.
       cout << "One of the components of weight is nan or zero !!" << endl;
       weight=0;
     }
@@ -292,8 +312,10 @@ void norm_onefile(TString inputfile, TString year, TString process, TString skim
     b_sys_muf->Fill();
     b_sys_murf->Fill();
 
-    b_sys_bctag->Fill();
-    b_sys_udsgtag->Fill();
+    b_sys_bctag_uncor->Fill();
+    b_sys_bctag_cor->Fill();
+    b_sys_udsgtag_uncor->Fill();
+    b_sys_udsgtag_cor->Fill();
     b_sys_isr->Fill();
     b_sys_pu->Fill();
     b_sys_lep->Fill();
@@ -302,8 +324,10 @@ void norm_onefile(TString inputfile, TString year, TString process, TString skim
     sys_mur.clear();
     sys_muf.clear();
     sys_murf.clear();
-    sys_bctag.clear();
-    sys_udsgtag.clear();
+    sys_bctag_uncor.clear();
+    sys_bctag_cor.clear();
+    sys_udsgtag_uncor.clear();
+    sys_udsgtag_cor.clear();
     sys_pu.clear();
     sys_lep.clear();
   }
@@ -319,8 +343,10 @@ void norm_onefile(TString inputfile, TString year, TString process, TString skim
   vec_sys_mur.clear();
   vec_sys_muf.clear();
   vec_sys_murf.clear();
-  vec_sys_bctag.clear();
-  vec_sys_udsgtag.clear();
+  vec_sys_bctag_uncor.clear();
+  vec_sys_bctag_cor.clear();
+  vec_sys_udsgtag_uncor.clear();
+  vec_sys_udsgtag_cor.clear();
   vec_sys_pu.clear();
   vec_sys_lep.clear();
 
@@ -332,29 +358,37 @@ void norm_onefile(TString inputfile, TString year, TString process, TString skim
   // copy and remove output file
   cout << "... transferring output file" << endl;
 
-  if(process.Contains("Run")) { // data
+  if(process.Contains("Run")) { // data does not need to be normed
     if(skim=="rpvfitnbge0") {
-      cout << Form("... cp Running/%s /data3/nanoprocessing/norm_230904_rpvfitnbge0_data/%s/%s", filename.Data(), year.Data(), process.Data()) << endl;  
-      gSystem->Exec(Form("cp Running/%s /data3/nanoprocessing/norm_230904_rpvfitnbge0_data/%s/%s", filename.Data(), year.Data(), process.Data()));
+      cout << Form("... cp /data3/nanoprocessing/Running/%s /data3/nanoprocessing/norm_230929_rpvfitnbge0_data/%s/%s", filename.Data(), year.Data(), process.Data()) << endl;  
+      gSystem->Exec(Form("cp /data3/nanoprocessing/Running/%s /data3/nanoprocessing/norm_230929_rpvfitnbge0_data/%s/%s", filename.Data(), year.Data(), process.Data()));
     }
     else if(skim=="dy") {
-      cout << Form("... cp Running/%s /data3/nanoprocessing/norm_230904_dy_data/%s/%s", filename.Data(), year.Data(), process.Data()) << endl;  
-      gSystem->Exec(Form("cp Running/%s /data3/nanoprocessing/norm_230904_dy_data/%s/%s", filename.Data(), year.Data(), process.Data()));
+      cout << Form("... cp /data3/nanoprocessing/Running/%s /data3/nanoprocessing/norm_230929_dy_data/%s/%s", filename.Data(), year.Data(), process.Data()) << endl;  
+      gSystem->Exec(Form("cp /data3/nanoprocessing/Running/%s /data3/nanoprocessing/norm_230929_dy_data/%s/%s", filename.Data(), year.Data(), process.Data()));
     }
-    cout << Form("rm Running/%s", filename.Data()) << endl;
-    gSystem->Exec(Form("rm Running/%s", filename.Data()));
+    cout << Form("rm /data3/nanoprocessing/Running/%s", filename.Data()) << endl;
+    gSystem->Exec(Form("rm /data3/nanoprocessing/Running/%s", filename.Data()));
   }
   else { // mc
     if(skim=="rpvfitnbge0") {
-      cout << Form("... cp Running/%s /data3/nanoprocessing/norm_230904_rpvfitnbge0/%s/%s", filename.Data(), year.Data(), process.Data()) << endl;  
-      gSystem->Exec(Form("cp Running/%s /data3/nanoprocessing/norm_230904_rpvfitnbge0/%s/%s", filename.Data(), year.Data(), process.Data()));
+      cout << Form("... cp /data3/nanoprocessing/Running/%s /data3/nanoprocessing/norm_250110/%s/%s", filename.Data(), year.Data(), process.Data()) << endl;  
+      gSystem->Exec(Form("cp /data3/nanoprocessing/Running/%s /data3/nanoprocessing/norm_250110/%s/%s", filename.Data(), year.Data(), process.Data()));
     }
     else if(skim=="dy") {
-      cout << Form("... cp Running/%s /data3/nanoprocessing/norm_230904_dy/%s/%s", filename.Data(), year.Data(), process.Data()) << endl;  
-      gSystem->Exec(Form("cp Running/%s /data3/nanoprocessing/norm_230904_dy/%s/%s", filename.Data(), year.Data(), process.Data()));
+      cout << Form("... cp /data3/nanoprocessing/Running/%s /data3/nanoprocessing/norm_241201_dy/%s/%s", filename.Data(), year.Data(), process.Data()) << endl;  
+      gSystem->Exec(Form("cp /data3/nanoprocessing/Running/%s /data3/nanoprocessing/norm_241201_dy/%s/%s", filename.Data(), year.Data(), process.Data()));
     }
-    cout << Form("rm Running/%s", filename.Data()) << endl;
-    gSystem->Exec(Form("rm Running/%s", filename.Data()));
+    else if(skim=="4top") {
+      cout << Form("... cp /data3/nanoprocessing/Running/%s /data3/nanoprocessing/norm_231020_4top/%s/%s", filename.Data(), year.Data(), process.Data()) << endl;  
+      gSystem->Exec(Form("cp /data3/nanoprocessing/Running/%s /data3/nanoprocessing/norm_231020_4top/%s/%s", filename.Data(), year.Data(), process.Data()));
+    }
+    else if(skim=="qcdfake") {
+      cout << Form("... cp /data3/nanoprocessing/Running/%s /data3/nanoprocessing/norm_241201_qcdfake/%s/%s", filename.Data(), year.Data(), process.Data()) << endl;  
+      gSystem->Exec(Form("cp /data3/nanoprocessing/Running/%s /data3/nanoprocessing/norm_241201_qcdfake/%s/%s", filename.Data(), year.Data(), process.Data()));
+    }
+    cout << Form("rm /data3/nanoprocessing/Running/%s", filename.Data()) << endl;
+    gSystem->Exec(Form("rm /data3/nanoprocessing/Running/%s", filename.Data()));
   }
 }
 
@@ -387,6 +421,8 @@ int main(int argc, char **argv)
   vector<TString> prenorm_files; prenorm_files.clear();
   if(skim=="rpvfitnbge0") prenorm_files = getFileListFromFile(Form("flist/skimmed/%s/flist_%s_rpvfitnbge0.txt", year.Data(), process.Data()));
   else if(skim=="dy") prenorm_files = getFileListFromFile(Form("flist/skimmed/%s/flist_%s_dy.txt", year.Data(), process.Data()));
+  else if(skim=="4top") prenorm_files = getFileListFromFile(Form("flist/skimmed/%s/flist_%s_4top.txt", year.Data(), process.Data()));
+  else if(skim=="qcdfake") prenorm_files = getFileListFromFile(Form("flist/skimmed/%s/flist_%s_qcdfake.txt", year.Data(), process.Data()));
   else {
     cout << "please provide proper argument for skim" << endl;
     return 0;
@@ -468,27 +504,51 @@ int main(int argc, char **argv)
 
   //----
 
-  TH1D  *h_sys_bctag_0 = new TH1D("h_sys_bctag_0","h_sys_bctag_0",100,-5,5);
-  ch_mean.Draw("sys_bctag[0]>>h_sys_bctag_0","","geoff");
-  sys_bctag_mean_0 = h_sys_bctag_0->GetMean();
-  cout << "sys_bctag mean down = " << sys_bctag_mean_0 << endl;
+  TH1D  *h_sys_bctag_uncor_0 = new TH1D("h_sys_bctag_uncor_0","h_sys_bctag_uncor_0",100,-5,5);
+  ch_mean.Draw("sys_bctag_uncor[0]>>h_sys_bctag_uncor_0","","geoff");
+  sys_bctag_uncor_mean_0 = h_sys_bctag_uncor_0->GetMean();
+  cout << "sys_bctag_uncor mean down = " << sys_bctag_uncor_mean_0 << endl;
 
-  TH1D  *h_sys_bctag_1 = new TH1D("h_sys_bctag_1","h_sys_bctag_1",100,-5,5);
-  ch_mean.Draw("sys_bctag[1]>>h_sys_bctag_1","","geoff");
-  sys_bctag_mean_1 = h_sys_bctag_1->GetMean();
-  cout << "sys_bctag mean up = " << sys_bctag_mean_1 << endl;
+  TH1D  *h_sys_bctag_uncor_1 = new TH1D("h_sys_bctag_uncor_1","h_sys_bctag_uncor_1",100,-5,5);
+  ch_mean.Draw("sys_bctag_uncor[1]>>h_sys_bctag_uncor_1","","geoff");
+  sys_bctag_uncor_mean_1 = h_sys_bctag_uncor_1->GetMean();
+  cout << "sys_bctag_uncor mean up = " << sys_bctag_uncor_mean_1 << endl;
 
   //----
 
-  TH1D  *h_sys_udsgtag_0 = new TH1D("h_sys_udsgtag_0","h_sys_udsgtag_0",100,-5,5);
-  ch_mean.Draw("sys_udsgtag[0]>>h_sys_udsgtag_0","","geoff");
-  sys_udsgtag_mean_0 = h_sys_udsgtag_0->GetMean();
-  cout << "sys_udsgtag mean down = " << sys_udsgtag_mean_0 << endl;
+  TH1D  *h_sys_bctag_cor_0 = new TH1D("h_sys_bctag_cor_0","h_sys_bctag_cor_0",100,-5,5);
+  ch_mean.Draw("sys_bctag_cor[0]>>h_sys_bctag_cor_0","","geoff");
+  sys_bctag_cor_mean_0 = h_sys_bctag_cor_0->GetMean();
+  cout << "sys_bctag_cor mean down = " << sys_bctag_cor_mean_0 << endl;
 
-  TH1D  *h_sys_udsgtag_1 = new TH1D("h_sys_udsgtag_1","h_sys_udsgtag_1",100,-5,5);
-  ch_mean.Draw("sys_udsgtag[1]>>h_sys_udsgtag_1","","geoff");
-  sys_udsgtag_mean_1 = h_sys_udsgtag_1->GetMean();
-  cout << "sys_udsgtag mean up = " << sys_udsgtag_mean_1 << endl;
+  TH1D  *h_sys_bctag_cor_1 = new TH1D("h_sys_bctag_cor_1","h_sys_bctag_cor_1",100,-5,5);
+  ch_mean.Draw("sys_bctag_cor[1]>>h_sys_bctag_cor_1","","geoff");
+  sys_bctag_cor_mean_1 = h_sys_bctag_cor_1->GetMean();
+  cout << "sys_bctag_cor mean up = " << sys_bctag_cor_mean_1 << endl;
+
+  //----
+
+  TH1D  *h_sys_udsgtag_uncor_0 = new TH1D("h_sys_udsgtag_uncor_0","h_sys_udsgtag_uncor_0",100,-5,5);
+  ch_mean.Draw("sys_udsgtag_uncor[0]>>h_sys_udsgtag_uncor_0","","geoff");
+  sys_udsgtag_uncor_mean_0 = h_sys_udsgtag_uncor_0->GetMean();
+  cout << "sys_udsgtag_uncor mean down = " << sys_udsgtag_uncor_mean_0 << endl;
+
+  TH1D  *h_sys_udsgtag_uncor_1 = new TH1D("h_sys_udsgtag_uncor_1","h_sys_udsgtag_uncor_1",100,-5,5);
+  ch_mean.Draw("sys_udsgtag_uncor[1]>>h_sys_udsgtag_uncor_1","","geoff");
+  sys_udsgtag_uncor_mean_1 = h_sys_udsgtag_uncor_1->GetMean();
+  cout << "sys_udsgtag_uncor mean up = " << sys_udsgtag_uncor_mean_1 << endl;
+
+  //----
+
+  TH1D  *h_sys_udsgtag_cor_0 = new TH1D("h_sys_udsgtag_cor_0","h_sys_udsgtag_cor_0",100,-5,5);
+  ch_mean.Draw("sys_udsgtag_cor[0]>>h_sys_udsgtag_cor_0","","geoff");
+  sys_udsgtag_cor_mean_0 = h_sys_udsgtag_cor_0->GetMean();
+  cout << "sys_udsgtag_cor mean down = " << sys_udsgtag_cor_mean_0 << endl;
+
+  TH1D  *h_sys_udsgtag_cor_1 = new TH1D("h_sys_udsgtag_cor_1","h_sys_udsgtag_cor_1",100,-5,5);
+  ch_mean.Draw("sys_udsgtag_cor[1]>>h_sys_udsgtag_cor_1","","geoff");
+  sys_udsgtag_cor_mean_1 = h_sys_udsgtag_cor_1->GetMean();
+  cout << "sys_udsgtag_cor mean up = " << sys_udsgtag_cor_mean_1 << endl;
 
   //----
 

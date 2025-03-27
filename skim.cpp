@@ -72,7 +72,7 @@ void skimfile(TString year, TString process, TString skim)
   if(skim=="rpvfit") {
     skimcut="ht>1200&&mj12>500&&njets>=4";
   }
-  else if(skim=="hem") {
+  else if(skim=="hem") {          // the same as rpvfitnbge0, but for naming of slurm file
     skimcut="ht>1200&&mj12>500&&njets>=4";
   }
   else if(skim=="trig") {
@@ -154,15 +154,15 @@ void skimfile(TString year, TString process, TString skim)
     else if(skim=="dy"){
       if(process.Contains("Run")) { // data
         cout << "... transferring output file" << endl;
-        cout << Form("... cp /data3/nanoprocessing/Running/%s /data3/nanoprocessing/skimmed_230929_dy_data/%s/%s", filename.Data(), year.Data(), process.Data()) << endl;
-        gSystem->Exec(Form("cp /data3/nanoprocessing/Running/%s /data3/nanoprocessing/skimmed_230929_dy_data/%s/%s", filename.Data(), year.Data(), process.Data()));
+        cout << Form("... cp /data3/nanoprocessing/Running/%s /data3/nanoprocessing/skimmed_241201_dy_data/%s/%s", filename.Data(), year.Data(), process.Data()) << endl;
+        gSystem->Exec(Form("cp /data3/nanoprocessing/Running/%s /data3/nanoprocessing/skimmed_241201_dy_data/%s/%s", filename.Data(), year.Data(), process.Data()));
         cout << Form("rm /data3/nanoprocessing/Running/%s", filename.Data()) << endl;
         gSystem->Exec(Form("rm /data3/nanoprocessing/Running/%s", filename.Data()));
       }
       else { // mc
         cout << "... transferring output file" << endl;
-        cout << Form("... cp /data3/nanoprocessing/Running/%s /data3/nanoprocessing/skimmed_230929_dy/%s/%s", filename.Data(), year.Data(), process.Data()) << endl;
-        gSystem->Exec(Form("cp /data3/nanoprocessing/Running/%s /data3/nanoprocessing/skimmed_230929_dy/%s/%s", filename.Data(), year.Data(), process.Data()));
+        cout << Form("... cp /data3/nanoprocessing/Running/%s /data3/nanoprocessing/skimmed_241201_dy/%s/%s", filename.Data(), year.Data(), process.Data()) << endl;
+        gSystem->Exec(Form("cp /data3/nanoprocessing/Running/%s /data3/nanoprocessing/skimmed_241201_dy/%s/%s", filename.Data(), year.Data(), process.Data()));
         cout << Form("rm /data3/nanoprocessing/Running/%s", filename.Data()) << endl;
         gSystem->Exec(Form("rm /data3/nanoprocessing/Running/%s", filename.Data()));
       }
@@ -186,31 +186,31 @@ void skimfile(TString year, TString process, TString skim)
     else if(skim=="qcdfake") {
       if(process.Contains("Run")) { // data
         cout << "... transferring output file" << endl;
-        cout << Form("... cp /data3/nanoprocessing/Running/%s /data3/nanoprocessing/skimmed_231020_qcdfake_data/%s/%s", filename.Data(), year.Data(), process.Data()) << endl;
-        gSystem->Exec(Form("cp /data3/nanoprocessing/Running/%s /data3/nanoprocessing/skimmed_231020_qcdfake_data/%s/%s", filename.Data(), year.Data(), process.Data()));
+        cout << Form("... cp /data3/nanoprocessing/Running/%s /data3/nanoprocessing/skimmed_241201_qcdfake_data/%s/%s", filename.Data(), year.Data(), process.Data()) << endl;
+        gSystem->Exec(Form("cp /data3/nanoprocessing/Running/%s /data3/nanoprocessing/skimmed_241201_qcdfake_data/%s/%s", filename.Data(), year.Data(), process.Data()));
         cout << Form("rm /data3/nanoprocessing/Running/%s", filename.Data()) << endl;
         gSystem->Exec(Form("rm /data3/nanoprocessing/Running/%s", filename.Data()));
       }
       else { // mc
         cout << "... transferring output file" << endl;
-        cout << Form("... cp /data3/nanoprocessing/Running/%s /data3/nanoprocessing/skimmed_231020_qcdfake/%s/%s", filename.Data(), year.Data(), process.Data()) << endl;
-        gSystem->Exec(Form("cp /data3/nanoprocessing/Running/%s /data3/nanoprocessing/skimmed_231020_qcdfake/%s/%s", filename.Data(), year.Data(), process.Data()));
+        cout << Form("... cp /data3/nanoprocessing/Running/%s /data3/nanoprocessing/skimmed_241201_qcdfake/%s/%s", filename.Data(), year.Data(), process.Data()) << endl;
+        gSystem->Exec(Form("cp /data3/nanoprocessing/Running/%s /data3/nanoprocessing/skimmed_241201_qcdfake/%s/%s", filename.Data(), year.Data(), process.Data()));
         cout << Form("rm /data3/nanoprocessing/Running/%s", filename.Data()) << endl;
         gSystem->Exec(Form("rm /data3/nanoprocessing/Running/%s", filename.Data()));
       }
     }
     else if(skim=="trig") {
       cout << "... transferring output file" << endl;
-      cout << Form("... cp /data3/nanoprocessing/Running/%s /data3/nanoprocessing/skimmed_231124_singlemu_data/%s/%s", filename.Data(), year.Data(), process.Data()) << endl;
-      gSystem->Exec(Form("cp /data3/nanoprocessing/Running/%s /data3/nanoprocessing/skimmed_231124_singlemu_data/%s/%s", filename.Data(), year.Data(), process.Data()));
+      cout << Form("... cp /data3/nanoprocessing/Running/%s /data3/nanoprocessing/skimmed_241201_singlemu_data/%s/%s", filename.Data(), year.Data(), process.Data()) << endl;
+      gSystem->Exec(Form("cp /data3/nanoprocessing/Running/%s /data3/nanoprocessing/skimmed_241201_singlemu_data/%s/%s", filename.Data(), year.Data(), process.Data()));
       cout << Form("rm /data3/nanoprocessing/Running/%s", filename.Data()) << endl;
       gSystem->Exec(Form("rm /data3/nanoprocessing/Running/%s", filename.Data()));
 
     }
     else if(skim=="hem") {
       cout << "... transferring output file" << endl;
-      cout << Form("... cp /data3/nanoprocessing/Running/%s /data3/nanoprocessing/skimmed_241013_data_hem/%s/%s", filename.Data(), year.Data(), process.Data()) << endl;
-      gSystem->Exec(Form("cp /data3/nanoprocessing/Running/%s /data3/nanoprocessing/skimmed_241013_data_hem/%s/%s", filename.Data(), year.Data(), process.Data()));
+      cout << Form("... cp /data3/nanoprocessing/Running/%s /data3/nanoprocessing/skimmed_241201_data_hem/%s/%s", filename.Data(), year.Data(), process.Data()) << endl;
+      gSystem->Exec(Form("cp /data3/nanoprocessing/Running/%s /data3/nanoprocessing/skimmed_241201_data_hem/%s/%s", filename.Data(), year.Data(), process.Data()));
       cout << Form("rm /data3/nanoprocessing/Running/%s", filename.Data()) << endl;
       gSystem->Exec(Form("rm /data3/nanoprocessing/Running/%s", filename.Data()));
 
