@@ -16,19 +16,28 @@ datamc = sys.argv[2]
 skim   = sys.argv[3]
 
 if datamc == "data":
-  if year == "UL2016_preVFP": inputdir="/data3/nanoprocessing/skimmed_230903_"+skim+"_data/UL2016_preVFP"
-  elif year == "UL2016": inputdir="/data3/nanoprocessing/skimmed_230903_"+skim+"_data/UL2016"             #2016F
-  elif year == "UL2017": inputdir="/data3/nanoprocessing/skimmed_230903_"+skim+"_data/UL2017"
-  elif year == "UL2018": inputdir="/data3/nanoprocessing/skimmed_230903_"+skim+"_data/UL2018"
+  # skimmed flist for data is unnecessary 
+  if year == "UL2016_preVFP": inputdir="/data3/nanoprocessing/skimmed_241201_"+skim+"_data/UL2016_preVFP"
+  elif year == "UL2016": inputdir="/data3/nanoprocessing/skimmed_241201_"+skim+"_data/UL2016"             #2016F
+  elif year == "UL2017": inputdir="/data3/nanoprocessing/skimmed_241201_"+skim+"_data/UL2017"
+  elif year == "UL2018": inputdir="/data3/nanoprocessing/skimmed_241201_"+skim+"_data/UL2018"
   else:
     print("Wrong year --- [Ultra Legacy: UL2016_preVFP, UL2016, UL2017, UL2018")
 elif datamc == "mc":
-  if year == "UL2016_preVFP": inputdir="/data3/nanoprocessing/skimmed_230903_"+skim+"/UL2016_preVFP"
-  elif year == "UL2016": inputdir="/data3/nanoprocessing/skimmed_230903_"+skim+"/UL2016"
-  elif year == "UL2017": inputdir="/data3/nanoprocessing/skimmed_230903_"+skim+"/UL2017"
-  elif year == "UL2018": inputdir="/data3/nanoprocessing/skimmed_230903_"+skim+"/UL2018"
+  if skim == "rpvfitnbge0":
+    if year == "UL2016_preVFP": inputdir="/data3/nanoprocessing/skimmed_241201/UL2016_preVFP"
+    elif year == "UL2016": inputdir="/data3/nanoprocessing/skimmed_241201/UL2016"
+    elif year == "UL2017": inputdir="/data3/nanoprocessing/skimmed_241201/UL2017"
+    elif year == "UL2018": inputdir="/data3/nanoprocessing/skimmed_241201/UL2018"
+    else:
+      print("Wrong year --- [Ultra Legacy: UL2016_preVFP, UL2016, UL2017, UL2018")
   else:
-    print("Wrong year --- [Ultra Legacy: UL2016_preVFP, UL2016, UL2017, UL2018")
+    if year == "UL2016_preVFP": inputdir="/data3/nanoprocessing/skimmed_241201_"+skim+"/UL2016_preVFP"
+    elif year == "UL2016": inputdir="/data3/nanoprocessing/skimmed_241201_"+skim+"/UL2016"
+    elif year == "UL2017": inputdir="/data3/nanoprocessing/skimmed_241201_"+skim+"/UL2017"
+    elif year == "UL2018": inputdir="/data3/nanoprocessing/skimmed_241201_"+skim+"/UL2018"
+    else:
+      print("Wrong year --- [Ultra Legacy: UL2016_preVFP, UL2016, UL2017, UL2018")
 else:
     print("Wrong datamc --- You should type [data or mc] in lower case")
 
