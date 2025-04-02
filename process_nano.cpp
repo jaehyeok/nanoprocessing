@@ -117,6 +117,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   else if(year=="UL2016") csvfile = "data/ultralegacy/wp_deepCSV_UL2016.csv";
   else if(year=="UL2017") csvfile = "data/ultralegacy/wp_deepCSV_UL2017.csv";
   else if(year=="UL2018") csvfile = "data/ultralegacy/wp_deepCSV_UL2018.csv";
+  else if(year=="2022") csvfile = "data/ultralegacy/wp_deepCSV_UL2018.csv"; //FIXME Run3
   cout << " btag sf file: " << csvfile << endl;  
   BTagCalibration calib("DeepCSV", csvfile);
   /*
@@ -144,6 +145,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   else if(year=="UL2016") electronSF = new TFile("data/ultralegacy/fullsim_electron_isolated_UL2016_postVFP.root","read");
   else if(year=="UL2017") electronSF = new TFile("data/ultralegacy/fullsim_electron_isolated_UL2017.root","read");
   else if(year=="UL2018") electronSF = new TFile("data/ultralegacy/fullsim_electron_isolated_UL2018.root","read");
+  else if(year=="2022") electronSF = new TFile("data/ultralegacy/fullsim_electron_isolated_UL2018.root","read"); //FIXME Run3
     
   TFile *muonSF;
   if(year=="2016")muonSF = new TFile("data/prelegacy/TnP_NUM_MiniIsoTight_DENOM_MediumID_VAR_map_pt_eta.root","read");
@@ -152,6 +154,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   else if(year=="UL2016")muonSF = new TFile("data/ultralegacy/fullsim_muon_isolated_UL2016_postVFP.root","read");
   else if(year=="UL2017")muonSF = new TFile("data/ultralegacy/fullsim_muon_isolated_UL2017.root","read");
   else if(year=="UL2018")muonSF = new TFile("data/ultralegacy/fullsim_muon_isolated_UL2018.root","read");
+  else if(year=="2022")muonSF = new TFile("data/ultralegacy/fullsim_muon_isolated_UL2018.root","read"); //FIXME Run3
 
   // PU reweight file
   TFile *f_pu_weight = new TFile("data/ultralegacy/pileup/weight/"+year+"/pu_weight_"+samplename+"_"+year+".root","READ");
@@ -170,6 +173,10 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
     else if(year=="UL2016_preVFP"||year=="UL2016") jsonfile = "data/ultralegacy/Cert_271036-284044_13TeV_Legacy2016_Collisions16_JSON.txt";
     else if(year=="UL2017") jsonfile = "data/ultralegacy/Cert_294927-306462_13TeV_UL2017_Collisions17_GoldenJSON.txt";
     else if(year=="UL2018") jsonfile = "data/ultralegacy/Cert_314472-325175_13TeV_Legacy2018_Collisions18_JSON.txt";
+    else if(year=="2022") jsonfile = "data/Run3/Cert_Collisions2022_355100_362760_Golden.json";
+    else if(year=="2023") jsonfile = "data/Run3/Cert_Collisions2023_366442_370790_Golden.json";
+    else if(year=="2024") jsonfile = "data/Run3/Cert_Collisions2024_378981_386951_Golden.json";
+    //else if(year=="2022") jsonfile = "data/Run3/Cert_Collisions2022_355100_362760_Muon.json";    // For Muon dataset
     else {
       cout << "[Error] No proper choice of JSON files!!" << endl;
       return ;
@@ -287,6 +294,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   Bool_t Flag_BadPFMuonFilter=true;
   Bool_t Flag_BadPFMuonDzFilter=true;
   Bool_t Flag_eeBadScFilter=true;
+  Bool_t Flag_hfNoisyHitsFilter=true;
   Bool_t Flag_ecalBadCalibFilter=true;
   // trigger 
   Bool_t HLT_PFJet450=true;
@@ -407,6 +415,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
   tree->SetBranchAddress("Flag_BadPFMuonFilter",                    &Flag_BadPFMuonFilter);
   tree->SetBranchAddress("Flag_BadPFMuonDzFilter",                  &Flag_BadPFMuonDzFilter);
   tree->SetBranchAddress("Flag_eeBadScFilter",                      &Flag_eeBadScFilter);
+  tree->SetBranchAddress("Flag_hfNoisyHitsFilter",                  &Flag_hfNoisyHitsFilter);
   tree->SetBranchAddress("Flag_ecalBadCalibFilter",                 &Flag_ecalBadCalibFilter);
   // trigger
   if(year=="2016"||year=="UL2016_preVFP"||year=="UL2016")
@@ -414,7 +423,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
     tree->SetBranchAddress("HLT_PFHT900",     &HLT_PFHT900);
     tree->SetBranchAddress("HLT_PFJet450",    &HLT_PFJet450);
   }
-  else if(year=="2017"||year=="2018"||year=="UL2017"||year=="UL2018")
+  else if(year=="2017"||year=="2018"||year=="UL2017"||year=="UL2018"||year=="2022"||year=="2023"||year=="2024")
   {
     tree->SetBranchAddress("HLT_PFHT1050",    &HLT_PFHT1050);
   }
@@ -1057,7 +1066,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
 
       bool jetid = true;
       if(year=="2016" && Jet_jetId[iJ]<3 ) jetid=false; // tight Id  #FIXME 230321: when we start using UL, it(3->2) must be changed!!  (ref: https://twiki.cern.ch/twiki/bin/view/CMSPublic/WorkBookNanoAOD#Jets)
-      if((year=="2017"||year=="2018"||year=="UL2016_preVFP"||year=="UL2016"||year=="UL2017"||year=="UL2018") && Jet_jetId[iJ]<2 ) jetid=false; // tight Id 
+      if((year=="2017"||year=="2018"||year=="UL2016_preVFP"||year=="UL2016"||year=="UL2017"||year=="UL2018"||year=="2022"||year=="2023"||year=="2024") && Jet_jetId[iJ]<2 ) jetid=false; // tight Id
       jets_id.push_back(jetid);
 
       bool jetislep = false;
@@ -1099,6 +1108,9 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
       else if(year=="UL2016") csv_cut = 0.5847;
       else if(year=="UL2017") csv_cut = 0.4506;
       else if(year=="UL2018") csv_cut = 0.4168;
+      else if(year=="2022") csv_cut = 0.4168;   // FIXME Run 3 (DeepCSV is no longer available from Run 3)
+      else if(year=="2023") csv_cut = 0.4168;
+      else if(year=="2024") csv_cut = 0.4168;
       
 //cout<<iJ<<" , " << jets_pt.size()<<endl;
       // nominal 
@@ -1428,7 +1440,7 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
         sys_isr.push_back(w_isr+((1-w_isr)/2));
         sys_isr.push_back(w_isr-((1-w_isr)/2));
       }
-      if(year=="2017"||year=="2018"||year=="UL2016_preVFP"||year=="UL2016"||year=="UL2017"||year=="UL2018"){
+      if(year=="2017"||year=="2018"||year=="UL2016_preVFP"||year=="UL2016"||year=="UL2017"||year=="UL2018"||year=="2022"||year=="2023"||year=="2024"){
         // Since UL samples use CP5 tune, there is no need for ISR systematics
         w_isr = 1;
         sys_isr.push_back(+0);
@@ -1482,11 +1494,11 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
 
     if(inputfile.Contains("TTJets_")){ // Now, Tune version of signal sample is CP5 (241029). 
 //    if(inputfile.Contains("SMS-T1tbs_RPV") || inputfile.Contains("TTJets_")){  //FIXME Why it includes "TTJets"? -> Cuz in PL, TTbar and Signal samples are only needed to be applied ISR correction
-      if(year=="2016" || year=="2017" || year=="UL2016_preVFP"||year=="UL2016"||year=="UL2017") weight = w_btag_dcsv * w_lumi * w_pu * w_isr * l1pre_nom * w_lep;
+      if(year=="2016" || year=="2017" || year=="UL2016_preVFP"||year=="UL2016"||year=="UL2017"||year=="2022"||year=="2023"||year=="2024") weight = w_btag_dcsv * w_lumi * w_pu * w_isr * l1pre_nom * w_lep;
       else weight = w_btag_dcsv * w_lumi * w_pu * w_isr * w_lep;
     }
     else {
-      if(year=="2016" || year=="2017"||year=="UL2016_preVFP"||year=="UL2016"||year=="UL2017") weight = w_btag_dcsv * w_lumi * w_pu * l1pre_nom * w_lep;
+      if(year=="2016" || year=="2017"||year=="UL2016_preVFP"||year=="UL2016"||year=="UL2017"||year=="2022"||year=="2023"||year=="2024") weight = w_btag_dcsv * w_lumi * w_pu * l1pre_nom * w_lep;
       else weight = w_btag_dcsv * w_lumi * w_pu * w_lep;
       w_isr = 1;
     }
@@ -1554,6 +1566,37 @@ void process_nano(TString inputfile, TString outputdir, float sumWeights, TStrin
         Flag_BadPFMuonDzFilter*
         Flag_eeBadScFilter*
         Flag_ecalBadCalibFilter;
+
+      // triggers
+      trig_ht1050 = HLT_PFHT1050;
+    }
+
+    else if(year=="2022"||year=="2023")  // ref: https://twiki.cern.ch/twiki/bin/viewauth/CMS/MissingETOptionalFiltersRun2#Run_3_2022_and_2023_data_and_MC
+					 // FIXME Flag_ecalBadCalibFilter is optional.
+    {
+      pass = Flag_goodVertices*
+        Flag_globalSuperTightHalo2016Filter*
+	Flag_EcalDeadCellTriggerPrimitiveFilter*
+	Flag_BadPFMuonFilter*
+	Flag_BadPFMuonDzFilter*
+	Flag_hfNoisyHitsFilter*
+	Flag_eeBadScFilter*
+	Flag_ecalBadCalibFilter;
+
+      // triggers
+      trig_ht1050 = HLT_PFHT1050;
+    }
+
+    else if(year=="2024")
+    {
+      pass = Flag_goodVertices*
+        Flag_globalSuperTightHalo2016Filter*
+	Flag_EcalDeadCellTriggerPrimitiveFilter*
+	Flag_BadPFMuonFilter*
+	Flag_BadPFMuonDzFilter*
+	Flag_hfNoisyHitsFilter*
+	Flag_eeBadScFilter*
+	Flag_ecalBadCalibFilter;
 
       // triggers
       trig_ht1050 = HLT_PFHT1050;
@@ -1665,7 +1708,7 @@ int main(int argc, char **argv)
     cout << " Please provide proper arguments" << endl;
     cout << "" << endl;
     cout << "   ./process_nano.exe [input dir] [output dir] [process] [list of processed files] [year]" << endl; 
-    cout << "   year:   [PreLegacy] 2016, 2017, 2018   [UltraLegacy] UL2016_preVFP, UL2016, UL2017, UL2018" << endl;
+    cout << "   year:   [PreLegacy] 2016, 2017, 2018   [UltraLegacy] UL2016_preVFP, UL2016, UL2017, UL2018    [Run3] 2022 2023 2024" << endl;
     cout << "" << endl;
     return 0;
   }
@@ -1780,6 +1823,9 @@ int main(int argc, char **argv)
   else if(year=="UL2016") JecUnc  = new JetCorrectionUncertainty("data/ultralegacy/jec/Summer19UL16_V7_MC_Uncertainty_AK4PFchs.txt");
   else if(year=="UL2017") JecUnc  = new JetCorrectionUncertainty("data/ultralegacy/jec/Summer19UL17_V5_MC_Uncertainty_AK4PFchs.txt");
   else if(year=="UL2018") JecUnc  = new JetCorrectionUncertainty("data/ultralegacy/jec/Summer19UL18_V5_MC_Uncertainty_AK4PFchs.txt");
+  else if(year=="2022") JecUnc  = new JetCorrectionUncertainty("data/ultralegacy/jec/Summer19UL18_V5_MC_Uncertainty_AK4PFchs.txt"); //FIXME Run 3
+  else if(year=="2023") JecUnc  = new JetCorrectionUncertainty("data/ultralegacy/jec/Summer19UL18_V5_MC_Uncertainty_AK4PFchs.txt");
+  else if(year=="2024") JecUnc  = new JetCorrectionUncertainty("data/ultralegacy/jec/Summer19UL18_V5_MC_Uncertainty_AK4PFchs.txt");
 
 //  JecUnc = new JetCorrectionUncertainty(Sample_Year::JECUncertFile);
 
