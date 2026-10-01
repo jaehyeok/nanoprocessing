@@ -87,25 +87,27 @@ float getXsec(TString process)
 	// Taken from https://twiki.cern.ch/twiki/bin/view/LHCPhysics/SUSYCrossSections13TeVgluglu
 	// Note that numbers are different from babymaker 
 	// It seems that cross section numbers changed 
-  if(process.Contains("mGluino1000"))                  xsec = 0.385E+00;
-  if(process.Contains("mGluino1100"))                  xsec = 0.191E+00;
-  if(process.Contains("mGluino1200"))                  xsec = 0.985E-01;
-  if(process.Contains("mGluino1300"))                  xsec = 0.522E-01;
-  if(process.Contains("mGluino1400"))                  xsec = 0.284E-01;
-  if(process.Contains("mGluino1500"))                  xsec = 0.157E-01;
-  if(process.Contains("mGluino1600"))                  xsec = 0.887E-02;
-  if(process.Contains("mGluino1700"))                  xsec = 0.507E-02;
-  if(process.Contains("mGluino1800"))                  xsec = 0.293E-02;
-  if(process.Contains("mGluino1900"))                  xsec = 0.171E-02;
-  if(process.Contains("mGluino2000"))                  xsec = 0.101E-02;
-  if(process.Contains("mGluino2100"))                  xsec = 0.598E-03;
-  if(process.Contains("mGluino2200"))                  xsec = 0.356E-03;
+  if(process.Contains("mGluino1000"))                  xsec = 0.3942E+00;
+  if(process.Contains("mGluino1100"))                  xsec = 0.1972E+00;
+  if(process.Contains("mGluino1200"))                  xsec = 0.1024E+00;
+  if(process.Contains("mGluino1300"))                  xsec = 0.5486E-01;
+  if(process.Contains("mGluino1400"))                  xsec = 0.3018E-01;
+  if(process.Contains("mGluino1500"))                  xsec = 0.1697E-01;
+  if(process.Contains("mGluino1600"))                  xsec = 0.972E-02;
+  if(process.Contains("mGluino1700"))                  xsec = 0.5662E-02;
+  if(process.Contains("mGluino1800"))                  xsec = 0.3349E-02;
+  if(process.Contains("mGluino1900"))                  xsec = 0.2004E-02;
+  if(process.Contains("mGluino2000"))                  xsec = 0.1216E-02;
+  if(process.Contains("mGluino2100"))                  xsec = 0.7439E-03;
+  if(process.Contains("mGluino2200"))                  xsec = 0.4607E-03;
 
   //GluGluToNeuNeu
-  if(process.Contains("2T2B2S_M-1200"))			xsec = 0.985E-01;
-  if(process.Contains("2T2B2S_M-1600"))			xsec = 0.887E-02;
-  if(process.Contains("2T2B2S_M-2400"))			xsec = 0.128E-03;
-  if(process.Contains("2T2B2S_M-3000"))			xsec = 0.621E-05;
+  	// The sample name indicates the neutralino mass, which is 5 GeV lower than the gluino mass.
+	// Since this difference is negligible, the neutralino mass is used as the gluino mass.
+  if(process.Contains("2T2B2S_M-1200"))			xsec = 0.1024;
+  if(process.Contains("2T2B2S_M-1600"))			xsec = 0.00972;
+  if(process.Contains("2T2B2S_M-2400"))			xsec = 0.0001806;
+  if(process.Contains("2T2B2S_M-3000"))			xsec = 0.00001285;
 
   // StealthSHH_mStop
   if(process.Contains("StealthSHH_2t4b_mStop-300_mSo-100_Tune")) xsec = 0.1E+02;
